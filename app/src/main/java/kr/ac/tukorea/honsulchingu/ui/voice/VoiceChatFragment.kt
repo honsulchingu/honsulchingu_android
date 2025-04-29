@@ -1,26 +1,34 @@
 package kr.ac.tukorea.honsulchingu.ui.voice
 
+import ChatAdapter
 import android.os.Bundle
 import android.text.method.ScrollingMovementMethod
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.animation.AlphaAnimation
 import android.widget.ImageButton
 import android.widget.TextView
 import androidx.fragment.app.Fragment
-import androidx.navigation.fragment.findNavController
+import androidx.fragment.app.FragmentContainerView
 import com.google.android.material.imageview.ShapeableImageView
 import kr.ac.tukorea.honsulchingu.R
+import kr.ac.tukorea.honsulchingu.ui.chat.ChatFragment
+import kr.ac.tukorea.honsulchingu.ui.chat.ChatMessage
 
 class VoiceChatFragment : Fragment() {
 
+    private lateinit var chatFragmentContainer: FragmentContainerView
     private lateinit var imageCharacter: ShapeableImageView
     private lateinit var textSpeech: TextView
     private lateinit var buttonMic: ImageButton
-    private lateinit var buttonCamera: ImageButton
     private lateinit var buttonChat: ImageButton
+    private lateinit var dimmedView: View
+    private lateinit var chatAdapter: ChatAdapter
+    private lateinit var chatMessages: MutableList<ChatMessage>
+
     private var isMicOn = true
-    private var isCameraOn = true
+    private var isChatVisible = false
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -34,9 +42,9 @@ class VoiceChatFragment : Fragment() {
         imageCharacter = view.findViewById(R.id.imageCharacter)
         textSpeech = view.findViewById(R.id.textSpeech)
         buttonMic = view.findViewById(R.id.buttonMic)
-        buttonCamera = view.findViewById(R.id.buttonCamera)
         buttonChat = view.findViewById(R.id.buttonChat)
-        textSpeech = view.findViewById(R.id.textSpeech)
+        chatFragmentContainer = view.findViewById(R.id.chatFragmentContainer)
+        dimmedView = view.findViewById(R.id.dimmedView) // dimmedView 연결
 
         // 텍스트 스크롤
         textSpeech.movementMethod = ScrollingMovementMethod()
@@ -50,36 +58,16 @@ class VoiceChatFragment : Fragment() {
             updateMicUI()
         }
 
-
-        buttonCamera.setOnClickListener {
-            isCameraOn = !isCameraOn
-            updateCameraUI()
+        buttonChat.setOnClickListener {
+            if (!isChatVisible) showChatFragment()
+            else hideChatFragment()
         }
-
-
-//        buttonChat.setOnClickListener {
-//            // 오른쪽으로 채팅 슬라이드 오픈
-//            findNavController().navigate(R.id.action_voiceChatFragment_to_textChatFragment)
-//        }
     }
 
     private fun startVoiceChat() {
         // 음성 채팅 시작 (예시: 음성 인식 등)
         textSpeech.text = "음성 채팅을 시작합니다..."
     }
-
-    private fun updateCameraUI() {
-        if (isCameraOn) {
-            buttonCamera.setBackgroundResource(R.drawable.bg_button_circle)
-            buttonCamera.setImageResource(R.drawable.ic_camera)
-            textSpeech.text = "카메라가 켜졌어요"
-        } else {
-            buttonCamera.setBackgroundResource(R.drawable.bg_off_button_circle)
-            buttonCamera.setImageResource(R.drawable.ic_camera_off)
-            textSpeech.text = "카메라가 꺼졌어요"
-        }
-    }
-
 
     private fun updateMicUI() {
         if (isMicOn) {
@@ -93,4 +81,51 @@ class VoiceChatFragment : Fragment() {
         }
     }
 
+    private fun showChatFragment() {
+        val chatFragment = ChatFragment()
+
+        // 배경 흐림 애니메이션
+        dimmedView.visibility = View.VISIBLE
+        dimmedView.animate().alpha(1f).setDuration(300).start()
+
+        parentFragmentManager.beginTransaction()
+            .setCustomAnimations(
+                R.anim.slide_in_right,
+                R.anim.slide_out_left,
+                R.anim.slide_in_left,
+                R.anim.slide_out_right
+            )
+            .replace(R.id.fragment_container, chatFragment)
+            .addToBackStack(null)
+            .commit()
+
+        isChatVisible = true
+    }
+
+    private fun hideChatFragment() {
+        // 흐림 배경 제거 애니메이션
+        dimmedView.animate().alpha(0f).setDuration(300).withEndAction {
+            dimmedView.visibility = View.GONE
+        }.start()
+
+        // ChatFragment를 스택에서 제거하여 숨김
+        parentFragmentManager.popBackStack()
+        isChatVisible = false
+    }
+
+    override fun onResume() {
+        super.onResume()
+        // 현재 ChatFragment가 백스택에 남아 있는지 확인
+        val currentFragment = parentFragmentManager.findFragmentById(R.id.fragment_container)
+        isChatVisible = currentFragment is ChatFragment
+
+        // 화면 복귀 시에도 dimmed 상태 유지
+        if (isChatVisible) {
+            dimmedView.visibility = View.VISIBLE
+            dimmedView.alpha = 1f
+        } else {
+            dimmedView.visibility = View.GONE
+            dimmedView.alpha = 0f
+        }
+    }
 }

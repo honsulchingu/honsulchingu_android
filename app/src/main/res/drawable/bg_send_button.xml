@@ -1,0 +1,10 @@
+<!-- res/drawable/bg_send_button.xml -->
+<shape xmlns:android="http://schemas.android.com/apk/res/android">
+    <gradient
+        android:angle="270"
+        android:startColor="#A770EF"
+        android:centerColor="#7F52FF"
+        android:endColor="#4A00E0"
+        android:type="linear" />
+    <corners android:radius="24dp"/>
+</shape>

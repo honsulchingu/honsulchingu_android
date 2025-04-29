@@ -2,13 +2,28 @@
 <androidx.constraintlayout.widget.ConstraintLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:id="@+id/voiceChatRoot"
+    android:id="@+id/voiceLayout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:paddingStart="24dp"
     android:paddingEnd="24dp"
-    android:paddingTop="104dp"
     android:background="@drawable/bg_voicechat">
+
+
+    <!--배경 흐림도-->
+    <View
+        android:id="@+id/dimmedView"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:background="@drawable/dimmed_gradient"
+        android:alpha="0"
+        android:visibility="gone"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+
 
     <!-- 캐릭터 이미지 -->
     <com.google.android.material.imageview.ShapeableImageView
@@ -16,14 +31,16 @@
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:layout_marginBottom="16dp"
+        android:layout_marginTop="104dp"
         android:scaleType="centerCrop"
         app:shapeAppearanceOverlay="@style/CircleImage"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintBottom_toTopOf="@+id/textSpeech"
+        app:layout_constraintBottom_toTopOf="@id/textSpeech"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintDimensionRatio="1:1"
-        app:layout_constraintHeight_percent="0.35" />
+        app:layout_constraintHeight_percent="0.35"
+        android:visibility="visible" /> <!-- 초기에는 보임 -->
 
     <!-- 대화 텍스트 -->
     <TextView
@@ -45,24 +62,6 @@
         app:layout_constraintEnd_toEndOf="parent" />
 
 
-
-
-    <!-- 카메라 버튼 -->
-    <ImageButton
-        android:id="@+id/buttonCamera"
-        android:layout_width="72dp"
-        android:layout_height="72dp"
-        android:background="@drawable/bg_button_circle"
-        android:src="@drawable/ic_camera"
-        android:contentDescription="Camera"
-        android:padding="16dp"
-        android:scaleType="centerInside"
-        app:layout_constraintTop_toBottomOf="@id/textSpeech"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toStartOf="@id/buttonMic"
-        android:layout_marginEnd="16dp" />
-
     <!-- 마이크 버튼 -->
     <ImageButton
         android:id="@+id/buttonMic"
@@ -75,15 +74,15 @@
         android:scaleType="centerInside"
         app:layout_constraintTop_toBottomOf="@id/textSpeech"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toEndOf="@id/buttonCamera"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toStartOf="@id/buttonChat"
-        android:layout_marginHorizontal="16dp" />
+        android:layout_marginEnd="16dp" />
 
     <!-- 채팅 버튼 -->
     <ImageButton
         android:id="@+id/buttonChat"
-        android:layout_width="72dp"
-        android:layout_height="72dp"
+        android:layout_width="96dp"
+        android:layout_height="96dp"
         android:background="@drawable/bg_button_circle"
         android:src="@drawable/ic_message"
         android:contentDescription="Chat"
@@ -95,4 +94,15 @@
         app:layout_constraintEnd_toEndOf="parent"
         android:layout_marginStart="16dp" />
 
+
+    <!-- 채팅 프래그먼트 -->
+    <androidx.fragment.app.FragmentContainerView
+        android:id="@+id/chatFragmentContainer"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="gone"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
 </androidx.constraintlayout.widget.ConstraintLayout>

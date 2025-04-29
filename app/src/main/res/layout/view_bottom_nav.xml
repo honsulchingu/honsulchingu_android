@@ -1,11 +1,24 @@
-<?xml version="1.0" encoding="utf-8"?>
-<com.google.android.material.bottomnavigation.BottomNavigationView
+<LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:id="@+id/bottomNavRoot"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:orientation="vertical">
+
+    <!-- 구분선 -->
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="#E5E7EB" /> <!-- 구분선 -->
+
+    <com.google.android.material.bottomnavigation.BottomNavigationView
+        android:id="@+id/bottomNavRoot"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="#F3F4F6"
     app:labelVisibilityMode="labeled"
     app:itemIconTint="@color/bottom_nav_color_selector"
     app:itemTextColor="@color/bottom_nav_color_selector"
     app:menu="@menu/bottom_nav_menu" />
+
+</LinearLayout>

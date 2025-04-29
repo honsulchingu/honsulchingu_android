@@ -12,4 +12,15 @@
         <item name="cornerSize">50%</item>
     </style>
 
+    <style name="RoundedCornerImageView">
+        <item name="cornerFamily">rounded</item>
+        <item name="cornerSize">30%</item>
+    </style>
+
+
+    <style name="Widget.Theme.Honsulchingu.MyView" parent="">
+        <item name="android:background">#F3F4F6</item>
+        <item name="exampleColor">@color/light_blue_400</item>
+    </style>
+
 </resources>
