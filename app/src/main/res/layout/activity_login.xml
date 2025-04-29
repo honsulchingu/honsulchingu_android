@@ -1,0 +1,109 @@
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/gradient_background"
+    android:id="@+id/login">
+
+    <!-- 안전 영역을 위한 상단 Guideline (10% 여백 확보) -->
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guidelineSafeTop"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_percent="0.1" /> <!-- 10% 아래부터 시작 -->
+
+    <!-- 카드 시작 Guideline (45% 아래에서 카드 시작) -->
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guidelineCardTop"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_percent="0.45" />
+
+    <!-- 로고 -->
+    <ImageView
+        android:id="@+id/logoCircle"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:src="@drawable/ic_app_logo"
+        android:scaleType="centerInside"
+        app:layout_constraintWidth_percent="0.4"
+        app:layout_constraintHeight_percent="0.2"
+        app:layout_constraintTop_toTopOf="@id/guidelineSafeTop"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+    <!-- 앱 이름 -->
+    <TextView
+        android:id="@+id/appTitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="혼술친구"
+        android:textColor="@android:color/white"
+        android:textSize="26sp"
+        android:textStyle="bold"
+        app:layout_constraintTop_toBottomOf="@id/logoCircle"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="20dp" />
+
+
+    <!-- 로그인 카드 -->
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/loginCard"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:background="@drawable/bg_card_rounded_top"
+        android:padding="24dp"
+        android:elevation="8dp"
+        app:layout_constraintTop_toTopOf="@id/guidelineCardTop"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
+
+        <!-- 카드 내부 가이드라인: 카드 높이의 40% 지점에 버튼 배치 -->
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/guidelineButtonTop"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            app:layout_constraintGuide_percent="0.35" /> <!-- 카드 기준 40% 지점 -->
+
+
+        <!-- 환영합니다 -->
+        <TextView
+            android:id="@+id/welcomeText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="환영합니다"
+            android:textColor="@android:color/black"
+            android:textSize="20sp"
+            android:fontFamily="@font/pretendard_bold"
+            android:textStyle="bold"
+            android:gravity="center"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            android:layout_marginTop="20dp" />
+
+        <!-- 카카오 로그인 버튼 - 카드 중앙보다 위쪽 (40%) 위치) -->
+        <ImageButton
+            android:id="@+id/kakaoLoginButton"
+            android:layout_width="0dp"
+            android:layout_height="48dp"
+            android:src="@drawable/kakao_login"
+            android:scaleType="fitXY"
+            android:background="@null"
+            android:contentDescription="카카오 로그인 버튼"
+            app:layout_constraintTop_toTopOf="@id/guidelineButtonTop"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            android:layout_marginStart="8dp"
+            android:layout_marginEnd="8dp"/>
+
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

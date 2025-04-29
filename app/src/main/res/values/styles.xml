@@ -17,6 +17,15 @@
         <item name="cornerSize">30%</item>
     </style>
 
+    <style name="TopRoundCardShape" parent="">
+        <item name="cornerFamily">rounded</item>
+        <item name="cornerSizeTopLeft">32dp</item>
+        <item name="cornerSizeTopRight">32dp</item>
+        <item name="cornerSizeBottomLeft">0dp</item>
+        <item name="cornerSizeBottomRight">0dp</item>
+
+    </style>
+
 
     <style name="Widget.Theme.Honsulchingu.MyView" parent="">
         <item name="android:background">#F3F4F6</item>
