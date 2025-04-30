@@ -63,23 +63,6 @@ class ChatFragment : Fragment() {
             requireActivity().supportFragmentManager.popBackStack()
         }
 
-//        gestureDetector = GestureDetector(requireContext(), object : GestureDetector.SimpleOnGestureListener() {
-//            override fun onFling(
-//                e1: MotionEvent?,
-//                e2: MotionEvent?,
-//                velocityX: Float,
-//                velocityY: Float
-//            ): Boolean {
-//                if (e1 != null && e2 != null) {
-//                    if (e1.x - e2.x > 100) { // 오른쪽 → 왼쪽 스와이프
-//                        binding.recyclerViewChat.visibility = View.GONE
-//                        return true
-//                    }
-//                }
-//                return false
-//            }
-//        })
-
 
 
 

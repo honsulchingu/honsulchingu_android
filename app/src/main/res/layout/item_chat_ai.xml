@@ -54,7 +54,7 @@
             android:src="@drawable/ic_heart"
             android:background="@android:color/transparent"
             android:contentDescription="하트"
-            android:visibility="invisible"
+            android:visibility="visible"
             app:layout_constraintStart_toEndOf="@id/messageText"
             app:layout_constraintBottom_toTopOf="@id/timeText"/>
 

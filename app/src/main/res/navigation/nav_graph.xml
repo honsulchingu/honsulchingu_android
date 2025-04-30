@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/nav_graph"
+    app:startDestination="@id/homeFragment">
+
+    <fragment
+        android:id="@+id/homeFragment"
+        android:name="kr.ac.tukorea.honsulchingu.ui.home.HomeFragment"
+        android:label="홈" />
+
+    <fragment
+        android:id="@+id/historyFragment"
+        android:name="kr.ac.tukorea.honsulchingu.history.HistoryFragment"
+        android:label="기록">
+        <action
+            android:id="@+id/action_historyFragment_to_voiceChatFragment"
+            app:destination="@id/voiceChatFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/voiceChatFragment"
+        android:name="kr.ac.tukorea.honsulchingu.ui.voice.VoiceChatFragment"
+        android:label="보이스챗" />
+
+    <fragment
+        android:id="@+id/settingsFragment"
+        android:name="kr.ac.tukorea.honsulchingu.ui.settings.SettingsFragment"
+        android:label="설정" />
+</navigation>
