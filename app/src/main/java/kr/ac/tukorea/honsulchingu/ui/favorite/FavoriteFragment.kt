@@ -5,56 +5,51 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import kr.ac.tukorea.honsulchingu.R
 
-// TODO: Rename parameter arguments, choose names that match
-// the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-private const val ARG_PARAM1 = "param1"
-private const val ARG_PARAM2 = "param2"
 
-/**
- * A simple [Fragment] subclass.
- * Use the [FavoriteFragment.newInstance] factory method to
- * create an instance of this fragment.
- */
 class FavoriteFragment : Fragment() {
-    // TODO: Rename and change types of parameters
-    private var param1: String? = null
-    private var param2: String? = null
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        arguments?.let {
-            param1 = it.getString(ARG_PARAM1)
-            param2 = it.getString(ARG_PARAM2)
-        }
-    }
+    private lateinit var favoriteRecyclerView: RecyclerView
+    private lateinit var favoriteAdapter: FavoriteAdapter
+    private val favoriteList = mutableListOf<FavoriteChat>()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_favorite, container, false)
     }
 
-    companion object {
-        /**
-         * Use this factory method to create a new instance of
-         * this fragment using the provided parameters.
-         *
-         * @param param1 Parameter 1.
-         * @param param2 Parameter 2.
-         * @return A new instance of fragment FavoriteFragment.
-         */
-        // TODO: Rename and change types and number of parameters
-        @JvmStatic
-        fun newInstance(param1: String, param2: String) =
-            FavoriteFragment().apply {
-                arguments = Bundle().apply {
-                    putString(ARG_PARAM1, param1)
-                    putString(ARG_PARAM2, param2)
-                }
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
+        favoriteRecyclerView = view.findViewById(R.id.favoriteRecyclerView)
+
+        // 테스트용 더미 데이터
+        favoriteList.addAll(
+            listOf(
+                FavoriteChat("민혁", "무서울꺼야. 하지만 계속 시도한다면 성장...", 1709160000000, R.drawable.friend1),
+                FavoriteChat("민혁", "넌 네가 바뀌어야 한다고 생각 안 해...", 1709160000000, R.drawable.friend1),
+                FavoriteChat("민혁", "감정적으로 살다보면 다치기 쉬워.", 1709160000000, R.drawable.friend2)
+            )
+        )
+
+        favoriteAdapter = FavoriteAdapter(
+            items = favoriteList,
+            onMoveClick = { chat ->
+                //  대화로 이동 처리
+            },
+            onUnfavoriteClick = { chat ->
+                // 즐겨찾기 해제 처리
             }
+        )
+
+        favoriteRecyclerView.apply {
+            layoutManager = LinearLayoutManager(requireContext())
+            adapter = favoriteAdapter
+        }
     }
 }
