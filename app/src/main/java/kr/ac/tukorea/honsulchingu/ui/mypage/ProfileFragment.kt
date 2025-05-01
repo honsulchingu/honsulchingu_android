@@ -1,4 +1,4 @@
-package kr.ac.tukorea.honsulchingu.mypage
+package kr.ac.tukorea.honsulchingu.ui.mypage
 
 import android.os.Bundle
 import androidx.fragment.app.Fragment

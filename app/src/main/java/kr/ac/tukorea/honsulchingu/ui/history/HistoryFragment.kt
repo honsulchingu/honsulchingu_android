@@ -34,7 +34,7 @@ class HistoryFragment : Fragment() {
 
 
         historyAdapter = HistoryAdapter(chatList) { chatRecord ->
-            findNavController().navigate(R.id.action_historyFragment_to_voiceChatFragment)
+            findNavController().navigate(R.id.nav_voiceChat)
         }
 
 

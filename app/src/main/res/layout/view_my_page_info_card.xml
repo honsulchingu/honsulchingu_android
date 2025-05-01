@@ -1,0 +1,140 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginHorizontal="16dp"
+    app:cardCornerRadius="16dp"
+    app:cardElevation="10dp"
+    android:backgroundTint="@android:color/white">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingVertical="16dp">
+
+        <!-- 가입일 -->
+        <LinearLayout
+            android:id="@+id/info_join_date"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:gravity="center"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toStartOf="@id/divider1"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintHorizontal_chainStyle="spread">
+
+            <TextView
+                android:id="@+id/text_join_date_value"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="2024년 3월"
+                android:textColor="@color/purple"
+                android:textSize="14sp"
+                android:fontFamily="@font/pretendard_bold"
+                android:gravity="center" />
+
+            <TextView
+                android:id="@+id/text_join_date_label"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="가입일"
+                android:textColor="@color/gray"
+                android:textSize="13sp"
+                android:fontFamily="@font/pretendard_medium"
+                android:gravity="center" />
+        </LinearLayout>
+
+        <!-- 구분선 1 -->
+        <View
+            android:id="@+id/divider1"
+            android:layout_width="1dp"
+            android:layout_height="40dp"
+            android:background="#E0E0E0"
+            app:layout_constraintStart_toEndOf="@id/info_join_date"
+            app:layout_constraintEnd_toStartOf="@id/info_chat_count"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent" />
+
+        <!-- 대화 수 -->
+        <LinearLayout
+            android:id="@+id/info_chat_count"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:gravity="center"
+            app:layout_constraintStart_toEndOf="@id/divider1"
+            app:layout_constraintEnd_toStartOf="@id/divider2"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent">
+
+            <TextView
+                android:id="@+id/text_chat_count_value"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="28"
+                android:textColor="@color/purple"
+                android:textSize="14sp"
+                android:fontFamily="@font/pretendard_bold"
+                android:gravity="center" />
+
+            <TextView
+                android:id="@+id/text_chat_count_label"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="대화 수"
+                android:textColor="@color/gray"
+                android:textSize="13sp"
+                android:fontFamily="@font/pretendard_medium"
+                android:gravity="center" />
+        </LinearLayout>
+
+        <!-- 구분선 2 -->
+        <View
+            android:id="@+id/divider2"
+            android:layout_width="1dp"
+            android:layout_height="40dp"
+            android:background="#E0E0E0"
+            app:layout_constraintStart_toEndOf="@id/info_chat_count"
+            app:layout_constraintEnd_toStartOf="@id/info_favorites"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent" />
+
+        <!-- 즐겨찾기 -->
+        <LinearLayout
+            android:id="@+id/info_favorites"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:gravity="center"
+            app:layout_constraintStart_toEndOf="@id/divider2"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent">
+
+            <TextView
+                android:id="@+id/text_favorite_count_value"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="3"
+                android:textColor="@color/purple"
+                android:textSize="14sp"
+                android:fontFamily="@font/pretendard_bold"
+                android:gravity="center" />
+
+            <TextView
+                android:id="@+id/text_favorite_count_label"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="즐겨찾기"
+                android:textColor="@color/gray"
+                android:textSize="13sp"
+                android:fontFamily="@font/pretendard_medium"
+                android:gravity="center" />
+        </LinearLayout>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</androidx.cardview.widget.CardView>

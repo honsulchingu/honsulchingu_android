@@ -2,29 +2,100 @@
 <navigation xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/nav_graph"
-    app:startDestination="@id/homeFragment">
+    app:startDestination="@id/nav_character">
 
     <fragment
-        android:id="@+id/homeFragment"
-        android:name="kr.ac.tukorea.honsulchingu.ui.home.HomeFragment"
-        android:label="홈" />
-
-    <fragment
-        android:id="@+id/historyFragment"
-        android:name="kr.ac.tukorea.honsulchingu.history.HistoryFragment"
-        android:label="기록">
+        android:id="@+id/nav_character"
+        android:name="kr.ac.tukorea.honsulchingu.ui.character.CharacterSelectFragment"
+        android:label="캐릭터">
         <action
-            android:id="@+id/action_historyFragment_to_voiceChatFragment"
-            app:destination="@id/voiceChatFragment" />
+            android:id="@+id/action_nav_character_to_nav_history"
+            app:destination="@id/nav_history"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"
+            app:popEnterAnim="@anim/slide_in_left"
+            app:popExitAnim="@anim/slide_out_right"/>
     </fragment>
 
     <fragment
-        android:id="@+id/voiceChatFragment"
-        android:name="kr.ac.tukorea.honsulchingu.ui.voice.VoiceChatFragment"
-        android:label="보이스챗" />
+        android:id="@+id/nav_history"
+        android:name="kr.ac.tukorea.honsulchingu.history.HistoryFragment"
+        android:label="대화기록">
+        <action
+            android:id="@+id/action_nav_history_to_nav_voiceChat"
+            app:destination="@id/nav_voiceChat"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"
+            app:popEnterAnim="@anim/slide_in_left"
+            app:popExitAnim="@anim/slide_out_right"/>
+    </fragment>
 
     <fragment
-        android:id="@+id/settingsFragment"
-        android:name="kr.ac.tukorea.honsulchingu.ui.settings.SettingsFragment"
+        android:id="@+id/nav_voiceChat"
+        android:name="kr.ac.tukorea.honsulchingu.ui.voice.VoiceChatFragment"
+        android:label="보이스챗">
+        <action
+            android:id="@+id/action_nav_voiceChat_to_nav_favorite"
+            app:destination="@id/nav_favorite"
+            app:enterAnim="@anim/slide_in_left"
+            app:exitAnim="@anim/slide_out_right"
+            app:popEnterAnim="@anim/slide_in_right"
+            app:popExitAnim="@anim/slide_out_left"/>
+    </fragment>
+
+    <fragment
+        android:id="@+id/nav_favorite"
+        android:name="kr.ac.tukorea.honsulchingu.ui.favorite.FavoriteFragment"
+        android:label="즐겨찾기">
+        <action
+            android:id="@+id/action_nav_favorite_to_nav_mypage"
+            app:destination="@id/nav_mypage"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"
+            app:popEnterAnim="@anim/slide_in_left"
+            app:popExitAnim="@anim/slide_out_right"/>
+    </fragment>
+
+    <fragment
+        android:id="@+id/nav_mypage"
+        android:name="kr.ac.tukorea.honsulchingu.ui.mypage.MyPageFragment"
         android:label="설정" />
+
+    <fragment
+        android:id="@+id/chatFragment"
+        android:name="kr.ac.tukorea.honsulchingu.ui.chat.ChatFragment"
+        android:label="채팅">
+
+        <argument
+            android:name="characterId"
+            app:argType="integer" />
+
+        <action
+            android:id="@+id/action_chatFragment_to_nav_voiceChat"
+            app:destination="@id/nav_voiceChat"
+            app:enterAnim="@anim/slide_in_left"
+            app:exitAnim="@anim/slide_out_right"
+            app:popEnterAnim="@anim/slide_in_right"
+            app:popExitAnim="@anim/slide_out_left"/>
+    </fragment>
+
+    <fragment
+        android:id="@+id/characterListFragment"
+        android:name="kr.ac.tukorea.honsulchingu.ui.character.CharacterListFragment"
+        android:label="캐릭터 목록">
+
+        <argument
+            android:name="TYPE"
+            app:argType="string" />
+
+        <action
+            android:id="@+id/action_characterList_to_chatFragment"
+            app:destination="@id/chatFragment"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"
+            app:popEnterAnim="@anim/slide_in_left"
+            app:popExitAnim="@anim/slide_out_right"/>
+    </fragment>
+
+
 </navigation>

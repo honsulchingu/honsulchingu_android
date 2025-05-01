@@ -16,6 +16,8 @@ import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.updateLayoutParams
 
 import androidx.fragment.app.Fragment
+import androidx.navigation.NavOptions
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import kotlinx.coroutines.NonCancellable.start
 import kr.ac.tukorea.honsulchingu.R
@@ -58,9 +60,17 @@ class ChatFragment : Fragment() {
 
         // btnCloseChat 버튼 클릭 시 VoiceChatFragment로 돌아가기
         val btnCloseChat: ImageButton = binding.root.findViewById(R.id.btnCloseChat)
+
         btnCloseChat.setOnClickListener {
-            // VoiceChatFragment로 돌아가기
-            requireActivity().supportFragmentManager.popBackStack()
+            val navController = findNavController()
+            val navOptions = NavOptions.Builder()
+                .setEnterAnim(R.anim.slide_in_left)
+                .setExitAnim(R.anim.slide_out_right)
+                .setPopEnterAnim(R.anim.slide_in_right)
+                .setPopExitAnim(R.anim.slide_out_left)
+                .build()
+
+            navController.navigate(R.id.nav_voiceChat, null, navOptions)
         }
 
 
@@ -125,14 +135,7 @@ class ChatFragment : Fragment() {
         }
     }
 
-    // 오른쪽 스와이프 시 VoiceChatFragment로 이동
-    private fun navigateToVoiceChatFragment() {
-        // 이곳에 VoiceChatFragment로의 전환 로직을 추가하세요
-        parentFragmentManager.beginTransaction()
-            .replace(R.id.fragment_container, VoiceChatFragment())
-            .addToBackStack(null)
-            .commit()
-    }
+
 
 
     private fun setupRecyclerView() {
@@ -260,6 +263,18 @@ class ChatFragment : Fragment() {
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
+    }
+
+    companion object {
+        private const val ARG_CHARACTER_ID = "character_id"
+
+        fun newInstance(characterId: Int): ChatFragment {
+            val fragment = ChatFragment()
+            val args = Bundle()
+            args.putInt(ARG_CHARACTER_ID, characterId)
+            fragment.arguments = args
+            return fragment
+        }
     }
 }
 

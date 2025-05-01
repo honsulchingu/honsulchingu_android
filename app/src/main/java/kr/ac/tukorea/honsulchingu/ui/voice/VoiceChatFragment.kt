@@ -11,6 +11,8 @@ import android.widget.ImageButton
 import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentContainerView
+import androidx.navigation.NavOptions
+import androidx.navigation.fragment.findNavController
 import com.google.android.material.imageview.ShapeableImageView
 import kr.ac.tukorea.honsulchingu.R
 import kr.ac.tukorea.honsulchingu.ui.chat.ChatFragment
@@ -45,6 +47,7 @@ class VoiceChatFragment : Fragment() {
         buttonChat = view.findViewById(R.id.buttonChat)
         chatFragmentContainer = view.findViewById(R.id.chatFragmentContainer)
         dimmedView = view.findViewById(R.id.dimmedView) // dimmedView 연결
+
 
         // 텍스트 스크롤
         textSpeech.movementMethod = ScrollingMovementMethod()
@@ -82,25 +85,27 @@ class VoiceChatFragment : Fragment() {
     }
 
     private fun showChatFragment() {
-        val chatFragment = ChatFragment()
+        val navController = findNavController()  // NavController 가져오기
+        // 네비게이션 그래프에서 정의한 액션을 사용해 ChatFragment로 이동
+        navController.navigate(R.id.chatFragment, null, getVoiceChatToChatAnim())
 
         // 배경 흐림 애니메이션
         dimmedView.visibility = View.VISIBLE
         dimmedView.animate().alpha(1f).setDuration(300).start()
 
-        parentFragmentManager.beginTransaction()
-            .setCustomAnimations(
-                R.anim.slide_in_right,
-                R.anim.slide_out_left,
-                R.anim.slide_in_left,
-                R.anim.slide_out_right
-            )
-            .replace(R.id.fragment_container, chatFragment)
-            .addToBackStack(null)
-            .commit()
-
         isChatVisible = true
     }
+
+//        parentFragmentManager.beginTransaction()
+//            .setCustomAnimations(
+//                R.anim.slide_in_right,
+//                R.anim.slide_out_left,
+//                R.anim.slide_in_left,
+//                R.anim.slide_out_right
+//            )
+//            .replace(R.id.fragment_container, chatFragment)
+//            .addToBackStack(null)
+//            .commit()
 
     private fun hideChatFragment() {
         // 흐림 배경 제거 애니메이션
@@ -127,5 +132,15 @@ class VoiceChatFragment : Fragment() {
             dimmedView.visibility = View.GONE
             dimmedView.alpha = 0f
         }
+    }
+
+    // 보이스챗에서 채팅으로 넘어갈 때는 오른쪽 -> 왼쪽 슬라이드
+    private fun getVoiceChatToChatAnim(): NavOptions {
+        return NavOptions.Builder()
+            .setEnterAnim(R.anim.slide_in_right) // 오른쪽 -> 왼쪽 슬라이드
+            .setExitAnim(R.anim.slide_out_left) // 우측으로 나가기
+            .setPopEnterAnim(R.anim.slide_in_left) // 왼쪽에서 오른쪽으로 슬라이드 인
+            .setPopExitAnim(R.anim.slide_out_right) // 좌측으로 나가기
+            .build()
     }
 }

@@ -1,6 +1,7 @@
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
+    id("androidx.navigation.safeargs.kotlin") version "2.5.0"
 }
 
 
@@ -46,8 +47,10 @@ android {
 dependencies {
 
     implementation("androidx.fragment:fragment-ktx:1.5.0")      // 추가
-    implementation ("androidx.navigation:navigation-fragment-ktx:2.6.0")    // 추가 (네비바)
-    implementation ("androidx.navigation:navigation-ui-ktx:2.6.0")          // 추가 (네비바)
+
+    // navigation 라이브러리
+    implementation ("androidx.navigation:navigation-fragment-ktx:2.7.7")
+    implementation ("androidx.navigation:navigation-ui-ktx:2.7.7")
     
     
     implementation(libs.androidx.core.ktx)

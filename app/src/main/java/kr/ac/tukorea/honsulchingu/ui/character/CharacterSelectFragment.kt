@@ -1,3 +1,5 @@
+package kr.ac.tukorea.honsulchingu.ui.character
+
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
