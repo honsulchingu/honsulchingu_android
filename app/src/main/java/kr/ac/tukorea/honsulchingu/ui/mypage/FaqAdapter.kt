@@ -14,9 +14,9 @@ import androidx.transition.TransitionManager
 class FaqAdapter(private val faqList: List<FaqItem>) : RecyclerView.Adapter<FaqAdapter.FaqViewHolder>() {
 
     inner class FaqViewHolder(view: View) : RecyclerView.ViewHolder(view) {
-        val questionText: TextView = view.findViewById(R.id.faq_question)
-        val answerText: TextView = view.findViewById(R.id.faq_answer)
-        val arrowIcon: ImageView = view.findViewById(R.id.faq_arrow)
+        val guideText: TextView = itemView.findViewById(R.id.guide_text)
+        val guideAnswer: TextView = itemView.findViewById(R.id.guide_answer)
+        val guideArrow: ImageView = itemView.findViewById(R.id.guide_arrow)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): FaqViewHolder {
@@ -26,26 +26,29 @@ class FaqAdapter(private val faqList: List<FaqItem>) : RecyclerView.Adapter<FaqA
 
     override fun onBindViewHolder(holder: FaqViewHolder, position: Int) {
         val faqItem = faqList[position]
-        holder.questionText.text = faqItem.question
-        holder.answerText.text = faqItem.answer
+        holder.guideText.text = faqItem.question
+        holder.guideAnswer.text = faqItem.answer
 
-        // 초기 상태에서는 답변은 보이지 않도록 설정
-        holder.answerText.visibility = View.GONE
-
-        // 클릭 이벤트 처리
         var isExpanded = false
+        // 초기 상태에서는 답변을 숨기기
+        holder.guideAnswer.visibility = View.GONE
+        holder.guideArrow.rotation = 0f
+
+        // 클릭 시 펼치기/접기 처리
         holder.itemView.setOnClickListener {
             isExpanded = !isExpanded
 
-            // 애니메이션으로 부드럽게 펼치기
-            TransitionManager.beginDelayedTransition(holder.itemView as ViewGroup, AutoTransition())
-            holder.answerText.visibility = if (isExpanded) View.VISIBLE else View.GONE
+            // 펼치기/접기 처리
+            if (isExpanded) {
+                holder.guideAnswer.visibility = View.VISIBLE
+            } else {
+                holder.guideAnswer.visibility = View.GONE
+            }
 
-            // 화살표 회전
-            holder.arrowIcon.animate().rotation(if (isExpanded) 180f else 0f).setDuration(200).start()
+            // 화살표 회전 애니메이션
+            holder.guideArrow.rotation = if (isExpanded) 180f else 0f
         }
     }
 
     override fun getItemCount(): Int = faqList.size
 }
-

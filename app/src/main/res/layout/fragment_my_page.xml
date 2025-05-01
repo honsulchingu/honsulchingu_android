@@ -115,10 +115,12 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical">
+            android:orientation="vertical"
+            >
 
             <!-- 프로필 관리 -->
             <LinearLayout
+                android:id="@+id/layoutProfile"
                 android:layout_width="match_parent"
                 android:layout_height="56dp"
                 android:gravity="center_vertical"
@@ -155,6 +157,7 @@
 
             <!-- 도움말 -->
             <LinearLayout
+                android:id="@+id/layoutHelp"
                 android:layout_width="match_parent"
                 android:layout_height="56dp"
                 android:gravity="center_vertical"

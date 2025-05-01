@@ -6,23 +6,21 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
+import kr.ac.tukorea.honsulchingu.R
 import kr.ac.tukorea.honsulchingu.databinding.FragmentHelpBinding
 
 
 class HelpFragment : Fragment() {
 
-    private var _binding: FragmentHelpBinding? = null
-    private val binding get() = _binding!!
-
-    private lateinit var faqAdapter: FaqAdapter // FaqAdapter로 변경
-    private lateinit var guideAdapter: GuideAdapter // GuideAdapter로 변경
+    private lateinit var faqAdapter: FaqAdapter // FaqAdapter
+    private lateinit var guideAdapter: GuideAdapter // GuideAdapter
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?,
-    ): View {
-        _binding = FragmentHelpBinding.inflate(inflater, container, false)
-        return binding.root
+        savedInstanceState: Bundle?
+    ): View? {
+        return inflater.inflate(R.layout.fragment_help, container, false) // View 반환
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -37,10 +35,9 @@ class HelpFragment : Fragment() {
 
         // FAQ Adapter 설정
         faqAdapter = FaqAdapter(faqList)
-        binding.rvFaqList.apply {
-            layoutManager = LinearLayoutManager(context)
-            adapter = faqAdapter
-        }
+        val rvFaqList = view.findViewById<RecyclerView>(R.id.rv_faq_list)
+        rvFaqList.layoutManager = LinearLayoutManager(context)
+        rvFaqList.adapter = faqAdapter
 
         // 가이드 리스트 (간단한 문자열 리스트)
         val guideList = listOf(
@@ -50,17 +47,17 @@ class HelpFragment : Fragment() {
             "프로필 수정하기"
         )
 
-        // 가이드 Adapter 설정
+        // Guide Adapter 설정
         guideAdapter = GuideAdapter(guideList)
-        binding.rvGuideList.apply {
-            layoutManager = LinearLayoutManager(context)
-            adapter = guideAdapter
-        }
+        val rvGuideList = view.findViewById<RecyclerView>(R.id.rv_guide_list)
+        rvGuideList.layoutManager = LinearLayoutManager(context)
+        rvGuideList.adapter = guideAdapter
     }
 
+    // onDestroyView는 해당 Fragment가 화면에서 사라질 때 호출됨
     override fun onDestroyView() {
         super.onDestroyView()
-        _binding = null
     }
 }
+
 

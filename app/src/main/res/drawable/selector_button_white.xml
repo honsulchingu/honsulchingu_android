@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- 클릭 상태 -->
+    <item android:state_pressed="true" android:drawable="@drawable/bg_button_white_press" />
+    <!-- 호버 상태 -->
+    <item android:state_hovered="true" android:drawable="@drawable/bg_button_white_hover" />
+    <!-- 기본 상태 -->
+    <shape xmlns:android="http://schemas.android.com/apk/res/android">
+        <solid android:color="@color/white" />
+        <corners android:radius="12dp" />
+    </shape>
+</selector>
