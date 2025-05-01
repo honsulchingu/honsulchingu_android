@@ -81,8 +81,8 @@
     <!-- 채팅 버튼 -->
     <ImageButton
         android:id="@+id/buttonChat"
-        android:layout_width="96dp"
-        android:layout_height="96dp"
+        android:layout_width="72dp"
+        android:layout_height="72dp"
         android:background="@drawable/bg_button_circle"
         android:src="@drawable/ic_message"
         android:contentDescription="Chat"
