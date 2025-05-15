@@ -1,0 +1,148 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginBottom="24dp"
+    app:cardCornerRadius="24dp"
+    app:cardElevation="6dp">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <!-- 상단 그라데이션 배경 영역 -->
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/headerLayout"
+            android:layout_width="match_parent"
+            android:layout_height="100dp"
+            android:background="@drawable/gradient_wide_bg"
+            android:padding="16dp"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent">
+
+            <!-- 이름 -->
+            <TextView
+                android:id="@+id/characterName"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="민혁"
+                android:textColor="@android:color/white"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                android:fontFamily="@font/pretendard_bold"
+                android:layout_marginTop="5dp"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintStart_toStartOf="parent" />
+
+            <!-- 메시지: 이름 아래쪽에 배치 -->
+            <TextView
+                android:id="@+id/characterMessage"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="오늘도 화이팅! 너의 이야기를 들려줘."
+                android:textColor="@android:color/white"
+                android:fontFamily="@font/pretendard_medium"
+                android:textSize="14sp"
+                android:layout_marginTop="12dp"
+                app:layout_constraintTop_toBottomOf="@id/characterName"
+                app:layout_constraintStart_toStartOf="parent" />
+
+            <!-- 프로필 이미지 -->
+            <ImageView
+                android:id="@+id/characterImage"
+                android:layout_width="60dp"
+                android:layout_height="60dp"
+                android:background="@drawable/profile_circle_bg"
+                android:padding="2dp"
+                android:scaleType="centerCrop"
+                android:src="@drawable/ic_profile_placeholder"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <!-- 아래 하단 흰색 컨텐츠 영역 -->
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/bodyLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="16dp"
+            android:background="@android:color/white"
+            app:layout_constraintTop_toBottomOf="@id/headerLayout"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            >
+
+            <!-- 태그들 -->
+            <LinearLayout
+                android:id="@+id/tagLayout"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintStart_toStartOf="parent">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="#조언"
+                    android:textColor="@color/purple"
+                    android:fontFamily="@font/pretendard_medium"
+                    android:textSize="14sp"
+                    android:background="@drawable/tag_background"
+                    android:paddingHorizontal="8dp"
+                    android:paddingVertical="4dp"
+                    android:layout_marginEnd="8dp" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="#격려"
+                    android:textColor="@color/purple"
+                    android:fontFamily="@font/pretendard_medium"
+                    android:textSize="14sp"
+                    android:background="@drawable/tag_background"
+                    android:paddingHorizontal="8dp"
+                    android:paddingVertical="4dp" />
+            </LinearLayout>
+
+            <!-- 설명 -->
+            <TextView
+                android:id="@+id/characterDescription"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:text="힘들 때 기댈 수 있는 든든한 오빠같은 친구예요. 고민이 있을 때 따뜻한 조언과 격려를 해줄게요."
+                android:textSize="14sp"
+                android:textColor="@color/dark_gray"
+                android:layout_marginTop="12dp"
+                android:fontFamily="@font/pretendard_medium"
+                app:layout_constraintTop_toBottomOf="@id/tagLayout"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent" />
+
+            <!-- 버튼 -->
+            <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/startChatButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="12dp"
+                style="@null"
+                android:background="@drawable/button_purple_rounded"
+                android:paddingHorizontal="16dp"
+                android:paddingVertical="8dp"
+                android:text="대화 시작하기"
+                android:fontFamily="@font/pretendard_semibold"
+                android:textColor="@android:color/white"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/characterDescription" />
+
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</androidx.cardview.widget.CardView>

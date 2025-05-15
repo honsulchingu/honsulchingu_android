@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/nav_graph"
+    app:startDestination="@id/nav_character">
+
+    <!-- 캐릭터 선택 -->
+    <fragment
+        android:id="@+id/nav_character"
+        android:name="kr.ac.tukorea.honsulchingu.ui.character.CharacterSelectFragment"
+        android:label="캐릭터">
+        <action
+            android:id="@+id/action_nav_character_to_nav_history"
+            app:destination="@id/nav_history"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"
+            app:popEnterAnim="@anim/slide_in_left"
+            app:popExitAnim="@anim/slide_out_right" />
+    </fragment>
+
+    <!-- 대화 기록 -->
+    <fragment
+        android:id="@+id/nav_history"
+        android:name="kr.ac.tukorea.honsulchingu.history.HistoryFragment"
+        android:label="대화기록">
+        <action
+            android:id="@+id/action_nav_history_to_nav_voiceChat"
+            app:destination="@id/nav_voiceChat"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"
+            app:popEnterAnim="@anim/slide_in_left"
+            app:popExitAnim="@anim/slide_out_right" />
+    </fragment>
+
+    <!-- 보이스 챗 -->
+    <fragment
+        android:id="@+id/nav_voiceChat"
+        android:name="kr.ac.tukorea.honsulchingu.ui.voice.VoiceChatFragment"
+        android:label="보이스챗">
+        <action
+            android:id="@+id/action_nav_voiceChat_to_nav_favorite"
+            app:destination="@id/nav_favorite"
+            app:enterAnim="@anim/slide_in_left"
+            app:exitAnim="@anim/slide_out_right"
+            app:popEnterAnim="@anim/slide_in_right"
+            app:popExitAnim="@anim/slide_out_left" />
+    </fragment>
+
+    <!-- 즐겨찾기 -->
+    <fragment
+        android:id="@+id/nav_favorite"
+        android:name="kr.ac.tukorea.honsulchingu.ui.favorite.FavoriteFragment"
+        android:label="즐겨찾기">
+        <action
+            android:id="@+id/action_nav_favorite_to_nav_mypage"
+            app:destination="@id/nav_mypage"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"
+            app:popEnterAnim="@anim/slide_in_left"
+            app:popExitAnim="@anim/slide_out_right" />
+    </fragment>
+
+    <!-- 채팅 -->
+    <fragment
+        android:id="@+id/chatFragment"
+        android:name="kr.ac.tukorea.honsulchingu.ui.chat.ChatFragment"
+        android:label="채팅">
+        <argument
+            android:name="characterId"
+            app:argType="integer" />
+        <action
+            android:id="@+id/action_chatFragment_to_nav_voiceChat"
+            app:destination="@id/nav_voiceChat"
+            app:enterAnim="@anim/slide_in_left"
+            app:exitAnim="@anim/slide_out_right"
+            app:popEnterAnim="@anim/slide_in_right"
+            app:popExitAnim="@anim/slide_out_left" />
+    </fragment>
+
+    <!-- 캐릭터 목록 -->
+    <fragment
+        android:id="@+id/characterListFragment"
+        android:name="kr.ac.tukorea.honsulchingu.ui.character.CharacterListFragment"
+        android:label="캐릭터 목록">
+        <argument
+            android:name="TYPE"
+            app:argType="string" />
+        <action
+            android:id="@+id/action_characterList_to_chatFragment"
+            app:destination="@id/chatFragment"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"
+            app:popEnterAnim="@anim/slide_in_left"
+            app:popExitAnim="@anim/slide_out_right" />
+    </fragment>
+
+    <!-- 마이페이지 -->
+    <fragment
+        android:id="@+id/nav_mypage"
+        android:name="kr.ac.tukorea.honsulchingu.ui.mypage.MyPageFragment"
+        android:label="설정">
+        <action
+            android:id="@+id/action_nav_mypage_to_profileFragment"
+            app:destination="@id/profileFragment"
+            app:enterAnim="@anim/fade_in"
+            app:exitAnim="@anim/fade_out"
+            app:popEnterAnim="@anim/fade_in"
+            app:popExitAnim="@anim/fade_out" />
+        <action
+            android:id="@+id/action_nav_mypage_to_helpFragment"
+            app:destination="@id/helpFragment"
+            app:enterAnim="@anim/fade_in"
+            app:exitAnim="@anim/fade_out"
+            app:popEnterAnim="@anim/fade_in"
+            app:popExitAnim="@anim/fade_out" />
+    </fragment>
+
+    <!-- 프로필 관리 -->
+    <fragment
+        android:id="@+id/profileFragment"
+        android:name="kr.ac.tukorea.honsulchingu.ui.mypage.ProfileFragment"
+        android:label="프로필 관리" />
+
+    <!-- 도움말 -->
+    <fragment
+        android:id="@+id/helpFragment"
+        android:name="kr.ac.tukorea.honsulchingu.ui.mypage.HelpFragment"
+        android:label="도움말" />
+</navigation>

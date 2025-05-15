@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:paddingVertical="14dp"
+    android:paddingStart="16dp"
+    android:paddingEnd="12dp"
+    android:background="?attr/selectableItemBackground"
+    android:clickable="true"
+    android:focusable="true">
+
+    <!-- 아이콘 -->
+    <ImageView
+        android:id="@+id/menuIcon"
+        android:layout_width="24dp"
+        android:layout_height="24dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        android:src="@drawable/ic_profile_manage" />
+
+    <!-- 타이틀 -->
+    <TextView
+        android:id="@+id/menuTitle"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="메뉴명"
+        android:textColor="@color/dark_gray"
+        android:textSize="15sp"
+        android:fontFamily="@font/pretendard_medium"
+        app:layout_constraintStart_toEndOf="@id/menuIcon"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@id/rightContent"
+        android:layout_marginStart="12dp" />
+
+    <!-- 오른쪽 추가 정보 (예: 버전 텍스트 or 화살표) -->
+    <TextView
+        android:id="@+id/rightContent"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text=">"
+        android:textColor="@color/dark_gray"
+        android:textSize="14sp"
+        android:fontFamily="@font/pretendard_light"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent" />
+</androidx.constraintlayout.widget.ConstraintLayout>
