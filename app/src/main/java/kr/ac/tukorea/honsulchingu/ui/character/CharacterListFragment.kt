@@ -7,8 +7,11 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
+import kr.ac.tukorea.honsulchingu.R
 import kr.ac.tukorea.honsulchingu.databinding.FragmentCharacterListBinding
+import kr.ac.tukorea.honsulchingu.navigation.NavAnimationUtil
 import kr.ac.tukorea.honsulchingu.viewmodel.CharacterViewModel
 
 class CharacterListFragment : Fragment() {
@@ -41,9 +44,16 @@ class CharacterListFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         characterListAdapter = CharacterListAdapter { character ->
-            // 예: 캐릭터 클릭 시 동작 (네비게이션 등)
-            Toast.makeText(requireContext(), "${character.name} 선택됨", Toast.LENGTH_SHORT).show()
         }
+        characterListAdapter.onChatButtonClick = { character ->
+            Toast.makeText(requireContext(), "${character.name}님과의 대화를 시작합니다.", Toast.LENGTH_SHORT).show()
+            findNavController().navigate(
+                R.id.nav_voiceChat,
+                null,
+                NavAnimationUtil.getSlideFromRightOptions()
+            )
+        }
+
 
         binding.characterRecyclerView.layoutManager = LinearLayoutManager(requireContext())
         binding.characterRecyclerView.adapter = characterListAdapter

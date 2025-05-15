@@ -1,21 +1,19 @@
-package kr.ac.tukorea.honsulchingu.history
-
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Button
 import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import kr.ac.tukorea.honsulchingu.R
-import kr.ac.tukorea.honsulchingu.databinding.ItemChatRecordBinding
-import kr.ac.tukorea.honsulchingu.ui.chat.toChatDateString
+import kr.ac.tukorea.honsulchingu.history.ChatRecord
 import kr.ac.tukorea.honsulchingu.ui.history.toSmartDateString
 import java.util.Date
 
 class HistoryAdapter(
     private val chatList: List<ChatRecord>,
-    private val onItemClick: (ChatRecord) -> Unit // 추가
+    private val onMoveClick: (ChatRecord) -> Unit
 ) : RecyclerView.Adapter<HistoryAdapter.ChatViewHolder>() {
 
     inner class ChatViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
@@ -24,6 +22,7 @@ class HistoryAdapter(
         private val textTime: TextView = itemView.findViewById(R.id.textTime)
         private val textMessage: TextView = itemView.findViewById(R.id.textMessage)
         private val tagContainer: LinearLayout = itemView.findViewById(R.id.tagContainer)
+        private val moveButton: Button = itemView.findViewById(R.id.moveButton)
 
         fun bind(item: ChatRecord) {
             imageProfile.setImageResource(item.profileImageRes)
@@ -31,11 +30,8 @@ class HistoryAdapter(
             textTime.text = Date(item.time).toSmartDateString()
             textMessage.text = item.last_message
 
-            itemView.setOnClickListener {
-                it.isPressed = true
-                it.postDelayed({
-                    onItemClick(item)
-                }, 150)
+            moveButton.setOnClickListener {
+                onMoveClick(item)
             }
 
             tagContainer.removeAllViews()
@@ -59,13 +55,11 @@ class HistoryAdapter(
         }
     }
 
-
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ChatViewHolder {
         val view = LayoutInflater.from(parent.context)
             .inflate(R.layout.item_chat_record, parent, false)
         return ChatViewHolder(view)
     }
-
 
     override fun onBindViewHolder(holder: ChatViewHolder, position: Int) {
         holder.bind(chatList[position])

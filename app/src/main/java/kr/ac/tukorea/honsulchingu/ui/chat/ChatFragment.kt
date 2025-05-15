@@ -211,7 +211,7 @@ class ChatFragment : Fragment() {
             ChatMessage("진짜요?", isUser = true, timestamp = now - 8 * minute),
             ChatMessage("네! 맑아요", isUser = false, timestamp = now - 8 * minute),
             ChatMessage("좋네요ㅎㅎ", isUser = true, timestamp = now - 7 * minute),
-            ChatMessage("산책 추천드립니다.", isUser = false, timestamp = now - 6 * minute)
+            ChatMessage("오이아아이아이오오이ㅚㅏ와ㅣ외ㅏ외외ㅏ오아ㅣㅘ아ㅣ산책 추천드립니다...뀨?", isUser = false, timestamp = now - 6 * minute)
         )
 
         var lastDate: String? = null

@@ -19,6 +19,9 @@ class CharacterListAdapter(
     private val onClick: (ChatCharacter) -> Unit
 ) : ListAdapter<ChatCharacter, CharacterListAdapter.CharacterViewHolder>(CharacterDiffCallback()) {
 
+
+    var onChatButtonClick: ((ChatCharacter) -> Unit)? = null
+
     inner class CharacterViewHolder(private val binding: ItemCharacterBinding) :
         RecyclerView.ViewHolder(binding.root) {
 
@@ -54,7 +57,6 @@ class CharacterListAdapter(
                     typeface = ResourcesCompat.getFont(context, R.font.pretendard_medium)
                     setTextSize(TypedValue.COMPLEX_UNIT_SP, 14f)
                 }
-
                 // 마진 적용
                 val layoutParams = ViewGroup.MarginLayoutParams(
                     ViewGroup.LayoutParams.WRAP_CONTENT,
@@ -76,7 +78,7 @@ class CharacterListAdapter(
 
             // 대화 시작 버튼 클릭 토스트
             binding.startChatButton.setOnClickListener {
-                Toast.makeText(binding.root.context, "${character.name}와 대화를 시작합니다.", Toast.LENGTH_SHORT).show()
+                onChatButtonClick?.invoke(character)
             }
         }
     }
