@@ -9,4 +9,3 @@ data class ChatCharacter(
     val tags: List<String>,
     val profileImage: Int
 )
-

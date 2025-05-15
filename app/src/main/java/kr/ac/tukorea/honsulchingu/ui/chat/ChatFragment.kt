@@ -84,7 +84,7 @@ class ChatFragment : Fragment() {
 
             binding.layoutChatInput.updateLayoutParams<ViewGroup.MarginLayoutParams> {
                 bottomMargin = if (isKeyboardVisible) {
-                    (imeHeight * 0.8).toInt()  // 키보드가 올라왔을 때 입력창과의 간격 조정
+                    (imeHeight * 0.05 ).toInt()  // 키보드가 올라왔을 때 입력창과의 간격 조정
                 } else {
                     defaultBottomMargin
                 }

@@ -11,7 +11,6 @@ import android.widget.TextView
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
-import kotlinx.coroutines.NonCancellable.start
 import android.os.VibrationEffect
 import android.os.Vibrator
 import android.os.Build

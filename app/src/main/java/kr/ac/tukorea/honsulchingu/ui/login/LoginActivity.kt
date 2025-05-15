@@ -2,6 +2,7 @@ package kr.ac.tukorea.honsulchingu.ui.login
 
 import android.animation.AnimatorSet
 import android.animation.ObjectAnimator
+import android.content.Intent
 import android.os.Bundle
 import android.view.ViewTreeObserver
 import android.widget.ImageButton
@@ -10,6 +11,7 @@ import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import kr.ac.tukorea.honsulchingu.MainActivity
 import kr.ac.tukorea.honsulchingu.R
 
 class LoginActivity : AppCompatActivity() {
@@ -51,6 +53,17 @@ class LoginActivity : AppCompatActivity() {
                 return true
             }
         })
+
+        // ✅ 로그인 버튼 클릭 시 메인으로 이동
+        kakaoLoginButton.setOnClickListener {
+            val intent = Intent(this, MainActivity::class.java)
+            startActivity(intent)
+            overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out)
+            finish()
+        }
+
+
+
 
         // 안전 영역 적용
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.login)) { v, insets ->

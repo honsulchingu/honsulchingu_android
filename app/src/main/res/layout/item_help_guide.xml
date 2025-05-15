@@ -49,7 +49,7 @@
             android:id="@+id/guide_answer"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:text="여기에는 음성 채팅 기능을 어떻게 사용하는지에 대한 설명이 들어갑니다."
+            android:text="기능설명 기능설명 기능설명 기능설명"
             android:textSize="12sp"
             android:textColor="#555555"
             android:layout_marginTop="12dp"

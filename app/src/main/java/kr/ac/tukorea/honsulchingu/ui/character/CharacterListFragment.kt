@@ -2,24 +2,19 @@ package kr.ac.tukorea.honsulchingu.ui.character
 
 import android.os.Bundle
 import android.view.LayoutInflater
-import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
-import androidx.appcompat.widget.AppCompatButton
-import androidx.core.content.ContentProviderCompat.requireContext
+import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
-import androidx.lifecycle.Observer
-import androidx.navigation.NavDirections
-import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
-import kr.ac.tukorea.honsulchingu.R
 import kr.ac.tukorea.honsulchingu.databinding.FragmentCharacterListBinding
-import kr.ac.tukorea.honsulchingu.model.ChatCharacter
-import kr.ac.tukorea.honsulchingu.ui.character.CharacterListAdapter
 import kr.ac.tukorea.honsulchingu.viewmodel.CharacterViewModel
 
 class CharacterListFragment : Fragment() {
+
+    private var _binding: FragmentCharacterListBinding? = null
+    private val binding get() = _binding!!
 
     private lateinit var characterListAdapter: CharacterListAdapter
     private val characterViewModel: CharacterViewModel by activityViewModels()
@@ -28,7 +23,7 @@ class CharacterListFragment : Fragment() {
         fun newInstance(type: String): CharacterListFragment {
             val fragment = CharacterListFragment()
             val args = Bundle()
-            args.putString("TYPE", type) // 타입 정보를 전달
+            args.putString("TYPE", type)
             fragment.arguments = args
             return fragment
         }
@@ -38,37 +33,36 @@ class CharacterListFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        val binding = FragmentCharacterListBinding.inflate(inflater, container, false)
+        _binding = FragmentCharacterListBinding.inflate(inflater, container, false)
+        return binding.root
+    }
 
-        // RecyclerView 설정
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
         characterListAdapter = CharacterListAdapter { character ->
-            // 캐릭터 클릭 시 ChatFragment로 이동
-            val action = CharacterListFragmentDirections.actionCharacterListToChatFragment(character.id)
-            findNavController().navigate(action)
+            // 예: 캐릭터 클릭 시 동작 (네비게이션 등)
+            Toast.makeText(requireContext(), "${character.name} 선택됨", Toast.LENGTH_SHORT).show()
         }
 
         binding.characterRecyclerView.layoutManager = LinearLayoutManager(requireContext())
         binding.characterRecyclerView.adapter = characterListAdapter
 
-        // 타입에 맞는 캐릭터 목록 로드
-        val type = arguments?.getString("TYPE")
-        loadCharactersByType(type)
-
-        // ViewModel 관찰
-        characterViewModel.filteredCharacters.observe(viewLifecycleOwner, Observer<List<ChatCharacter>> { characters ->
+        // ViewModel의 캐릭터 목록 관찰해서 어댑터에 전달
+        characterViewModel.filteredCharacters.observe(viewLifecycleOwner) { characters ->
             characterListAdapter.submitList(characters)
-        })
+        }
 
-        // 버튼에 리스너 추가
-        val startChatButton = binding.root.findViewById<AppCompatButton>(R.id.startChatButton)
-
-
-        return binding.root
-    }
-
-    private fun loadCharactersByType(type: String?) {
+        // 타입 정보 받아서 캐릭터 로드
+        val type = arguments?.getString("TYPE")
         if (type != null) {
             characterViewModel.updateCharacters(type)
         }
     }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
+    }
 }
+

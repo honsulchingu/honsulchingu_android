@@ -10,8 +10,8 @@
         android:name="kr.ac.tukorea.honsulchingu.ui.character.CharacterSelectFragment"
         android:label="캐릭터">
         <action
-            android:id="@+id/action_nav_character_to_nav_history"
-            app:destination="@id/nav_history"
+            android:id="@+id/action_nav_character_to_nav_voiceChat"
+            app:destination="@id/nav_voiceChat"
             app:enterAnim="@anim/slide_in_right"
             app:exitAnim="@anim/slide_out_left"
             app:popEnterAnim="@anim/slide_in_left"
