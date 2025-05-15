@@ -2,18 +2,15 @@ package kr.ac.tukorea.honsulchingu
 
 
 import android.os.Bundle
+import android.view.View
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
-import androidx.navigation.findNavController
+import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.core.content.ContextCompat
 import androidx.navigation.fragment.NavHostFragment
-import androidx.navigation.navOptions
 import androidx.navigation.ui.setupWithNavController
 import com.google.android.material.bottomnavigation.BottomNavigationView
-import kr.ac.tukorea.honsulchingu.R
-import kr.ac.tukorea.honsulchingu.history.HistoryFragment
-import kr.ac.tukorea.honsulchingu.ui.character.CharacterSelectFragment
 
-import kr.ac.tukorea.honsulchingu.ui.voice.VoiceChatFragment
 import androidx.navigation.NavOptions
 
 class MainActivity : AppCompatActivity() {
@@ -42,6 +39,25 @@ class MainActivity : AppCompatActivity() {
                 R.id.nav_mypage -> bottomNav.menu.findItem(R.id.nav_mypage).isChecked = true
             }
         }
+
+        // 구분선 View 생성
+        val divider = View(this).apply {
+            id = View.generateViewId()
+            layoutParams = ConstraintLayout.LayoutParams(
+                ConstraintLayout.LayoutParams.MATCH_PARENT,
+                1 //
+            ).apply {
+                bottomToTop = bottomNav.id
+                startToStart = ConstraintLayout.LayoutParams.PARENT_ID
+                endToEnd = ConstraintLayout.LayoutParams.PARENT_ID
+            }
+            setBackgroundColor(ContextCompat.getColor(context, R.color.divider_color))
+        }
+
+// 구분선 추가
+        val rootLayout = findViewById<ConstraintLayout>(R.id.main)
+        rootLayout.addView(divider)
+
 
         // BottomNavigationView 아이템 선택 시 애니메이션과 함께 네비게이션 처리
         bottomNav.setOnItemSelectedListener { item ->

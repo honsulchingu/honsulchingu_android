@@ -4,7 +4,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/white">
+    android:background="@color/bg_color">
 
     <!-- 상단 배경 + 타이틀 -->
     <LinearLayout
@@ -26,7 +26,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="캐릭터"
-            android:textColor="@color/white"
+            android:textColor="@color/bg_color"
             android:textSize="20sp"
             android:textStyle="bold"
             android:fontFamily="@font/pretendard_bold" />
@@ -36,7 +36,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="당신만의 특별한 대화 상대를 찾아보세요"
-            android:textColor="@color/white"
+            android:textColor="@color/bg_color"
             android:textSize="14sp"
             android:layout_marginTop="10dp"
             android:fontFamily="@font/pretendard_medium" />
