@@ -10,12 +10,8 @@
         android:name="kr.ac.tukorea.honsulchingu.ui.character.CharacterSelectFragment"
         android:label="캐릭터">
         <action
-            android:id="@+id/action_nav_character_to_nav_voiceChat"
-            app:destination="@id/nav_voiceChat"
-            app:enterAnim="@anim/slide_in_right"
-            app:exitAnim="@anim/slide_out_left"
-            app:popEnterAnim="@anim/slide_in_left"
-            app:popExitAnim="@anim/slide_out_right" />
+            android:id="@+id/character_to_voiceChat"
+            app:destination="@id/nav_voiceChat" />
     </fragment>
 
     <!-- 대화 기록 -->
@@ -37,6 +33,9 @@
         android:id="@+id/nav_voiceChat"
         android:name="kr.ac.tukorea.honsulchingu.ui.voice.VoiceChatFragment"
         android:label="보이스챗">
+        <argument
+            android:name="characterName"
+            app:argType="string" />
         <action
             android:id="@+id/action_nav_voiceChat_to_nav_favorite"
             app:destination="@id/nav_favorite"

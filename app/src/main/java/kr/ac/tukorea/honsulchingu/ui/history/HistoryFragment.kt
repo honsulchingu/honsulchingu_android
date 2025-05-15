@@ -1,15 +1,18 @@
 package kr.ac.tukorea.honsulchingu.history
 
+import HistoryAdapter
 import android.content.Intent
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.navigation.NavOptions
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import kr.ac.tukorea.honsulchingu.R
 import kr.ac.tukorea.honsulchingu.databinding.FragmentHistoryBinding
+import kr.ac.tukorea.honsulchingu.navigation.NavAnimationUtil
 import kr.ac.tukorea.honsulchingu.ui.chat.ChatFragment
 import kr.ac.tukorea.honsulchingu.ui.voice.VoiceChatFragment
 import java.text.SimpleDateFormat
@@ -34,8 +37,14 @@ class HistoryFragment : Fragment() {
 
 
         historyAdapter = HistoryAdapter(chatList) { chatRecord ->
-            findNavController().navigate(R.id.nav_voiceChat)
+            findNavController().navigate(
+                R.id.nav_voiceChat,
+                null,
+                NavAnimationUtil.getSlideFromRightOptions()
+            )
         }
+
+
 
 
         binding.chatRecyclerView.apply {

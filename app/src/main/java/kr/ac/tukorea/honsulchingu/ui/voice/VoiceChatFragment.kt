@@ -15,6 +15,8 @@ import androidx.navigation.NavOptions
 import androidx.navigation.fragment.findNavController
 import com.google.android.material.imageview.ShapeableImageView
 import kr.ac.tukorea.honsulchingu.R
+import kr.ac.tukorea.honsulchingu.navigation.NavAnimationUtil
+import kr.ac.tukorea.honsulchingu.navigation.NavAnimationUtil.getVoiceChatToChatAnim
 import kr.ac.tukorea.honsulchingu.ui.chat.ChatFragment
 import kr.ac.tukorea.honsulchingu.ui.chat.ChatMessage
 
@@ -85,9 +87,12 @@ class VoiceChatFragment : Fragment() {
     }
 
     private fun showChatFragment() {
-        val navController = findNavController()  // NavController 가져오기
-        // 네비게이션 그래프에서 정의한 액션을 사용해 ChatFragment로 이동
-        navController.navigate(R.id.chatFragment, null, getVoiceChatToChatAnim())
+        val navController = findNavController()
+        navController.navigate(
+            R.id.chatFragment,
+            null,
+            NavAnimationUtil.getVoiceChatToChatAnim()
+        )
 
         // 배경 흐림 애니메이션
         dimmedView.visibility = View.VISIBLE
@@ -96,16 +101,6 @@ class VoiceChatFragment : Fragment() {
         isChatVisible = true
     }
 
-//        parentFragmentManager.beginTransaction()
-//            .setCustomAnimations(
-//                R.anim.slide_in_right,
-//                R.anim.slide_out_left,
-//                R.anim.slide_in_left,
-//                R.anim.slide_out_right
-//            )
-//            .replace(R.id.fragment_container, chatFragment)
-//            .addToBackStack(null)
-//            .commit()
 
     private fun hideChatFragment() {
         // 흐림 배경 제거 애니메이션
@@ -135,12 +130,12 @@ class VoiceChatFragment : Fragment() {
     }
 
     // 보이스챗에서 채팅으로 넘어갈 때는 오른쪽 -> 왼쪽 슬라이드
-    private fun getVoiceChatToChatAnim(): NavOptions {
-        return NavOptions.Builder()
-            .setEnterAnim(R.anim.slide_in_right) // 오른쪽 -> 왼쪽 슬라이드
-            .setExitAnim(R.anim.slide_out_left) // 우측으로 나가기
-            .setPopEnterAnim(R.anim.slide_in_left) // 왼쪽에서 오른쪽으로 슬라이드 인
-            .setPopExitAnim(R.anim.slide_out_right) // 좌측으로 나가기
-            .build()
-    }
+//    private fun getVoiceChatToChatAnim(): NavOptions {
+//        return NavOptions.Builder()
+//            .setEnterAnim(R.anim.slide_in_right) // 오른쪽 -> 왼쪽 슬라이드
+//            .setExitAnim(R.anim.slide_out_left) // 우측으로 나가기
+//            .setPopEnterAnim(R.anim.slide_in_left) // 왼쪽에서 오른쪽으로 슬라이드 인
+//            .setPopExitAnim(R.anim.slide_out_right) // 좌측으로 나가기
+//            .build()
+//    }
 }
