@@ -1,0 +1,16 @@
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- Gradient background -->
+    <item>
+        <shape android:shape="rectangle">
+            <gradient
+                android:angle="180"
+                android:startColor="#3730A3"
+                android:centerColor="#6D28D9"
+                android:endColor="#7D22CE"
+                android:type="linear"/>
+        </shape>
+    </item>
+
+    <!-- Vector icon overlay -->
+    <item android:drawable="@drawable/ic_mic" />
+</layer-list>

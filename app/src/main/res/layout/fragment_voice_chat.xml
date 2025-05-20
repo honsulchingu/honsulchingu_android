@@ -68,7 +68,7 @@
         android:layout_width="96dp"
         android:layout_height="96dp"
         android:background="@drawable/bg_button_circle_large"
-        android:src="@drawable/ic_mic"
+        android:src="@drawable/ic_mic2"
         android:contentDescription="Mic"
         android:padding="16dp"
         android:scaleType="centerInside"

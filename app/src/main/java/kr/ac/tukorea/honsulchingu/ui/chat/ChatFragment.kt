@@ -4,13 +4,10 @@ import ChatAdapter
 import android.animation.ObjectAnimator
 import android.content.res.Resources
 import android.os.Bundle
-import android.view.GestureDetector
 import android.view.LayoutInflater
-import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageButton
-import androidx.core.content.ContentProviderCompat.requireContext
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.updateLayoutParams
@@ -19,13 +16,8 @@ import androidx.fragment.app.Fragment
 import androidx.navigation.NavOptions
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
-import kotlinx.coroutines.NonCancellable.start
 import kr.ac.tukorea.honsulchingu.R
 import kr.ac.tukorea.honsulchingu.databinding.FragmentChatBinding
-import kr.ac.tukorea.honsulchingu.ui.chat.ChatItem
-import kr.ac.tukorea.honsulchingu.ui.chat.ChatMessage
-import kr.ac.tukorea.honsulchingu.ui.voice.VoiceChatFragment
-
 
 import java.text.SimpleDateFormat
 import java.util.Calendar
@@ -41,7 +33,6 @@ class ChatFragment : Fragment() {
 
     private lateinit var chatAdapter: ChatAdapter
     private val chatItems = mutableListOf<ChatItem>()
-    private lateinit var gestureDetector: GestureDetector
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         _binding = FragmentChatBinding.inflate(inflater, container, false)

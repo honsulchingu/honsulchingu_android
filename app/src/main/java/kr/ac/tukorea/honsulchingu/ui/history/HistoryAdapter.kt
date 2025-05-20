@@ -1,19 +1,24 @@
+package kr.ac.tukorea.honsulchingu.ui.history
+
+import android.app.AlertDialog
+import android.util.TypedValue
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
+import android.widget.ImageButton
 import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
+import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import kr.ac.tukorea.honsulchingu.R
-import kr.ac.tukorea.honsulchingu.history.ChatRecord
-import kr.ac.tukorea.honsulchingu.ui.history.toSmartDateString
 import java.util.Date
 
 class HistoryAdapter(
     private val chatList: List<ChatRecord>,
-    private val onMoveClick: (ChatRecord) -> Unit
+    private val onMoveClick: (ChatRecord) -> Unit,
+    private val onDeleteClick: (ChatRecord) -> Unit
 ) : RecyclerView.Adapter<HistoryAdapter.ChatViewHolder>() {
 
     inner class ChatViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
@@ -23,6 +28,7 @@ class HistoryAdapter(
         private val textMessage: TextView = itemView.findViewById(R.id.textMessage)
         private val tagContainer: LinearLayout = itemView.findViewById(R.id.tagContainer)
         private val moveButton: Button = itemView.findViewById(R.id.moveButton)
+        private val deleteButton: ImageButton = itemView.findViewById(R.id.delButton)
 
         fun bind(item: ChatRecord) {
             imageProfile.setImageResource(item.profileImageRes)
@@ -34,13 +40,38 @@ class HistoryAdapter(
                 onMoveClick(item)
             }
 
+            deleteButton.setOnClickListener {
+                val context = itemView.context
+                val dialog = AlertDialog.Builder(context, R.style.HonsulAlertDialog)
+                    .setTitle("기록 삭제")
+                    .setMessage("이 대화 기록을 삭제하시겠습니까?")
+                    .setPositiveButton("삭제") { _, _ ->
+                        onDeleteClick(item)
+                    }
+                    .setNegativeButton("취소", null)
+                    .create()
+
+                dialog.show()
+
+                dialog.getButton(AlertDialog.BUTTON_POSITIVE)?.setTextColor(
+                    ContextCompat.getColor(context, R.color.purple)
+                )
+                dialog.getButton(AlertDialog.BUTTON_NEGATIVE)?.setTextColor(
+                    ContextCompat.getColor(context, R.color.gray)
+                )
+            }
+
             tagContainer.removeAllViews()
             item.tags.forEach { tag ->
                 val tagView = TextView(itemView.context).apply {
                     text = tag
                     setTextColor(itemView.context.getColor(R.color.purple))
                     setBackgroundResource(R.drawable.tag_background)
-                    setPadding(24, 8, 24, 8)
+                    val paddingHorizontal = TypedValue.applyDimension(
+                        TypedValue.COMPLEX_UNIT_DIP, 8f, resources.displayMetrics).toInt()
+                    val paddingVertical = TypedValue.applyDimension(
+                        TypedValue.COMPLEX_UNIT_DIP, 4f, resources.displayMetrics).toInt()
+                    setPadding(paddingHorizontal, paddingVertical, paddingHorizontal, paddingVertical)
                     textSize = 14f
                     typeface = resources.getFont(R.font.pretendard_medium)
                 }

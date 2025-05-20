@@ -5,10 +5,11 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Button
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import kr.ac.tukorea.honsulchingu.R
+import kr.ac.tukorea.honsulchingu.navigation.NavAnimationUtil
 
 
 class FavoriteFragment : Fragment() {
@@ -38,10 +39,16 @@ class FavoriteFragment : Fragment() {
             )
         )
 
+
+
         favoriteAdapter = FavoriteAdapter(
             items = favoriteList,
             onMoveClick = { chat ->
-                //  대화로 이동 처리
+                findNavController().navigate(
+                    R.id.nav_voiceChat,
+                    null,
+                    NavAnimationUtil.getSlideFromLeftOptions()
+                )
             },
 
             onUnfavoriteClick = { chat ->

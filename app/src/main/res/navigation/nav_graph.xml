@@ -17,7 +17,7 @@
     <!-- 대화 기록 -->
     <fragment
         android:id="@+id/nav_history"
-        android:name="kr.ac.tukorea.honsulchingu.history.HistoryFragment"
+        android:name="kr.ac.tukorea.honsulchingu.ui.history.HistoryFragment"
         android:label="대화기록">
         <action
             android:id="@+id/action_nav_history_to_nav_voiceChat"

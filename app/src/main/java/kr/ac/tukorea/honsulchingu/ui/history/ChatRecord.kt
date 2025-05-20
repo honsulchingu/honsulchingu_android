@@ -1,4 +1,4 @@
-package kr.ac.tukorea.honsulchingu.history
+package kr.ac.tukorea.honsulchingu.ui.history
 
 
 data class ChatRecord(

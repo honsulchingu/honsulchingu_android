@@ -6,17 +6,14 @@ import android.text.method.ScrollingMovementMethod
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.view.animation.AlphaAnimation
 import android.widget.ImageButton
 import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentContainerView
-import androidx.navigation.NavOptions
 import androidx.navigation.fragment.findNavController
 import com.google.android.material.imageview.ShapeableImageView
 import kr.ac.tukorea.honsulchingu.R
 import kr.ac.tukorea.honsulchingu.navigation.NavAnimationUtil
-import kr.ac.tukorea.honsulchingu.navigation.NavAnimationUtil.getVoiceChatToChatAnim
 import kr.ac.tukorea.honsulchingu.ui.chat.ChatFragment
 import kr.ac.tukorea.honsulchingu.ui.chat.ChatMessage
 
@@ -31,7 +28,7 @@ class VoiceChatFragment : Fragment() {
     private lateinit var chatAdapter: ChatAdapter
     private lateinit var chatMessages: MutableList<ChatMessage>
 
-    private var isMicOn = true
+    private var isMicOn = false
     private var isChatVisible = false
 
     override fun onCreateView(
@@ -69,20 +66,16 @@ class VoiceChatFragment : Fragment() {
         }
     }
 
-    private fun startVoiceChat() {
-        // 음성 채팅 시작 (예시: 음성 인식 등)
-        textSpeech.text = "음성 채팅을 시작합니다..."
-    }
 
     private fun updateMicUI() {
         if (isMicOn) {
             buttonMic.setBackgroundResource(R.drawable.bg_button_circle_large)
-            buttonMic.setImageResource(R.drawable.ic_mic)
-            textSpeech.text = "음성 채팅을 시작합니다..."
+            buttonMic.setImageResource(R.drawable.ic_mic2)
+            textSpeech.text = "음성 채팅 시작..."
         } else {
             buttonMic.setBackgroundResource(R.drawable.bg_off_button_circle_large)
             buttonMic.setImageResource(R.drawable.ic_mic_off)
-            textSpeech.text = "마이크 꺼졌어요"
+            textSpeech.text = "AI 대답 위치"
         }
     }
 
@@ -128,14 +121,4 @@ class VoiceChatFragment : Fragment() {
             dimmedView.alpha = 0f
         }
     }
-
-    // 보이스챗에서 채팅으로 넘어갈 때는 오른쪽 -> 왼쪽 슬라이드
-//    private fun getVoiceChatToChatAnim(): NavOptions {
-//        return NavOptions.Builder()
-//            .setEnterAnim(R.anim.slide_in_right) // 오른쪽 -> 왼쪽 슬라이드
-//            .setExitAnim(R.anim.slide_out_left) // 우측으로 나가기
-//            .setPopEnterAnim(R.anim.slide_in_left) // 왼쪽에서 오른쪽으로 슬라이드 인
-//            .setPopExitAnim(R.anim.slide_out_right) // 좌측으로 나가기
-//            .build()
-//    }
 }

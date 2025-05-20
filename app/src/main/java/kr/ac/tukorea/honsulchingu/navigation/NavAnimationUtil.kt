@@ -14,6 +14,15 @@ object NavAnimationUtil {
             .build()
     }
 
+    fun getSlideFromLeftOptions(): NavOptions {
+        return NavOptions.Builder()
+            .setEnterAnim(R.anim.slide_in_left)
+            .setExitAnim(R.anim.slide_out_right)
+            .setPopEnterAnim(R.anim.slide_in_right)
+            .setPopExitAnim(R.anim.slide_out_left)
+            .build()
+    }
+
     fun getSlideFromBottomOptions(): NavOptions {
         return NavOptions.Builder()
             .setEnterAnim(R.anim.slide_in_bottom)
@@ -23,14 +32,18 @@ object NavAnimationUtil {
             .build()
     }
 
-    fun getFadeOptions(): NavOptions {
-        return NavOptions.Builder()
+    fun getFadeOptions(popUpToId: Int? = null, inclusive: Boolean = false): NavOptions {
+        val builder = NavOptions.Builder()
             .setEnterAnim(R.anim.fade_in)
             .setExitAnim(R.anim.fade_out)
             .setPopEnterAnim(R.anim.fade_in)
             .setPopExitAnim(R.anim.fade_out)
-            .build()
+        if (popUpToId != null) {
+            builder.setPopUpTo(popUpToId, inclusive)
+        }
+        return builder.build()
     }
+
 
 
     fun getVoiceChatToChatAnim(): NavOptions {
@@ -42,14 +55,6 @@ object NavAnimationUtil {
             .build()
     }
 
-    fun getRecordToChatOptions(): NavOptions {
-        return NavOptions.Builder()
-            .setEnterAnim(R.anim.slide_in_bottom_fade) // 아래에서 부드럽게 올라옴
-            .setExitAnim(R.anim.fade_out)
-            .setPopEnterAnim(R.anim.fade_in)
-            .setPopExitAnim(R.anim.slide_out_bottom_fade)
-            .build()
-    }
 
     fun getBookmarkToChatOptions(): NavOptions {
         return NavOptions.Builder()
@@ -74,14 +79,6 @@ object NavAnimationUtil {
             .setExitAnim(R.anim.zoom_out)
             .setPopEnterAnim(R.anim.zoom_in)
             .setPopExitAnim(R.anim.zoom_out)
-            .build()
-    }
-    fun getSlideFromLeftOptions(): NavOptions {
-        return NavOptions.Builder()
-            .setEnterAnim(R.anim.slide_in_left)
-            .setExitAnim(R.anim.slide_out_right)
-            .setPopEnterAnim(R.anim.slide_in_right)
-            .setPopExitAnim(R.anim.slide_out_left)
             .build()
     }
 }

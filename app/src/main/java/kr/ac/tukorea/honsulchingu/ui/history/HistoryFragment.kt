@@ -1,20 +1,15 @@
-package kr.ac.tukorea.honsulchingu.history
+package kr.ac.tukorea.honsulchingu.ui.history
 
-import HistoryAdapter
-import android.content.Intent
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.navigation.NavOptions
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import kr.ac.tukorea.honsulchingu.R
 import kr.ac.tukorea.honsulchingu.databinding.FragmentHistoryBinding
 import kr.ac.tukorea.honsulchingu.navigation.NavAnimationUtil
-import kr.ac.tukorea.honsulchingu.ui.chat.ChatFragment
-import kr.ac.tukorea.honsulchingu.ui.voice.VoiceChatFragment
 import java.text.SimpleDateFormat
 import java.util.Locale
 
@@ -36,16 +31,22 @@ class HistoryFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
 
-        historyAdapter = HistoryAdapter(chatList) { chatRecord ->
-            findNavController().navigate(
-                R.id.nav_voiceChat,
-                null,
-                NavAnimationUtil.getSlideFromRightOptions()
-            )
-        }
-
-
-
+        historyAdapter = HistoryAdapter(
+            chatList,
+            onMoveClick = { chatRecord ->
+                findNavController().navigate(
+                    R.id.nav_voiceChat,
+                    null,
+                    NavAnimationUtil.getSlideFromRightOptions()
+                )
+            },
+            onDeleteClick = { chatRecord ->
+                val position = chatList.indexOf(chatRecord)
+                if (position != -1) {
+                    // 대화기록 지우기
+                }
+            }
+        )
 
         binding.chatRecyclerView.apply {
             layoutManager = LinearLayoutManager(requireContext())

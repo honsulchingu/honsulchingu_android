@@ -12,10 +12,7 @@ import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import kr.ac.tukorea.honsulchingu.R
 import kr.ac.tukorea.honsulchingu.ui.history.toSmartDateString
-import java.text.SimpleDateFormat
 import java.util.Date
-import java.util.Locale
-
 
 class FavoriteAdapter(
     private val items: List<FavoriteChat>,
@@ -24,12 +21,44 @@ class FavoriteAdapter(
 ) : RecyclerView.Adapter<FavoriteAdapter.FavoriteViewHolder>() {
 
     inner class FavoriteViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        val imageProfile: ImageView = itemView.findViewById(R.id.imageProfile)
-        val nameText: TextView = itemView.findViewById(R.id.nameText)
-        val dateText: TextView = itemView.findViewById(R.id.dateText)
-        val messageText: TextView = itemView.findViewById(R.id.messageText)
-        val unfavButton: ImageButton = itemView.findViewById(R.id.unfavButton)
-        val moveButton: Button = itemView.findViewById(R.id.moveButton)
+        private val imageProfile: ImageView = itemView.findViewById(R.id.imageProfile)
+        private val nameText: TextView = itemView.findViewById(R.id.nameText)
+        private val dateText: TextView = itemView.findViewById(R.id.dateText)
+        private val messageText: TextView = itemView.findViewById(R.id.messageText)
+        private val unfavButton: ImageButton = itemView.findViewById(R.id.unfavButton)
+        private val moveButton: Button = itemView.findViewById(R.id.moveButton)
+
+        fun bind(item: FavoriteChat) {
+            imageProfile.setImageResource(item.profileImageRes)
+            nameText.text = item.name
+            messageText.text = item.message
+            dateText.text = Date(item.time).toSmartDateString()
+
+            moveButton.setOnClickListener {
+                onMoveClick(item)
+            }
+
+            unfavButton.setOnClickListener {
+                val context = itemView.context
+                val dialog = AlertDialog.Builder(context, R.style.HonsulAlertDialog)
+                    .setTitle("즐겨찾기 해제")
+                    .setMessage("이 대화를 즐겨찾기에서 해제하시겠습니까?")
+                    .setPositiveButton("확인") { _, _ ->
+                        onUnfavoriteClick(item)
+                    }
+                    .setNegativeButton("취소", null)
+                    .create()
+
+                dialog.show()
+
+                dialog.getButton(AlertDialog.BUTTON_POSITIVE)?.setTextColor(
+                    ContextCompat.getColor(context, R.color.purple)
+                )
+                dialog.getButton(AlertDialog.BUTTON_NEGATIVE)?.setTextColor(
+                    ContextCompat.getColor(context, R.color.gray)
+                )
+            }
+        }
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): FavoriteViewHolder {
@@ -39,41 +68,8 @@ class FavoriteAdapter(
     }
 
     override fun onBindViewHolder(holder: FavoriteViewHolder, position: Int) {
-        val item = items[position]
-
-        holder.imageProfile.setImageResource(item.profileImageRes)
-        holder.nameText.text = item.name
-        holder.messageText.text = item.message
-        holder.dateText.text = Date(item.time).toSmartDateString()
-
-        holder.unfavButton.setOnClickListener { onUnfavoriteClick(item) }
-        holder.moveButton.setOnClickListener { onMoveClick(item) }
-
-        holder.unfavButton.setOnClickListener {
-            val context = holder.itemView.context
-            val dialog = AlertDialog.Builder(context, R.style.HonsulAlertDialog)
-                .setTitle("즐겨찾기 해제")
-                .setMessage("이 대화를 즐겨찾기에서 해제하시겠습니까?")
-                .setPositiveButton("확인") { _, _ ->
-                    onUnfavoriteClick(item)
-                }
-                .setNegativeButton("취소", null)
-                .create()
-
-            dialog.show()
-
-            // 버튼 색상 및 폰트 설정
-            dialog.getButton(AlertDialog.BUTTON_POSITIVE)?.setTextColor(
-                ContextCompat.getColor(context, R.color.purple)
-            )
-            dialog.getButton(AlertDialog.BUTTON_NEGATIVE)?.setTextColor(
-                ContextCompat.getColor(context, R.color.gray)
-            )
-
-
-        }
+        holder.bind(items[position])
     }
-
 
     override fun getItemCount(): Int = items.size
 }
