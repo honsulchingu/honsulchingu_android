@@ -6,4 +6,11 @@
     </style>
 
     <style name="Theme.Honsulchingu" parent="Base.Theme.Honsulchingu" />
+
+    <style name="Widget.HonsulChingu.Button" parent="Widget.MaterialComponents.Button.TextButton">
+        <!-- 터치 효과 ripple 배경 -->
+        <item name="android:background">?attr/selectableItemBackground</item>
+    </style>
+
+
 </resources>

@@ -127,17 +127,24 @@
         </LinearLayout>
 
         <!-- 딜리트 버튼 -->
-        <ImageButton
-            android:id="@+id/delButton"
-            android:layout_width="40dp"
-            android:layout_height="40dp"
-            android:src="@drawable/ic_delete"
-            android:contentDescription="즐겨찾기 해제"
-            android:layout_marginTop="12dp"
+
+        <FrameLayout
+            android:id="@+id/delButtonWrapper"
+            android:layout_width="60dp"
+            android:layout_height="60dp"
             android:layout_marginEnd="20dp"
             android:background="?attr/selectableItemBackground"
             app:layout_constraintTop_toBottomOf="@id/tagContainer"
-            app:layout_constraintEnd_toStartOf="@id/moveButton" />
+            app:layout_constraintEnd_toStartOf="@id/moveButton">
+
+            <ImageButton
+                android:id="@+id/delButton"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:src="@drawable/ic_delete"
+                android:background="?attr/selectableItemBackground"
+                android:layout_gravity="center" />
+        </FrameLayout>
 
         <!-- 대화로 이동 버튼 -->
         <androidx.appcompat.widget.AppCompatButton

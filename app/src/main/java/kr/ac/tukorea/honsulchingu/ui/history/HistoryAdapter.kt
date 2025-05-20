@@ -40,6 +40,8 @@ class HistoryAdapter(
                 onMoveClick(item)
             }
 
+            expandTouchArea(deleteButton, 20)
+
             deleteButton.setOnClickListener {
                 val context = itemView.context
                 val dialog = AlertDialog.Builder(context, R.style.HonsulAlertDialog)
@@ -83,6 +85,7 @@ class HistoryAdapter(
                 }
                 tagContainer.addView(tagView, params)
             }
+
         }
     }
 
@@ -100,4 +103,19 @@ class HistoryAdapter(
     }
 
     override fun getItemCount(): Int = chatList.size
+}
+
+// 터치 영역 확장 함수
+private fun expandTouchArea(view: View, extraPadding: Int) {
+    val parent = view.parent as View
+    parent.post {
+        val rect = android.graphics.Rect()
+        view.getHitRect(rect)
+        rect.top -= extraPadding
+        rect.bottom += extraPadding
+        rect.left -= extraPadding
+        rect.right += extraPadding
+        val touchDelegate = android.view.TouchDelegate(rect, view)
+        parent.touchDelegate = touchDelegate
+    }
 }

@@ -100,19 +100,24 @@
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 
-        <!-- 즐겨찾기 해제 버튼 (휴지통 아이콘) -->
-        <ImageButton
-            android:id="@+id/unfavButton"
-            android:layout_width="40dp"
-            android:layout_height="40dp"
-            android:src="@drawable/ic_delete"
-            android:contentDescription="즐겨찾기 해제"
-            android:layout_marginTop="12dp"
+        <!-- 즐겨찾기 해제 버튼 -->
+        <FrameLayout
+            android:id="@+id/unfavButtonWrapper"
+            android:layout_width="60dp"
+            android:layout_height="60dp"
             android:layout_marginEnd="20dp"
-            android:background="@android:color/transparent"
+            android:background="?attr/selectableItemBackground"
             app:layout_constraintTop_toBottomOf="@id/messageContainer"
-            app:layout_constraintEnd_toStartOf="@id/moveButton" />
+            app:layout_constraintEnd_toStartOf="@id/moveButton">
 
+            <ImageButton
+                android:id="@+id/unfavButton"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:src="@drawable/ic_delete"
+                android:background="?attr/selectableItemBackground"
+                android:layout_gravity="center" />
+        </FrameLayout>
         <!-- 대화 이동 버튼 -->
         <androidx.appcompat.widget.AppCompatButton
             android:id="@+id/moveButton"
