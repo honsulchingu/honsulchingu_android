@@ -6,55 +6,49 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import kr.ac.tukorea.honsulchingu.R
+import com.google.android.material.button.MaterialButton
+import kr.ac.tukorea.honsulchingu.ui.DialogUtil
 
-// TODO: Rename parameter arguments, choose names that match
-// the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-private const val ARG_PARAM1 = "param1"
-private const val ARG_PARAM2 = "param2"
-
-/**
- * A simple [Fragment] subclass.
- * Use the [ProfileFragment.newInstance] factory method to
- * create an instance of this fragment.
- */
 class ProfileFragment : Fragment() {
-    // TODO: Rename and change types of parameters
-    private var param1: String? = null
-    private var param2: String? = null
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        arguments?.let {
-            param1 = it.getString(ARG_PARAM1)
-            param2 = it.getString(ARG_PARAM2)
-        }
-    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
+        savedInstanceState: Bundle?,
     ): View? {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_profile, container, false)
-    }
+        val view = inflater.inflate(R.layout.fragment_profile, container, false)
 
-    companion object {
-        /**
-         * Use this factory method to create a new instance of
-         * this fragment using the provided parameters.
-         *
-         * @param param1 Parameter 1.
-         * @param param2 Parameter 2.
-         * @return A new instance of fragment ProfileFragment.
-         */
-        // TODO: Rename and change types and number of parameters
-        @JvmStatic
-        fun newInstance(param1: String, param2: String) =
-            ProfileFragment().apply {
-                arguments = Bundle().apply {
-                    putString(ARG_PARAM1, param1)
-                    putString(ARG_PARAM2, param2)
-                }
+        val btnLogout = view.findViewById<MaterialButton>(R.id.btnLogout)
+        val btnWithdraw = view.findViewById<MaterialButton>(R.id.btnWithdraw)
+
+        btnLogout.setOnClickListener {
+            DialogUtil.showHonsulDialog(
+                context = requireContext(),
+                title = "로그아웃 하시겠어요?",
+                message = "혼술친구를 안전하게 종료하시려면\n로그아웃해주세요.",
+                iconRes = R.drawable.ic_logout,
+                positiveText = "로그아웃",
+                negativeText = "취소"
+            ) {
+                // 로그아웃 처리
             }
+
+        }
+
+
+        btnWithdraw.setOnClickListener {
+            DialogUtil.showHonsulDialog(
+                context = requireContext(),
+                title = "회원 탈퇴 하시겠어요?",
+                message = "탈퇴하시면 지금까지의 모든 대화와 정보가 삭제됩니다./n정말로 탈퇴를 진행하시겠습니까?",
+                iconRes = R.drawable.ic_logout,
+                positiveText = "탈퇴하기",
+                negativeText = "취소"
+            ) {
+                // 탈퇴 처리
+            }
+        }
+
+
+        return view
     }
 }

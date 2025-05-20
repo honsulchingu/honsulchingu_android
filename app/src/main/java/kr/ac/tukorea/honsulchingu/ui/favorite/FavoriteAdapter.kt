@@ -8,9 +8,11 @@ import android.widget.Button
 import android.widget.ImageButton
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.core.content.ContentProviderCompat.requireContext
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import kr.ac.tukorea.honsulchingu.R
+import kr.ac.tukorea.honsulchingu.ui.DialogUtil
 import kr.ac.tukorea.honsulchingu.ui.history.toSmartDateString
 import java.util.Date
 
@@ -41,24 +43,17 @@ class FavoriteAdapter(
             expandTouchArea(unfavButton, 20)
 
             unfavButton.setOnClickListener {
-                val context = itemView.context
-                val dialog = AlertDialog.Builder(context, R.style.HonsulAlertDialog)
-                    .setTitle("즐겨찾기 해제")
-                    .setMessage("이 대화를 즐겨찾기에서 해제하시겠습니까?")
-                    .setPositiveButton("확인") { _, _ ->
-                        onUnfavoriteClick(item)
-                    }
-                    .setNegativeButton("취소", null)
-                    .create()
+                DialogUtil.showHonsulDialog(
+                    context = itemView.context,
+                    title = "즐겨찾기를 해제할까요?",
+                    message = "이 대화를 즐겨찾기에서 삭제해도\n언제든 다시 추가할 수 있어요.",
+                    iconRes = R.drawable.ic_delete,
+                    positiveText = "해제하기",
+                    negativeText = "취소"
+                ) {
+                    // 해제 처리
+                }
 
-                dialog.show()
-
-                dialog.getButton(AlertDialog.BUTTON_POSITIVE)?.setTextColor(
-                    ContextCompat.getColor(context, R.color.purple)
-                )
-                dialog.getButton(AlertDialog.BUTTON_NEGATIVE)?.setTextColor(
-                    ContextCompat.getColor(context, R.color.gray)
-                )
             }
         }
     }

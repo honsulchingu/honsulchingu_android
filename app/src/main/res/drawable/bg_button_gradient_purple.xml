@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <!-- 눌렀을 때 살짝 진하게 -->
+    <item android:state_pressed="true">
+        <shape android:shape="rectangle">
+            <gradient
+                android:angle="90"
+                android:startColor="#7E22CE"
+                android:endColor="#9333EA" />
+            <corners android:radius="16dp" />
+        </shape>
+    </item>
+
+    <!-- 기본 상태 -->
+    <item>
+        <shape android:shape="rectangle">
+            <gradient
+                android:angle="90"
+                android:startColor="#9333EA"
+                android:endColor="#A855F7" />
+            <corners android:radius="16dp" />
+        </shape>
+    </item>
+</selector>
