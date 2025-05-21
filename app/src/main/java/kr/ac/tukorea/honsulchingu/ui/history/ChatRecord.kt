@@ -1,11 +1,10 @@
-package kr.ac.tukorea.honsulchingu.history
-
-import java.util.Date
+package kr.ac.tukorea.honsulchingu.ui.history
 
 data class ChatRecord(
     val name: String,
-    val time: Long,
-    val last_message: String,
-    val tags: List<String>,
+    val last_chat: String,
+    val last_time: Long,
+    val start_time: String,
+    val tag: List<String>,
     val profileImageRes: Int
 )

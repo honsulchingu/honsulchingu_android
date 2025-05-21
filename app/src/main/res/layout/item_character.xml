@@ -42,7 +42,7 @@
                 android:id="@+id/characterMessage"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="오늘도 화이팅! 너의 이야기를 들려줘."
+                android:text="가나다라"
                 android:textColor="@android:color/white"
                 android:fontFamily="@font/pretendard_medium"
                 android:textSize="14sp"
@@ -87,9 +87,10 @@
                 app:layout_constraintStart_toStartOf="parent">
 
                 <TextView
+                    android:id="@+id/characterTag1"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="#조언"
+                    android:text="#가나다라"
                     android:textColor="@color/purple"
                     android:fontFamily="@font/pretendard_medium"
                     android:textSize="14sp"
@@ -99,9 +100,23 @@
                     android:layout_marginEnd="8dp" />
 
                 <TextView
+                    android:id="@+id/characterTag2"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="#격려"
+                    android:text="#가나다라"
+                    android:textColor="@color/purple"
+                    android:fontFamily="@font/pretendard_medium"
+                    android:textSize="14sp"
+                    android:background="@drawable/tag_background"
+                    android:paddingHorizontal="8dp"
+                    android:paddingVertical="4dp"
+                    android:layout_marginEnd="8dp" />
+
+                <TextView
+                    android:id="@+id/characterTag3"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="#가나다라"
                     android:textColor="@color/purple"
                     android:fontFamily="@font/pretendard_medium"
                     android:textSize="14sp"
@@ -115,7 +130,7 @@
                 android:id="@+id/characterDescription"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:text="힘들 때 기댈 수 있는 든든한 오빠같은 친구예요. 고민이 있을 때 따뜻한 조언과 격려를 해줄게요."
+                android:text="가나다라"
                 android:textSize="14sp"
                 android:textColor="@color/dark_gray"
                 android:layout_marginTop="12dp"

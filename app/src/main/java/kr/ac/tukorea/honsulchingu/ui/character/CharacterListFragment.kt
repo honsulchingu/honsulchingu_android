@@ -2,27 +2,26 @@ package kr.ac.tukorea.honsulchingu.ui.character
 
 import android.os.Bundle
 import android.view.LayoutInflater
-import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
-import androidx.appcompat.widget.AppCompatButton
-import androidx.core.content.ContentProviderCompat.requireContext
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
-import androidx.lifecycle.Observer
-import androidx.navigation.NavDirections
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import kr.ac.tukorea.honsulchingu.R
 import kr.ac.tukorea.honsulchingu.databinding.FragmentCharacterListBinding
 import kr.ac.tukorea.honsulchingu.model.ChatCharacter
-import kr.ac.tukorea.honsulchingu.ui.character.CharacterListAdapter
 import kr.ac.tukorea.honsulchingu.viewmodel.CharacterViewModel
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
 
 class CharacterListFragment : Fragment() {
 
     private lateinit var characterListAdapter: CharacterListAdapter
     private val characterViewModel: CharacterViewModel by activityViewModels()
+
+    private var selectedCharacter: ChatCharacter? = null
 
     companion object {
         fun newInstance(type: String): CharacterListFragment {
@@ -41,11 +40,23 @@ class CharacterListFragment : Fragment() {
         val binding = FragmentCharacterListBinding.inflate(inflater, container, false)
 
         // RecyclerView 설정
-        characterListAdapter = CharacterListAdapter { character ->
-            // 캐릭터 클릭 시 ChatFragment로 이동
-            val action = CharacterListFragmentDirections.actionCharacterListToChatFragment(character.id)
-            findNavController().navigate(action)
-        }
+        characterListAdapter = CharacterListAdapter(
+            onClick = { character ->
+                selectedCharacter = character
+                val action = CharacterListFragmentDirections.actionCharacterListToChatFragment(character.id)
+                findNavController().navigate(action)
+            },
+            onStartChatClick = { character ->
+                // bundle에 select_user, start_user 담기
+                val bundle = Bundle().apply {
+                    putString("select_user", character.name)
+                    putString("start_user", SimpleDateFormat("yyyy. MM. dd. HH-mm-ss", Locale.KOREA).format(Date(System.currentTimeMillis())))
+                }
+
+                // ChatFragment에 보내기
+                findNavController().navigate(R.id.chatFragment, bundle)
+            }
+        )
 
         binding.characterRecyclerView.layoutManager = LinearLayoutManager(requireContext())
         binding.characterRecyclerView.adapter = characterListAdapter
@@ -55,13 +66,9 @@ class CharacterListFragment : Fragment() {
         loadCharactersByType(type)
 
         // ViewModel 관찰
-        characterViewModel.filteredCharacters.observe(viewLifecycleOwner, Observer<List<ChatCharacter>> { characters ->
+        characterViewModel.filteredCharacters.observe(viewLifecycleOwner) { characters ->
             characterListAdapter.submitList(characters)
-        })
-
-        // 버튼에 리스너 추가
-        val startChatButton = binding.root.findViewById<AppCompatButton>(R.id.startChatButton)
-
+        }
 
         return binding.root
     }

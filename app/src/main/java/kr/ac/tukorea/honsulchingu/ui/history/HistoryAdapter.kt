@@ -1,4 +1,4 @@
-package kr.ac.tukorea.honsulchingu.history
+package kr.ac.tukorea.honsulchingu.ui.history
 
 import android.view.LayoutInflater
 import android.view.View
@@ -8,14 +8,11 @@ import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import kr.ac.tukorea.honsulchingu.R
-import kr.ac.tukorea.honsulchingu.databinding.ItemChatRecordBinding
-import kr.ac.tukorea.honsulchingu.ui.chat.toChatDateString
-import kr.ac.tukorea.honsulchingu.ui.history.toSmartDateString
 import java.util.Date
 
 class HistoryAdapter(
     private val chatList: List<ChatRecord>,
-    private val onItemClick: (ChatRecord) -> Unit // 추가
+    private val onItemClick: (ChatRecord) -> Unit
 ) : RecyclerView.Adapter<HistoryAdapter.ChatViewHolder>() {
 
     inner class ChatViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
@@ -27,9 +24,9 @@ class HistoryAdapter(
 
         fun bind(item: ChatRecord) {
             imageProfile.setImageResource(item.profileImageRes)
-            textName.text = item.name
-            textTime.text = Date(item.time).toSmartDateString()
-            textMessage.text = item.last_message
+            textName.text = item.name.substringAfterLast("_")
+            textTime.text = Date(item.last_time).toSmartDateString()
+            textMessage.text = item.last_chat
 
             itemView.setOnClickListener {
                 it.isPressed = true
@@ -39,7 +36,7 @@ class HistoryAdapter(
             }
 
             tagContainer.removeAllViews()
-            item.tags.forEach { tag ->
+            item.tag.forEach { tag ->
                 val tagView = TextView(itemView.context).apply {
                     text = tag
                     setTextColor(itemView.context.getColor(R.color.purple))
@@ -59,19 +56,15 @@ class HistoryAdapter(
         }
     }
 
-
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ChatViewHolder {
-        val view = LayoutInflater.from(parent.context)
-            .inflate(R.layout.item_chat_record, parent, false)
+        val view = LayoutInflater.from(parent.context).inflate(R.layout.item_chat_record, parent, false)
         return ChatViewHolder(view)
     }
-
 
     override fun onBindViewHolder(holder: ChatViewHolder, position: Int) {
         holder.bind(chatList[position])
         val isLast = position == chatList.lastIndex
-        holder.itemView.findViewById<View>(R.id.divider).visibility =
-            if (isLast) View.GONE else View.VISIBLE
+        holder.itemView.findViewById<View>(R.id.divider).visibility = if (isLast) View.GONE else View.VISIBLE
     }
 
     override fun getItemCount(): Int = chatList.size

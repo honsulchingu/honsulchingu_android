@@ -1,37 +1,37 @@
 package kr.ac.tukorea.honsulchingu.ui.chat
 
-import ChatAdapter
 import android.animation.ObjectAnimator
-import android.content.res.Resources
 import android.os.Bundle
-import android.view.GestureDetector
+import android.os.Handler
+import android.os.Looper
 import android.view.LayoutInflater
-import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageButton
-import androidx.core.content.ContentProviderCompat.requireContext
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.updateLayoutParams
-
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.activityViewModels
 import androidx.navigation.NavOptions
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
-import kotlinx.coroutines.NonCancellable.start
 import kr.ac.tukorea.honsulchingu.R
 import kr.ac.tukorea.honsulchingu.databinding.FragmentChatBinding
-import kr.ac.tukorea.honsulchingu.ui.chat.ChatItem
-import kr.ac.tukorea.honsulchingu.ui.chat.ChatMessage
-import kr.ac.tukorea.honsulchingu.ui.voice.VoiceChatFragment
-
-
+import kr.ac.tukorea.honsulchingu.viewmodel.ChatViewModel
+import org.json.JSONObject
+import java.io.BufferedReader
+import java.io.InputStreamReader
+import java.io.OutputStream
+import java.net.HttpURLConnection
+import java.net.URL
 import java.text.SimpleDateFormat
+import java.time.LocalDateTime
+import java.time.ZoneId
+import java.time.format.DateTimeFormatter
 import java.util.Calendar
 import java.util.Date
 import java.util.Locale
-
 
 class ChatFragment : Fragment() {
 
@@ -41,7 +41,7 @@ class ChatFragment : Fragment() {
 
     private lateinit var chatAdapter: ChatAdapter
     private val chatItems = mutableListOf<ChatItem>()
-    private lateinit var gestureDetector: GestureDetector
+    private val chatViewModel: ChatViewModel by activityViewModels()
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         _binding = FragmentChatBinding.inflate(inflater, container, false)
@@ -52,14 +52,15 @@ class ChatFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         setupRecyclerView()
-        loadTestData()
 
-        val params = binding.layoutChatInput.layoutParams as ViewGroup.MarginLayoutParams
-        defaultBottomMargin = params.bottomMargin
-
+        loadChat()
 
         // btnCloseChat 버튼 클릭 시 VoiceChatFragment로 돌아가기
         val btnCloseChat: ImageButton = binding.root.findViewById(R.id.btnCloseChat)
+
+        val params = binding.layoutChatInput.layoutParams as ViewGroup.MarginLayoutParams
+
+        defaultBottomMargin = params.bottomMargin
 
         btnCloseChat.setOnClickListener {
             val navController = findNavController()
@@ -73,24 +74,21 @@ class ChatFragment : Fragment() {
             navController.navigate(R.id.nav_voiceChat, null, navOptions)
         }
 
-
-
-
         // 키보드가 올라왔을 때 입력창 마진을 동적으로 설정
-        ViewCompat.setOnApplyWindowInsetsListener(binding.root) { v, insets ->
+        ViewCompat.setOnApplyWindowInsetsListener(binding.root) { _, insets ->
             val imeInsets = insets.getInsets(WindowInsetsCompat.Type.ime())
             val imeHeight = imeInsets.bottom
             val isKeyboardVisible = imeHeight > 0
 
             binding.layoutChatInput.updateLayoutParams<ViewGroup.MarginLayoutParams> {
                 bottomMargin = if (isKeyboardVisible) {
-                    (imeHeight * 0.8).toInt()  // 키보드가 올라왔을 때 입력창과의 간격 조정
+                    (imeHeight * 0.8).toInt() // 키보드가 올라왔을 때 입력창과의 간격 조정
                 } else {
                     defaultBottomMargin
                 }
             }
 
-            // 입력창이 가려지지 않도록 `RecyclerView` 자동 스크롤
+            // 입력창이 가려지지 않도록 RecyclerView 자동 스크롤
             if (isKeyboardVisible) {
                 binding.recyclerViewChat.post {
                     binding.recyclerViewChat.scrollToPosition(chatItems.size - 1)
@@ -100,74 +98,101 @@ class ChatFragment : Fragment() {
             WindowInsetsCompat.CONSUMED
         }
 
-// 키보드 올라갈 때 스크롤 자동화 및 플릭커 방지
+        // 키보드 올라갈 때 스크롤 자동화 및 플릭커 방지
         binding.recyclerViewChat.addOnLayoutChangeListener { _, _, _, _, bottom, _, _, _, oldBottom ->
-            if (bottom < oldBottom) {  // 화면이 위로 밀렸을 때 (키보드가 올라갔을 때)
+            if (bottom < oldBottom) { // 화면이 위로 밀렸을 때 (키보드가 올라갔을 때)
                 binding.recyclerViewChat.post {
                     val position = chatItems.size - 1
-                    binding.recyclerViewChat.smoothScrollToPosition(position)  // 부드럽게 맨 아래로 스크롤
+                    binding.recyclerViewChat.smoothScrollToPosition(position) // 부드럽게 맨 아래로 스크롤
                 }
             }
         }
 
         binding.buttonSend.setOnClickListener {
-            val message = binding.editTextMessage.text.toString().trim()
-            if (message.isNotEmpty()) {
-                sendMessage(message)
-                binding.editTextMessage.text.clear()
-            }
-        }
-
-
-
-    }
-
-    // 메시지 전송 후 항상 부드럽게 맨 아래로 스크롤
-    fun scrollToBottom() {
-        binding.recyclerViewChat.post {
-            val position = chatItems.size - 1
-            val layoutManager = binding.recyclerViewChat.layoutManager as LinearLayoutManager
-
-            // 맨 아래로 스크롤하기 전에 리스트가 갱신되었는지 확인
-            if (position > layoutManager.findLastVisibleItemPosition()) {
-                layoutManager.scrollToPositionWithOffset(chatItems.size - 1, 0)
-            }
+            sendToServer(binding.editTextMessage.text.toString().trim(), System.currentTimeMillis())
+            binding.editTextMessage.text.clear()
         }
     }
 
-
-
-
-    private fun setupRecyclerView() {
-        chatAdapter = ChatAdapter()
-        binding.recyclerViewChat.adapter = chatAdapter
-        binding.recyclerViewChat.layoutManager = LinearLayoutManager(requireContext())
+    private fun createURL(endPoint: String): URL {
+        val IPv4 = "13.208.186.203"
+        return URL("http://$IPv4:8000$endPoint")
     }
 
-    private fun sendMessage(text: String) {
-        val timestamp = System.currentTimeMillis()
+    private fun sendToServer(input_user: String, time_user: Long) {
+        Thread {
+            val url = createURL("/conversation_model")
 
+            val connection = url.openConnection() as HttpURLConnection
+
+            connection.requestMethod = "POST"
+            connection.setRequestProperty("Content-Type", "application/json; charset=UTF-8")
+            connection.doOutput = true
+
+
+            // arguments?.getString("id_user")?.let {
+            //     chatViewModel.id_user = it
+            // }
+
+            arguments?.getString("select_user")?.let {
+                chatViewModel.select_user = it
+            }
+
+            arguments?.getString("start_user")?.let {
+                chatViewModel.start_user = it
+            }
+
+            val jsonInput = JSONObject()
+
+            sendMessage(input_user, true, time_user)
+            // jsonInput.put("id_user", chatViewModel.id_user)
+            jsonInput.put("id_user", "alps1248@gmail.com")
+            jsonInput.put("select_user", chatViewModel.select_user)
+            jsonInput.put("input_user", input_user)
+            jsonInput.put("time_user", SimpleDateFormat("yyyy. MM. dd. HH-mm-ss", Locale.KOREA).format(Date(time_user)))
+            jsonInput.put("start_user", chatViewModel.start_user)
+            jsonInput.put("shown_user", "true")
+
+
+            val outputStream: OutputStream = connection.outputStream
+
+            outputStream.write(jsonInput.toString().toByteArray(Charsets.UTF_8))
+            outputStream.flush()
+            outputStream.close()
+
+
+            val reader = BufferedReader(InputStreamReader(connection.inputStream))
+
+            val responseBuilder = StringBuilder()
+
+            var line: String?
+
+            while (reader.readLine().also { line = it } != null) responseBuilder.append(line)
+
+            reader.close()
+
+
+            val responseJson = JSONObject(responseBuilder.toString())
+
+            val output_ai = responseJson.getString("output_ai")
+
+            val time_ai = LocalDateTime.parse(responseJson.getString("time_ai"), DateTimeFormatter.ofPattern("yyyy. MM. dd. HH-mm-ss")).atZone(ZoneId.of("Asia/Seoul")).toInstant().toEpochMilli()
+
+            sendMessage(output_ai, false, time_ai)
+
+        }.start()
+    }
+
+    private fun sendMessage(message: String, isUser: Boolean, timestamp: Long) {
         // 마지막 MessageItem 찾기 (날짜 구분선 제외)
         val lastMessageItem = chatItems.lastOrNull { it is ChatItem.MessageItem } as? ChatItem.MessageItem
         val previousMessage = lastMessageItem?.chatMessage
 
         val newMessage = ChatMessage(
-            message = text,
-            isUser = true,
-            timestamp = timestamp,
-            showTime = true
+            message = message,
+            isUser = isUser,
+            timestamp = timestamp
         )
-
-        // 시간 비교
-        if (previousMessage != null && isSameMinute(previousMessage.timestamp, newMessage.timestamp)) {
-            val index = chatItems.indexOfLast {
-                it is ChatItem.MessageItem && it.chatMessage.timestamp == previousMessage.timestamp
-            }
-            if (index != -1) {
-                val updated = (chatItems[index] as ChatItem.MessageItem).chatMessage.copy(showTime = false)
-                chatItems[index] = ChatItem.MessageItem(updated)
-            }
-        }
 
         // 날짜 구분선 추가
         val lastDate = previousMessage?.let { formatDate(it.timestamp) }
@@ -178,12 +203,16 @@ class ChatFragment : Fragment() {
         }
 
         chatItems.add(ChatItem.MessageItem(newMessage))
-        chatAdapter.submitList(chatItems.toList()) // 이때마다 리스트 전체를 갱신하면 스크롤 문제 발생할 수 있음
+        chatAdapter.submitList(chatItems.toList())
+        Handler(Looper.getMainLooper()).postDelayed({
+            val position = chatItems.size - 1
+            val layoutManager = binding.recyclerViewChat.layoutManager as LinearLayoutManager
 
-        // 새 메시지가 추가된 후에만 스크롤
-        binding.recyclerViewChat.post {
-            scrollToBottom()
-        }
+            // 맨 아래로 스크롤하기 전에 리스트가 갱신되었는지 확인
+            if (position > layoutManager.findLastVisibleItemPosition()) {
+                layoutManager.scrollToPositionWithOffset(position, 0)
+            }
+        }, 5) // 5ms 지연
 
         // 애니메이션 효과 추가
         binding.recyclerViewChat.post {
@@ -197,38 +226,104 @@ class ChatFragment : Fragment() {
                 }
             }
         }
-
     }
 
-    private fun loadTestData() {
-        val now = System.currentTimeMillis()
-        val minute = 60 * 1000L
+    private fun loadChat() {
+        Thread {
+            val url = createURL("/load_chat")
 
-        val dummyMessages = listOf(
-            ChatMessage("안녕하세요!", isUser = false, timestamp = now - 10 * minute),
-            ChatMessage("네, 반갑습니다!", isUser = true, timestamp = now - 10 * minute),
-            ChatMessage("오늘 날씨 좋네요", isUser = false, timestamp = now - 9 * minute),
-            ChatMessage("진짜요?", isUser = true, timestamp = now - 8 * minute),
-            ChatMessage("네! 맑아요", isUser = false, timestamp = now - 8 * minute),
-            ChatMessage("좋네요ㅎㅎ", isUser = true, timestamp = now - 7 * minute),
-            ChatMessage("산책 추천드립니다.", isUser = false, timestamp = now - 6 * minute)
-        )
+            val connection = url.openConnection() as HttpURLConnection
 
-        var lastDate: String? = null
+            connection.requestMethod = "POST"
+            connection.setRequestProperty("Content-Type", "application/json; charset=UTF-8")
+            connection.doOutput = true
 
-        for (message in dummyMessages) {
-            val currentDate = formatDate(message.timestamp)
 
-            if (lastDate != currentDate) {
-                chatItems.add(ChatItem.DateDividerItem(currentDate))
-                lastDate = currentDate
+            // arguments?.getString("id_user")?.let {
+            //     chatViewModel.id_user = it
+            // }
+
+            arguments?.getString("select_user")?.let {
+                chatViewModel.select_user = it
             }
 
-            chatItems.add(ChatItem.MessageItem(message))
-        }
+            arguments?.getString("start_user")?.let {
+                chatViewModel.start_user = it
+            }
 
-        chatAdapter.submitList(chatItems.toList())
-        binding.recyclerViewChat.scrollToPosition(chatItems.size - 1)
+            val jsonInput = JSONObject()
+
+            // jsonInput.put("id_user", chatViewModel.id_user)
+            jsonInput.put("id_user", "alps1248@gmail.com")
+            jsonInput.put("select_user", chatViewModel.select_user)
+            jsonInput.put("input_user", "")
+            jsonInput.put("time_user", "")
+            jsonInput.put("start_user", chatViewModel.start_user)
+            jsonInput.put("shown_user", "true")
+
+
+            val outputStream: OutputStream = connection.outputStream
+
+            outputStream.write(jsonInput.toString().toByteArray(Charsets.UTF_8))
+            outputStream.flush()
+            outputStream.close()
+
+
+            val reader = BufferedReader(InputStreamReader(connection.inputStream))
+
+            val responseBuilder = StringBuilder()
+
+            var line: String?
+
+            while (reader.readLine().also { line = it } != null) responseBuilder.append(line)
+
+            reader.close()
+
+
+            val responseJsonObject = JSONObject(responseBuilder.toString())
+
+            val responseJsonArray = responseJsonObject.getJSONArray("chat")
+
+            val Messages = mutableListOf<ChatMessage>()
+
+            Messages.add(ChatMessage("인물 별 한 마디", false, System.currentTimeMillis()))
+
+            for (i in 0 until responseJsonArray.length()) {
+                val responseJsonItem = responseJsonArray.getJSONObject(i)
+
+                val message = responseJsonItem.getString("text")
+
+                val isUser = responseJsonItem.getString("role") == "user"
+
+                val timestamp = LocalDateTime.parse(responseJsonItem.getString("time"), DateTimeFormatter.ofPattern("yyyy. MM. dd. HH-mm-ss")).atZone(ZoneId.of("Asia/Seoul")).toInstant().toEpochMilli()
+
+                Messages.add(ChatMessage(message, isUser, timestamp))
+            }
+
+
+            var lastDate: String? = null
+
+            for (message in Messages) {
+                val currentDate = formatDate(message.timestamp)
+
+                if (lastDate != currentDate) {
+                    chatItems.add(ChatItem.DateDividerItem(currentDate))
+                    lastDate = currentDate
+                }
+
+                chatItems.add(ChatItem.MessageItem(message))
+            }
+
+            Handler(Looper.getMainLooper()).postDelayed({
+                chatAdapter.submitList(chatItems.toList())
+                binding.recyclerViewChat.scrollToPosition(chatItems.size - 1)
+            }, 450) // 450ms 지연
+        }.start()
+    }
+
+    private fun isSameDay(cal1: Calendar, cal2: Calendar): Boolean {
+        return cal1.get(Calendar.YEAR) == cal2.get(Calendar.YEAR) &&
+                cal1.get(Calendar.DAY_OF_YEAR) == cal2.get(Calendar.DAY_OF_YEAR)
     }
 
     private fun formatDate(timestamp: Long): String {
@@ -246,36 +341,14 @@ class ChatFragment : Fragment() {
         }
     }
 
-    private fun isSameDay(cal1: Calendar, cal2: Calendar): Boolean {
-        return cal1.get(Calendar.YEAR) == cal2.get(Calendar.YEAR) &&
-                cal1.get(Calendar.DAY_OF_YEAR) == cal2.get(Calendar.DAY_OF_YEAR)
+    private fun setupRecyclerView() {
+        chatAdapter = ChatAdapter()
+        binding.recyclerViewChat.adapter = chatAdapter
+        binding.recyclerViewChat.layoutManager = LinearLayoutManager(requireContext())
     }
-
-
-    private fun isSameMinute(time1: Long, time2: Long): Boolean {
-        val sdf = SimpleDateFormat("yyyyMMddHHmm", Locale.getDefault())
-        return sdf.format(Date(time1)) == sdf.format(Date(time2))
-    }
-
-    private fun Int.toPx(): Int = (this * Resources.getSystem().displayMetrics.density).toInt()
-
 
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
     }
-
-    companion object {
-        private const val ARG_CHARACTER_ID = "character_id"
-
-        fun newInstance(characterId: Int): ChatFragment {
-            val fragment = ChatFragment()
-            val args = Bundle()
-            args.putInt(ARG_CHARACTER_ID, characterId)
-            fragment.arguments = args
-            return fragment
-        }
-    }
 }
-
-

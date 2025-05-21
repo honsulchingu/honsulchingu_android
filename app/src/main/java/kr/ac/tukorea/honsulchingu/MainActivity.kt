@@ -1,19 +1,11 @@
 package kr.ac.tukorea.honsulchingu
 
-
 import android.os.Bundle
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
-import androidx.navigation.findNavController
 import androidx.navigation.fragment.NavHostFragment
-import androidx.navigation.navOptions
 import androidx.navigation.ui.setupWithNavController
 import com.google.android.material.bottomnavigation.BottomNavigationView
-import kr.ac.tukorea.honsulchingu.R
-import kr.ac.tukorea.honsulchingu.history.HistoryFragment
-import kr.ac.tukorea.honsulchingu.ui.character.CharacterSelectFragment
-
-import kr.ac.tukorea.honsulchingu.ui.voice.VoiceChatFragment
 import androidx.navigation.NavOptions
 
 class MainActivity : AppCompatActivity() {
@@ -108,6 +100,3 @@ class MainActivity : AppCompatActivity() {
     }
 
 }
-
-
-

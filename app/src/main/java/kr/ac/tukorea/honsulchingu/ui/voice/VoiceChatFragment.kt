@@ -1,12 +1,10 @@
 package kr.ac.tukorea.honsulchingu.ui.voice
 
-import ChatAdapter
 import android.os.Bundle
 import android.text.method.ScrollingMovementMethod
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.view.animation.AlphaAnimation
 import android.widget.ImageButton
 import android.widget.TextView
 import androidx.fragment.app.Fragment
@@ -15,6 +13,7 @@ import androidx.navigation.NavOptions
 import androidx.navigation.fragment.findNavController
 import com.google.android.material.imageview.ShapeableImageView
 import kr.ac.tukorea.honsulchingu.R
+import kr.ac.tukorea.honsulchingu.ui.chat.ChatAdapter
 import kr.ac.tukorea.honsulchingu.ui.chat.ChatFragment
 import kr.ac.tukorea.honsulchingu.ui.chat.ChatMessage
 

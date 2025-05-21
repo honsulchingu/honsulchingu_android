@@ -10,7 +10,8 @@ import kr.ac.tukorea.honsulchingu.model.ChatCharacter
 
 // ChatCharacter의 항목들을 표시하는 Adapter
 class CharacterListAdapter(
-    private val onClick: (ChatCharacter) -> Unit
+    private val onClick: (ChatCharacter) -> Unit,
+    private val onStartChatClick: (ChatCharacter) -> Unit // 버튼 클릭 콜백 추가
 ) : ListAdapter<ChatCharacter, CharacterListAdapter.CharacterViewHolder>(CharacterDiffCallback()) {
 
     inner class CharacterViewHolder(private val binding: ItemCharacterBinding) :
@@ -18,12 +19,21 @@ class CharacterListAdapter(
 
         fun bind(character: ChatCharacter) {
             binding.characterName.text = character.name
-            binding.characterDescription.text = character.description
-            // 필요 시 이미지 설정 등 추가 가능
+            binding.characterMessage.text = character.greet
+            binding.characterTag1.text = character.tag[0]
+            binding.characterTag2.text = character.tag[1]
+            binding.characterTag3.text = character.tag[2]
+            binding.characterDescription.text = character.descript
+            binding.characterImage.setImageResource(character.profileImage)
 
             // 클릭 이벤트 처리
             binding.root.setOnClickListener {
                 onClick(character)
+            }
+
+            // 버튼 클릭 처리
+            binding.startChatButton.setOnClickListener {
+                onStartChatClick(character)
             }
         }
     }
@@ -49,4 +59,3 @@ class CharacterListAdapter(
         }
     }
 }
-

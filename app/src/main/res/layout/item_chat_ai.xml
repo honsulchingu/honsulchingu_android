@@ -34,11 +34,12 @@
             android:id="@+id/messageText"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:maxWidth="230dp"
+            android:maxWidth="162dp"
             android:background="@drawable/chat_bubble_ai"
             android:padding="12dp"
             android:text="AI의 메시지가 여기 들어갑니다."
             android:textColor="@android:color/black"
+            android:fontFamily="@font/pretendard_medium"
             android:textSize="14sp"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintBottom_toBottomOf="parent"
@@ -54,7 +55,7 @@
             android:src="@drawable/ic_heart"
             android:background="@android:color/transparent"
             android:contentDescription="하트"
-            android:visibility="visible"
+            android:visibility="invisible"
             app:layout_constraintStart_toEndOf="@id/messageText"
             app:layout_constraintBottom_toTopOf="@id/timeText"/>
 
