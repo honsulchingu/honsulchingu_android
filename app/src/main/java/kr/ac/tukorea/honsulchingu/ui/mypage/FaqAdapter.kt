@@ -5,18 +5,19 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.recyclerview.widget.RecyclerView
 import kr.ac.tukorea.honsulchingu.R
 
-import androidx.transition.AutoTransition
-import androidx.transition.TransitionManager
-
 class FaqAdapter(private val faqList: List<FaqItem>) : RecyclerView.Adapter<FaqAdapter.FaqViewHolder>() {
 
+    private val expandedState = MutableList(faqList.size) { false }
+
     inner class FaqViewHolder(view: View) : RecyclerView.ViewHolder(view) {
-        val guideText: TextView = itemView.findViewById(R.id.guide_text)
-        val guideAnswer: TextView = itemView.findViewById(R.id.guide_answer)
-        val guideArrow: ImageView = itemView.findViewById(R.id.guide_arrow)
+        val questionText: TextView = view.findViewById(R.id.guide_text)
+        val answerText: TextView = view.findViewById(R.id.guide_answer)
+        val arrowIcon: ImageView = view.findViewById(R.id.guide_arrow)
+        val container: ConstraintLayout = view.findViewById(R.id.container)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): FaqViewHolder {
@@ -25,28 +26,41 @@ class FaqAdapter(private val faqList: List<FaqItem>) : RecyclerView.Adapter<FaqA
     }
 
     override fun onBindViewHolder(holder: FaqViewHolder, position: Int) {
-        val faqItem = faqList[position]
-        holder.guideText.text = faqItem.question
-        holder.guideAnswer.text = faqItem.answer
+        val faq = faqList[position]
+        val isExpanded = expandedState[position]
 
-        var isExpanded = false
-        // 초기 상태에서는 답변을 숨기기
-        holder.guideAnswer.visibility = View.GONE
-        holder.guideArrow.rotation = 0f
+        holder.questionText.text = faq.question
+        holder.answerText.text = faq.answer
 
-        // 클릭 시 펼치기/접기 처리
-        holder.itemView.setOnClickListener {
-            isExpanded = !isExpanded
+        // 초기 상태 반영
+        holder.answerText.visibility = if (isExpanded) View.VISIBLE else View.GONE
+        holder.answerText.alpha = if (isExpanded) 1f else 0f
+        holder.arrowIcon.rotation = if (isExpanded) 180f else 0f
 
-            // 펼치기/접기 처리
-            if (isExpanded) {
-                holder.guideAnswer.visibility = View.VISIBLE
+        // 클릭 시 확장/축소 처리
+        holder.container.setOnClickListener {
+            val newState = !expandedState[position]
+            expandedState[position] = newState
+
+            // 화살표 회전
+            holder.arrowIcon.animate().rotation(if (newState) 180f else 0f).start()
+
+            if (newState) {
+                holder.answerText.visibility = View.VISIBLE
+                holder.answerText.alpha = 0f
+                holder.answerText.animate()
+                    .alpha(1f)
+                    .setDuration(200)
+                    .start()
             } else {
-                holder.guideAnswer.visibility = View.GONE
+                holder.answerText.animate()
+                    .alpha(0f)
+                    .setDuration(200)
+                    .withEndAction {
+                        holder.answerText.visibility = View.GONE
+                    }
+                    .start()
             }
-
-            // 화살표 회전 애니메이션
-            holder.guideArrow.rotation = if (isExpanded) 180f else 0f
         }
     }
 

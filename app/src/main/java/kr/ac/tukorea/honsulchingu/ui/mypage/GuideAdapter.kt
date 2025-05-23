@@ -9,11 +9,9 @@ import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.recyclerview.widget.RecyclerView
 import kr.ac.tukorea.honsulchingu.R
 
-class GuideAdapter(private val guideList: List<String>) : RecyclerView.Adapter<GuideAdapter.GuideViewHolder>() {
+class GuideAdapter(private val guideList: List<GuideItem>) : RecyclerView.Adapter<GuideAdapter.GuideViewHolder>() {
 
-    private val expandedState = mutableListOf<Boolean>().apply {
-        repeat(guideList.size) { add(false) }  // 각 항목의 초기 상태는 접혀있음
-    }
+    private val expandedState = MutableList(guideList.size) { false }
 
     inner class GuideViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         val guideText: TextView = view.findViewById(R.id.guide_text)
@@ -29,7 +27,8 @@ class GuideAdapter(private val guideList: List<String>) : RecyclerView.Adapter<G
 
     override fun onBindViewHolder(holder: GuideViewHolder, position: Int) {
         val guide = guideList[position]
-        holder.guideText.text = guide
+        holder.guideText.text = guide.title
+        holder.guideDescription.text = guide.description
 
         val isExpanded = expandedState[position]
 
@@ -63,9 +62,6 @@ class GuideAdapter(private val guideList: List<String>) : RecyclerView.Adapter<G
             }
         }
     }
-
-
-
 
     override fun getItemCount(): Int = guideList.size
 }

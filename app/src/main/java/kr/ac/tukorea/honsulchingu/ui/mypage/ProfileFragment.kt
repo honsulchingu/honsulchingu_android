@@ -39,8 +39,8 @@ class ProfileFragment : Fragment() {
             DialogUtil.showHonsulDialog(
                 context = requireContext(),
                 title = "회원 탈퇴 하시겠어요?",
-                message = "탈퇴하시면 지금까지의 모든 대화와 정보가 삭제됩니다./n정말로 탈퇴를 진행하시겠습니까?",
-                iconRes = R.drawable.ic_logout,
+                message = "탈퇴하시면 지금까지의 모든 대화와 정보가 삭제됩니다.\n정말로 탈퇴를 진행하시겠습니까?",
+                iconRes = R.drawable.ic_close,
                 positiveText = "탈퇴하기",
                 negativeText = "취소"
             ) {
