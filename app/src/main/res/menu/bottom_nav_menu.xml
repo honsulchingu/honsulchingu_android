@@ -3,19 +3,19 @@
     <item
         android:id="@+id/nav_character"
         android:icon="@drawable/ic_character"
-        android:title="캐릭터" />
+        android:title="캐릭터"/>
     <item
         android:id="@+id/nav_history"
         android:icon="@drawable/ic_history"
-        android:title="대화기록" />
+        android:title="대화기록"/>
     <item
         android:id="@+id/nav_voiceChat"
         android:icon="@drawable/ic_chat"
-        android:title="채팅" />
+        android:title="채팅"/>
     <item
         android:id="@+id/nav_favorite"
         android:icon="@drawable/ic_favorite"
-        android:title="즐겨찾기" />
+        android:title="즐겨찾기"/>
     <item
         android:id="@+id/nav_mypage"
         android:icon="@drawable/ic_my"

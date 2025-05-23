@@ -1,6 +1,5 @@
 package kr.ac.tukorea.honsulchingu.ui
 
-import android.app.AlertDialog
 import android.content.Context
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable

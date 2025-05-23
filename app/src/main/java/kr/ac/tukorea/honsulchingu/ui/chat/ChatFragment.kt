@@ -4,6 +4,8 @@ import ChatAdapter
 import android.animation.ObjectAnimator
 import android.content.res.Resources
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -23,6 +25,7 @@ import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Date
 import java.util.Locale
+import kotlin.random.Random
 
 
 class ChatFragment : Fragment() {
@@ -34,6 +37,28 @@ class ChatFragment : Fragment() {
     private lateinit var chatAdapter: ChatAdapter
     private val chatItems = mutableListOf<ChatItem>()
 
+    private val handler = Handler(Looper.getMainLooper())
+
+    // 로딩 메시지 목록
+    private val loadingMessages = listOf(
+        "대화를 꺼내는 중이에요…",
+        "생각의 스위치를 켜는 중이에요.",
+        "기억과 술 사이를 잇는 중이에요.",
+        "조용히 대화를 깨우는 중이에요.",
+    )
+
+    // 1초마다 로딩 메시지 변경하는 Runnable
+    private val loadingTextRunnable = object : Runnable {
+        override fun run() {
+            // 메시지 랜덤 또는 순차 선택 (여기선 랜덤)
+            val randomIndex = Random.nextInt(loadingMessages.size)
+            binding.loadingText.text = loadingMessages[randomIndex]
+
+            // 3.5초 후 다시 실행
+            handler.postDelayed(this, 3500)
+        }
+    }
+
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         _binding = FragmentChatBinding.inflate(inflater, container, false)
         return binding.root
@@ -41,6 +66,27 @@ class ChatFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        // 1. 로딩 애니메이션 보이기
+        binding.loadingAnimation.visibility = View.VISIBLE
+        binding.loadingText.visibility = View.VISIBLE
+        binding.recyclerViewChat.visibility = View.GONE
+
+        // 2. 로딩 텍스트 주기적 변경 시작
+        handler.post(loadingTextRunnable)
+
+        // 3. 리사이클러뷰 세팅 및 더미 데이터 로드
+        setupRecyclerView()
+        loadTestData()
+
+        // 4. 일정 시간 후 로딩 UI 제거
+        handler.postDelayed({
+            binding.loadingAnimation.visibility = View.GONE
+            binding.loadingText.visibility = View.GONE
+            binding.recyclerViewChat.visibility = View.VISIBLE
+            handler.removeCallbacks(loadingTextRunnable)
+        }, 3000) // 3초 후 제거. 필요 시 데이터 로딩 완료 기준으로 조정 가능
+
 
         setupRecyclerView()
         loadTestData()
@@ -248,24 +294,18 @@ class ChatFragment : Fragment() {
         return sdf.format(Date(time1)) == sdf.format(Date(time2))
     }
 
-    private fun Int.toPx(): Int = (this * Resources.getSystem().displayMetrics.density).toInt()
 
 
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
+        handler.removeCallbacks(loadingTextRunnable)
     }
 
     companion object {
         private const val ARG_CHARACTER_ID = "character_id"
 
-        fun newInstance(characterId: Int): ChatFragment {
-            val fragment = ChatFragment()
-            val args = Bundle()
-            args.putInt(ARG_CHARACTER_ID, characterId)
-            fragment.arguments = args
-            return fragment
-        }
+
     }
 }
 

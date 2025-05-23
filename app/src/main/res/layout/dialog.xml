@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/dialogRoot"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
@@ -7,7 +8,7 @@
     android:padding="24dp"
     android:background="@drawable/bg_dialog_rounded"
     android:gravity="center_horizontal"
-    android:elevation="8dp">
+    android:elevation="1dp">
 
     <!-- 아이콘 (선택 사항) -->
     <ImageView
@@ -53,7 +54,7 @@
         android:layout_marginTop="12dp">
 
         <!-- 취소 버튼: 투명 배경 + 보라색 테두리 + 보라색 텍스트 -->
-        <Button
+        <com.google.android.material.button.MaterialButton
             android:id="@+id/btnCancel"
             android:layout_weight="1"
             android:layout_width="0dp"
@@ -64,9 +65,10 @@
             android:textColor="#9333EA"
             android:fontFamily="@font/pretendard_semibold"
             android:layout_marginEnd="12dp"
-            android:stateListAnimator="@null" />
+            android:stateListAnimator="@null"
+            app:backgroundTint="@null"/>
 
-        <Button
+        <com.google.android.material.button.MaterialButton
             android:id="@+id/btnConfirm"
             android:layout_weight="1"
             android:layout_width="0dp"
@@ -74,10 +76,15 @@
             android:text="확인"
             android:textColor="@color/bg_color"
             android:background="@drawable/bg_button_gradient_purple"
+            android:backgroundTint="@null"
             android:textSize="16sp"
             android:fontFamily="@font/pretendard_semibold"
             android:layout_marginStart="12dp"
+            style="@style/Widget.MaterialComponents.Button"
+            app:backgroundTint="@null"
             android:stateListAnimator="@null" />
+
+
 
     </LinearLayout>
 

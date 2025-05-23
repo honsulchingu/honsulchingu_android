@@ -1,17 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
 <selector xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <!-- 눌렀을 때: 연한 보라 배경 + 진한 퍼플 테두리 -->
     <item android:state_pressed="true">
         <shape android:shape="rectangle">
-            <solid android:color="#F3E8FF" />
-            <stroke android:width="1dp" android:color="#9333EA"/>
+            <solid android:color="#CBB4FF" /> <!-- 좀 더 진한 연보라 -->
+            <stroke android:width="1.5dp" android:color="#7C3AED"/> <!-- 더 진한 보라 -->
             <corners android:radius="16dp" />
         </shape>
     </item>
+
+    <!-- 기본 상태: 투명 배경 + 퍼플 테두리 -->
     <item>
         <shape android:shape="rectangle">
             <solid android:color="@android:color/transparent" />
-            <stroke android:width="1dp" android:color="#9333EA"/>
+            <stroke android:width="1.5dp" android:color="#6D28D9"/>
             <corners android:radius="16dp" />
         </shape>
     </item>
+
 </selector>

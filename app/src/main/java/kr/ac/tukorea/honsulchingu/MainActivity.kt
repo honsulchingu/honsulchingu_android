@@ -83,6 +83,8 @@ class MainActivity : AppCompatActivity() {
             }
         }
 
+        bottomNav.itemBackground = ContextCompat.getDrawable(this, R.drawable.transparent_ripple)
+
     }
 }
 

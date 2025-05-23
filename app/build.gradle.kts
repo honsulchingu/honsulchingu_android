@@ -51,8 +51,11 @@ dependencies {
     // navigation 라이브러리
     implementation ("androidx.navigation:navigation-fragment-ktx:2.7.7")
     implementation ("androidx.navigation:navigation-ui-ktx:2.7.7")
-    
-    
+
+
+    // Lottie 애니메이션
+    implementation ("com.airbnb.android:lottie:6.4.0")
+
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
     implementation(libs.material)
