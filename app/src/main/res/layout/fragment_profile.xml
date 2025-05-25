@@ -28,14 +28,6 @@
             android:textSize="20sp"
             android:textStyle="bold"
             android:fontFamily="@font/pretendard_bold" />
-
-        <ImageView
-            android:id="@+id/editButton"
-            android:layout_width="20dp"
-            android:layout_height="20dp"
-            android:layout_gravity="end"
-            android:src="@drawable/ic_edit"
-            android:layout_marginTop="-25dp" />
     </LinearLayout>
 
     <!-- 프로필 아이콘 (중앙 원형) - FrameLayout으로 테두리 포함 -->
