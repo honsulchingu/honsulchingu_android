@@ -3,7 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/gradient_background"
+    android:background="@color/bg_color"
     android:id="@+id/login">
 
     <!-- 안전 영역을 위한 상단 Guideline (10% 여백 확보) -->
@@ -41,7 +41,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="혼술친구"
-        android:textColor="@android:color/white"
+        android:textColor="@color/info_black"
         android:textSize="26sp"
         android:textStyle="bold"
         app:layout_constraintTop_toBottomOf="@id/logoCircle"
@@ -72,13 +72,13 @@
             app:layout_constraintGuide_percent="0.35" /> <!-- 카드 기준 40% 지점 -->
 
 
-        <!-- 환영합니다 -->
+
         <TextView
             android:id="@+id/welcomeText"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="환영합니다"
-            android:textColor="@android:color/black"
+            android:textColor="@color/info_black"
             android:textSize="20sp"
             android:fontFamily="@font/pretendard_bold"
             android:textStyle="bold"
