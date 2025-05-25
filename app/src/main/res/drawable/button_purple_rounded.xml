@@ -1,28 +1,29 @@
 <?xml version="1.0" encoding="utf-8"?>
 <selector xmlns:android="http://schemas.android.com/apk/res/android">
-    <!-- 호버 상태 -->
+
+    <!-- 눌렀을 때:  -->
     <item android:state_pressed="true">
         <shape android:shape="rectangle">
-            <corners android:radius="24dp" />
             <gradient
                 android:angle="180"
-                android:startColor="#5B33D1"
-            android:centerColor="#8C50E3"
-            android:endColor="#A733E5"
-            android:type="linear"/>
+                android:startColor="#2C1E80"
+                android:centerColor="#4B128D"
+                android:endColor="#551A8B"
+                android:type="linear"/>
+            <corners android:radius="24dp" />
         </shape>
     </item>
 
-    <!-- 기본 상태 -->
+    <!-- 기본 상태: 전체적으로 퍼플 계열 -->
     <item>
         <shape android:shape="rectangle">
-            <corners android:radius="24dp" />
             <gradient
                 android:angle="180"
                 android:startColor="#3730A3"
                 android:centerColor="#6D28D9"
                 android:endColor="#7D22CE"
                 android:type="linear"/>
+            <corners android:radius="24dp" />
         </shape>
     </item>
 </selector>
