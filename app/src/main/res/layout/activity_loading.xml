@@ -32,7 +32,7 @@
             android:src="@drawable/ic_app_logo"
             android:scaleType="centerInside"/>
 
-        <TextView
+        <kr.ac.tukorea.honsulchingu.ui.GradientTextView
             android:id="@+id/appName"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"

@@ -36,12 +36,11 @@
         app:layout_constraintEnd_toEndOf="parent" />
 
     <!-- 앱 이름 -->
-    <TextView
+    <kr.ac.tukorea.honsulchingu.ui.GradientTextView
         android:id="@+id/appTitle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="혼술친구"
-        android:textColor="@color/info_black"
         android:textSize="26sp"
         android:textStyle="bold"
         app:layout_constraintTop_toBottomOf="@id/logoCircle"
