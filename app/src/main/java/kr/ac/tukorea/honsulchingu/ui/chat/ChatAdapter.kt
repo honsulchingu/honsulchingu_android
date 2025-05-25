@@ -21,8 +21,10 @@ import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
 import android.content.ClipboardManager
+import android.content.Context.MODE_PRIVATE
+import com.google.android.material.imageview.ShapeableImageView
 
-class ChatAdapter : ListAdapter<ChatItem, RecyclerView.ViewHolder>(DiffCallback) {
+class ChatAdapter(private val context: Context) : ListAdapter<ChatItem, RecyclerView.ViewHolder>(DiffCallback) {
 
     // DiffCallback의 areItemsTheSame와 areContentsTheSame에서 실제 데이터 비교
     object DiffCallback : DiffUtil.ItemCallback<ChatItem>() {
@@ -97,11 +99,15 @@ class ChatAdapter : ListAdapter<ChatItem, RecyclerView.ViewHolder>(DiffCallback)
     inner class AIViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         private val messageText: TextView = itemView.findViewById(R.id.messageText)
         private val timeText: TextView = itemView.findViewById(R.id.timeText)
+        private val imageText: ShapeableImageView = itemView.findViewById(R.id.chatCharacterImage)
         private val gestureDetector = GestureDetector(itemView.context, GestureListener())
+
+        private val sharedPreferences_chat = context.getSharedPreferences("prefs_chat", MODE_PRIVATE)
 
         fun bind(message: ChatMessage) {
             messageText.text = message.message
             timeText.text = formatTime(message.timestamp)
+            imageText.setImageResource(sharedPreferences_chat.getInt("image", R.drawable.ic_profile_placeholder))
 
             ObjectAnimator.ofFloat(messageText, "alpha", 0f, 1f).apply {
                 duration = 300

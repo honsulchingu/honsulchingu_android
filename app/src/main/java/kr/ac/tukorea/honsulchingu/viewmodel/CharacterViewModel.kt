@@ -1,10 +1,14 @@
 package kr.ac.tukorea.honsulchingu.viewmodel
 
+import android.content.Context
+import android.os.Handler
+import android.os.Looper
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import kr.ac.tukorea.honsulchingu.R
-import kr.ac.tukorea.honsulchingu.model.ChatCharacter
+import kr.ac.tukorea.honsulchingu.ui.character.ChatCharacter
+import org.json.JSONObject
+import java.net.HttpURLConnection
 import java.net.URL
 
 class CharacterViewModel : ViewModel() {
@@ -12,12 +16,7 @@ class CharacterViewModel : ViewModel() {
     private val _filteredCharacters = MutableLiveData<List<ChatCharacter>>()
     val filteredCharacters: LiveData<List<ChatCharacter>> get() = _filteredCharacters
 
-    private val allCharacters = listOf(
-        ChatCharacter(1, "friend", "친구_이나경", "기본 메시지", listOf("친절함", "편안함", "가나다라"), "항상 편안한 친구 같은 느낌!", R.drawable.friend1),
-        ChatCharacter(2, "friend", "친구_최민혁", "안녕, 오늘 어땠어?", listOf("유쾌함", "활발함", "가나다라"), "활발하고 털털한 스타일", R.drawable.friend2),
-        ChatCharacter(3, "lover", "연인_김세희", "기다리고 있었어", listOf("다정함", "로맨틱", "가나다라"), "부드럽고 다정한 연인 스타일", R.drawable.ic_profile_placeholder),
-        ChatCharacter(4, "lover", "연인_송하린", "나랑 술 한잔 할래?", listOf("시크함", "츤데레", "가나다라"),"시크하지만 마음은 따뜻한 타입", R.drawable.ic_profile_placeholder)
-    )
+    private val allCharacters = mutableListOf<ChatCharacter>()
 
     // 특정 타입의 캐릭터 업데이트
     fun updateCharacters(type: String) {
@@ -29,5 +28,46 @@ class CharacterViewModel : ViewModel() {
     fun updateURL(endPoint: String): URL {
         val IPv4 = "13.208.186.203"
         return URL("http://$IPv4:8000$endPoint")
+    }
+
+    // 캐릭터 리스트 DB 로딩 후 업데이트
+    fun loadCharacters(context: Context, onLoaded: () -> Unit) {
+        Thread {
+            val url = updateURL("/load_character")
+
+            val connection = (url.openConnection() as HttpURLConnection).apply {
+                requestMethod = "POST"
+                setRequestProperty("Content-Type", "application/json; charset=UTF-8")
+                doOutput = true
+            }
+
+
+            val jsonInput = JSONObject()
+
+            connection.outputStream.use { it.write(jsonInput.toString().toByteArray(Charsets.UTF_8)) }
+
+
+            val responseString = connection.inputStream.bufferedReader().use { it.readText() }
+
+            val responseJsonObject = JSONObject(responseString)
+
+            val responseJsonArray = responseJsonObject.getJSONArray("character")
+
+            val loadedCharacters = MutableList(responseJsonArray.length()) { i ->
+                val item = responseJsonArray.getJSONObject(i)
+                val name = item.getString("name")
+                val greet = item.getString("greet")
+                val tag = item.getString("tag").split(',').map { it.trim() }
+                val description = item.getString("description")
+                val image = context.resources.getIdentifier(item.getString("image"), "drawable", context.packageName)
+                ChatCharacter(i, name.substringBeforeLast('_'), name.substringAfterLast('_'), greet, tag, description, image)
+            }
+
+
+            allCharacters.clear()
+            allCharacters.addAll(loadedCharacters)
+            _filteredCharacters.postValue(allCharacters)
+            Handler(Looper.getMainLooper()).post { onLoaded() }
+        }.start()
     }
 }

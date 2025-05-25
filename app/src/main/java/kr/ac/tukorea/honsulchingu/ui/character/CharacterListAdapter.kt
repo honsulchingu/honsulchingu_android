@@ -6,7 +6,6 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import kr.ac.tukorea.honsulchingu.databinding.ItemCharacterBinding
-import kr.ac.tukorea.honsulchingu.model.ChatCharacter
 
 // ChatCharacter의 항목들을 표시하는 Adapter
 class CharacterListAdapter(
@@ -18,7 +17,7 @@ class CharacterListAdapter(
         RecyclerView.ViewHolder(binding.root) {
 
         fun bind(character: ChatCharacter) {
-            binding.characterName.text = character.name.substringAfterLast("_")
+            binding.characterName.text = character.name.substringAfterLast('_')
             binding.characterMessage.text = character.greet
             binding.characterTag1.text = character.tag[0]
             binding.characterTag2.text = character.tag[1]

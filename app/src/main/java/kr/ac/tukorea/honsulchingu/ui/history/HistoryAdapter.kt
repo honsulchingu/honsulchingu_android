@@ -23,7 +23,7 @@ class HistoryAdapter(
         private val imageProfile: ImageView = itemView.findViewById(R.id.imageProfile)
 
         fun bind(item: ChatRecord) {
-            textName.text = item.name.substringAfterLast("_")
+            textName.text = item.name.substringAfterLast('_')
             textMessage.text = item.last_chat
             textTime.text = Date(item.last_time).toSmartDateString()
             imageProfile.setImageResource(item.profileImageRes)

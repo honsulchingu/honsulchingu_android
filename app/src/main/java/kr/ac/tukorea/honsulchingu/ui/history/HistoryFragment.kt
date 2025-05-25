@@ -140,9 +140,9 @@ class HistoryFragment : Fragment() {
                 connection.outputStream.use { it.write(jsonInput.toString().toByteArray(Charsets.UTF_8)) }
 
 
-                val responseText = connection.inputStream.bufferedReader().use { it.readText() }
+                val responseString = connection.inputStream.bufferedReader().use { it.readText() }
 
-                val responseJson = JSONObject(responseText)
+                val responseJson = JSONObject(responseString)
 
                 val tagArray = responseJson.getJSONArray("tag")
 

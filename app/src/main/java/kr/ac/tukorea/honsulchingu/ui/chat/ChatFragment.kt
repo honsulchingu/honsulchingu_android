@@ -287,7 +287,7 @@ class ChatFragment : Fragment() {
     }
 
     private fun setupRecyclerView() {
-        chatAdapter = ChatAdapter()
+        chatAdapter = ChatAdapter(requireContext())
         binding.recyclerViewChat.adapter = chatAdapter
         binding.recyclerViewChat.layoutManager = LinearLayoutManager(requireContext())
     }

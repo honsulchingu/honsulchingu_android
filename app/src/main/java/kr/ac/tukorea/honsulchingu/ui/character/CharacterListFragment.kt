@@ -11,7 +11,6 @@ import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import kr.ac.tukorea.honsulchingu.R
 import kr.ac.tukorea.honsulchingu.databinding.FragmentCharacterListBinding
-import kr.ac.tukorea.honsulchingu.model.ChatCharacter
 import kr.ac.tukorea.honsulchingu.viewmodel.CharacterViewModel
 import java.text.SimpleDateFormat
 import java.util.Date
@@ -51,9 +50,10 @@ class CharacterListFragment : Fragment() {
                 val sharedPreferences_chat = requireContext().getSharedPreferences("prefs_chat", MODE_PRIVATE)
 
                 sharedPreferences_chat.edit().apply {
-                    putString("select_user", character.name)
+                    putString("select_user", character.type + '_' + character.name)
                     putString("start_user", SimpleDateFormat("yyyy. MM. dd. HH-mm-ss", Locale.KOREA).format(Date(System.currentTimeMillis())))
                     putBoolean("isFirst", true)
+                    putInt("image", character.image)
                     apply()
                 }
 

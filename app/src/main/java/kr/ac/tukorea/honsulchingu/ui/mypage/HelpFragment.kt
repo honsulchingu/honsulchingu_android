@@ -8,8 +8,6 @@ import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import kr.ac.tukorea.honsulchingu.R
-import kr.ac.tukorea.honsulchingu.databinding.FragmentHelpBinding
-
 
 class HelpFragment : Fragment() {
 
@@ -59,5 +57,3 @@ class HelpFragment : Fragment() {
         super.onDestroyView()
     }
 }
-
-

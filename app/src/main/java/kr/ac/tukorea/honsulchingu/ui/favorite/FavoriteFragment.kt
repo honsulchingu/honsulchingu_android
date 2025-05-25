@@ -9,7 +9,6 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import kr.ac.tukorea.honsulchingu.R
 
-
 class FavoriteFragment : Fragment() {
 
     private lateinit var favoriteRecyclerView: RecyclerView
@@ -31,9 +30,9 @@ class FavoriteFragment : Fragment() {
         // 테스트용 더미 데이터
         favoriteList.addAll(
             listOf(
-                FavoriteChat("민혁", "무서울꺼야. 하지만 계속 시도한다면 성장할거야", 1709160000000, R.drawable.friend1),
-                FavoriteChat("민혁", "넌 네가 바뀌어야 한다고 생각 안 해...", 1709160000000, R.drawable.friend1),
-                FavoriteChat("민혁", "감정적으로 살다보면 다치기 쉬워.", 1709160000000, R.drawable.friend2)
+                FavoriteChat("민혁", "무서울꺼야. 하지만 계속 시도한다면 성장할거야", 1709160000000, R.drawable.friend_choiminhyeok),
+                FavoriteChat("민혁", "넌 네가 바뀌어야 한다고 생각 안 해...", 1709160000000, R.drawable.friend_choiminhyeok),
+                FavoriteChat("민혁", "감정적으로 살다보면 다치기 쉬워.", 1709160000000, R.drawable.friend_choiminhyeok)
             )
         )
 
@@ -42,7 +41,6 @@ class FavoriteFragment : Fragment() {
             onMoveClick = { chat ->
                 //  대화로 이동 처리
             },
-
             onUnfavoriteClick = { chat ->
                 // 즐겨찾기 해제 처리
             }

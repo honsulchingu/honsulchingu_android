@@ -61,14 +61,7 @@ class LoginActivity : AppCompatActivity() {
             }
 
 
-            val jsonInput = JSONObject().apply {
-                put("id_user", "")
-                put("select_user", "")
-                put("input_user", "")
-                put("time_user", "")
-                put("start_user", "")
-                put("shown_user", "")
-            }
+            val jsonInput = JSONObject()
 
             connection.outputStream.use { it.write(jsonInput.toString().toByteArray(Charsets.UTF_8)) }
 
@@ -192,7 +185,6 @@ class LoginActivity : AppCompatActivity() {
         }
 
         // ✅ 구글 로그인
-        // 123
     }
 
     // ✅ 사용자 정보 요청

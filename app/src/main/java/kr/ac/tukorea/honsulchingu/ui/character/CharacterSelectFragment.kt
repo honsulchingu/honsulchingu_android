@@ -35,36 +35,42 @@ class CharacterSelectFragment : Fragment(R.layout.fragment_character_select) {
 
         // PageTransformer로 애니메이션 제어 (부드럽게 전환)
         binding.characterViewPager.setPageTransformer { page, position ->
-            page.alpha = 1 - Math.abs(position)  // 페이드 효과
+            page.alpha = 1 - Math.abs(position) // 페이드 효과
             page.translationX = -position * page.width // 스와이프 효과
-            page.scaleX = 1 - 0.25f * Math.abs(position)  // 크기 변화로 부드러운 전환
-            page.scaleY = 1 - 0.25f * Math.abs(position)  // 크기 변화
+            page.scaleX = 1 - 0.25f * Math.abs(position) // 크기 변화로 부드러운 전환
+            page.scaleY = 1 - 0.25f * Math.abs(position) // 크기 변화
         }
 
         // 초기 탭 색상 설정
         updateTabColors(isFriend = true)
 
+        // 초기 ViewModel 캐릭터 필터링 설정 (친구형)
+        characterViewModel.loadCharacters(requireContext()) {
+            characterViewModel.updateCharacters("친구")
+            characterPagerAdapter.notifyDataSetChanged()
+        }
+
         // 초기 ViewPager2 페이지 설정 (친구형)
-        binding.characterViewPager.setCurrentItem(0, false)  // 애니메이션 없이 페이지 전환
+        binding.characterViewPager.setCurrentItem(0, false) // 애니메이션 없이 페이지 전환
 
         // 탭 클릭 시 캐릭터 필터링 및 ViewPager2 페이지 전환
         binding.friendTab.setOnClickListener {
             // 데이터 갱신
-            characterViewModel.updateCharacters("friend")
+            characterViewModel.updateCharacters("친구")
             // 어댑터 데이터 갱신
             characterPagerAdapter.notifyDataSetChanged()
             // 애니메이션 없는 전환
-            binding.characterViewPager.setCurrentItem(0, false)  // 부드럽게 애니메이션
+            binding.characterViewPager.setCurrentItem(0, false) // 부드럽게 애니메이션
             updateTabColors(isFriend = true)
         }
 
         binding.loverTab.setOnClickListener {
             // 데이터 갱신
-            characterViewModel.updateCharacters("lover")
+            characterViewModel.updateCharacters("연인")
             // 어댑터 데이터 갱신
             characterPagerAdapter.notifyDataSetChanged()
             // 애니메이션 없는 전환
-            binding.characterViewPager.setCurrentItem(1, false)  // 부드럽게 애니메이션
+            binding.characterViewPager.setCurrentItem(1, false) // 부드럽게 애니메이션
             updateTabColors(isFriend = false)
         }
 
@@ -75,18 +81,19 @@ class CharacterSelectFragment : Fragment(R.layout.fragment_character_select) {
 
                 if (position == 0) {
                     // 데이터 갱신
-                    characterViewModel.updateCharacters("friend")
+                    characterViewModel.updateCharacters("친구")
                     // 어댑터 데이터 갱신
                     characterPagerAdapter.notifyDataSetChanged()
                     // 애니메이션 없는 전환
-                    binding.characterViewPager.setCurrentItem(0, true)  // 부드럽게 애니메이션
+                    binding.characterViewPager.setCurrentItem(0, true) // 부드럽게 애니메이션
                     updateTabColors(isFriend = true)
-                } else {
-                    characterViewModel.updateCharacters("lover")
+                }
+                else {
+                    characterViewModel.updateCharacters("연인")
                     // 어댑터 데이터 갱신
                     characterPagerAdapter.notifyDataSetChanged()
                     // 애니메이션 없는 전환
-                    binding.characterViewPager.setCurrentItem(1, true)  // 부드럽게 애니메이션
+                    binding.characterViewPager.setCurrentItem(1, true) // 부드럽게 애니메이션
                     updateTabColors(isFriend = false)
                 }
             }
@@ -96,11 +103,8 @@ class CharacterSelectFragment : Fragment(R.layout.fragment_character_select) {
         binding.characterViewPager.registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
             override fun onPageSelected(position: Int) {
                 super.onPageSelected(position)
-                if (position == 0) {
-                    updateTabColors(isFriend = true)
-                } else {
-                    updateTabColors(isFriend = false)
-                }
+                if (position == 0) updateTabColors(isFriend = true)
+                else updateTabColors(isFriend = false)
             }
         })
 
@@ -117,7 +121,8 @@ class CharacterSelectFragment : Fragment(R.layout.fragment_character_select) {
             // 연인형 탭 비선택
             binding.loverTabText.setTextColor(ContextCompat.getColor(requireContext(), R.color.gray))
             binding.loverTabUnderline.setBackgroundColor(ContextCompat.getColor(requireContext(), R.color.trans))
-        } else {
+        }
+        else {
             // 연인형 탭 선택
             binding.loverTabText.setTextColor(ContextCompat.getColor(requireContext(), R.color.purple))
             binding.loverTabUnderline.setBackgroundColor(ContextCompat.getColor(requireContext(), R.color.purple))

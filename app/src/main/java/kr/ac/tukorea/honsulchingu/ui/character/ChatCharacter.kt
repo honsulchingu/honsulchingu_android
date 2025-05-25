@@ -1,4 +1,4 @@
-package kr.ac.tukorea.honsulchingu.model
+package kr.ac.tukorea.honsulchingu.ui.character
 
 data class ChatCharacter(
     val id: Int,

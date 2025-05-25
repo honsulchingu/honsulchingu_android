@@ -1,5 +1,6 @@
 package kr.ac.tukorea.honsulchingu.ui.voice
 
+import android.content.Context.MODE_PRIVATE
 import android.os.Bundle
 import android.text.method.ScrollingMovementMethod
 import android.view.LayoutInflater
@@ -40,6 +41,8 @@ class VoiceChatFragment : Fragment() {
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        val sharedPreferences_chat = requireContext().getSharedPreferences("prefs_chat", MODE_PRIVATE)
+
         imageCharacter = view.findViewById(R.id.imageCharacter)
         textSpeech = view.findViewById(R.id.textSpeech)
         buttonMic = view.findViewById(R.id.buttonMic)
@@ -47,12 +50,11 @@ class VoiceChatFragment : Fragment() {
         chatFragmentContainer = view.findViewById(R.id.chatFragmentContainer)
         dimmedView = view.findViewById(R.id.dimmedView) // dimmedView 연결
 
-
         // 텍스트 스크롤
         textSpeech.movementMethod = ScrollingMovementMethod()
 
         // 캐릭터 정보 불러오기 - 추후 ViewModel 연동
-        imageCharacter.setImageResource(R.drawable.friend1)
+        imageCharacter.setImageResource(sharedPreferences_chat.getInt("image", R.drawable.ic_profile_placeholder))
 
         // 버튼 이벤트
         buttonMic.setOnClickListener {
@@ -76,7 +78,8 @@ class VoiceChatFragment : Fragment() {
             buttonMic.setBackgroundResource(R.drawable.bg_button_circle_large)
             buttonMic.setImageResource(R.drawable.ic_mic)
             textSpeech.text = "음성 채팅을 시작합니다..."
-        } else {
+        }
+        else {
             buttonMic.setBackgroundResource(R.drawable.bg_off_button_circle_large)
             buttonMic.setImageResource(R.drawable.ic_mic_off)
             textSpeech.text = "마이크 꺼졌어요"
@@ -127,7 +130,8 @@ class VoiceChatFragment : Fragment() {
         if (isChatVisible) {
             dimmedView.visibility = View.VISIBLE
             dimmedView.alpha = 1f
-        } else {
+        }
+        else {
             dimmedView.visibility = View.GONE
             dimmedView.alpha = 0f
         }
