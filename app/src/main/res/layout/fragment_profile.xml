@@ -50,7 +50,6 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
 
-
     <!-- 정보 카드 -->
     <androidx.cardview.widget.CardView
         android:id="@+id/infoCard"
@@ -67,8 +66,7 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
-            >
+            android:orientation="vertical">
 
             <!-- 이름 -->
             <LinearLayout
@@ -171,8 +169,8 @@
             </LinearLayout>
 
         </LinearLayout>
-    </androidx.cardview.widget.CardView>
 
+    </androidx.cardview.widget.CardView>
 
     <!-- 로그아웃 버튼 -->
     <Button
@@ -192,8 +190,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         android:clickable="true"
-        android:focusable="true"
-        />
+        android:focusable="true" />
 
     <!-- 탈퇴 버튼 -->
     <Button

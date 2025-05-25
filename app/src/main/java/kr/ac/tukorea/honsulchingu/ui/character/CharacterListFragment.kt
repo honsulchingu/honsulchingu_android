@@ -1,5 +1,6 @@
 package kr.ac.tukorea.honsulchingu.ui.character
 
+import android.content.Context.MODE_PRIVATE
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -47,14 +48,16 @@ class CharacterListFragment : Fragment() {
                 findNavController().navigate(action)
             },
             onStartChatClick = { character ->
-                // bundle에 select_user, start_user 담기
-                val bundle = Bundle().apply {
+                val sharedPreferences_chat = requireContext().getSharedPreferences("prefs_chat", MODE_PRIVATE)
+
+                sharedPreferences_chat.edit().apply {
                     putString("select_user", character.name)
                     putString("start_user", SimpleDateFormat("yyyy. MM. dd. HH-mm-ss", Locale.KOREA).format(Date(System.currentTimeMillis())))
+                    putBoolean("isFirst", true)
+                    apply()
                 }
 
-                // ChatFragment에 보내기
-                findNavController().navigate(R.id.chatFragment, bundle)
+                findNavController().navigate(R.id.nav_voiceChat)
             }
         )
 

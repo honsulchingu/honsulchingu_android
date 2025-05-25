@@ -108,7 +108,7 @@ class ChatAdapter : ListAdapter<ChatItem, RecyclerView.ViewHolder>(DiffCallback)
                 start()
             }
 
-            messageText.setOnTouchListener { v, event ->
+            messageText.setOnTouchListener { _, event ->
                 gestureDetector.onTouchEvent(event)
                 true
             }

@@ -6,6 +6,6 @@ data class ChatCharacter(
     val name: String,
     val greet: String,
     val tag: List<String>,
-    val descript: String,
-    val profileImage: Int
+    val description: String,
+    val image: Int
 )

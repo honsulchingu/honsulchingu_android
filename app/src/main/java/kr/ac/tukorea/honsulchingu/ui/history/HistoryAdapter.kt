@@ -16,17 +16,17 @@ class HistoryAdapter(
 ) : RecyclerView.Adapter<HistoryAdapter.ChatViewHolder>() {
 
     inner class ChatViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        private val imageProfile: ImageView = itemView.findViewById(R.id.imageProfile)
         private val textName: TextView = itemView.findViewById(R.id.textName)
-        private val textTime: TextView = itemView.findViewById(R.id.textTime)
         private val textMessage: TextView = itemView.findViewById(R.id.textMessage)
+        private val textTime: TextView = itemView.findViewById(R.id.textTime)
         private val tagContainer: LinearLayout = itemView.findViewById(R.id.tagContainer)
+        private val imageProfile: ImageView = itemView.findViewById(R.id.imageProfile)
 
         fun bind(item: ChatRecord) {
-            imageProfile.setImageResource(item.profileImageRes)
             textName.text = item.name.substringAfterLast("_")
-            textTime.text = Date(item.last_time).toSmartDateString()
             textMessage.text = item.last_chat
+            textTime.text = Date(item.last_time).toSmartDateString()
+            imageProfile.setImageResource(item.profileImageRes)
 
             itemView.setOnClickListener {
                 it.isPressed = true

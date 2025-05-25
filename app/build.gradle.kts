@@ -44,12 +44,15 @@ android {
 }
 
 dependencies {
-    // 추가
+    // fragment
     implementation("androidx.fragment:fragment-ktx:1.5.0")
 
-    // navigation 라이브러리
+    // navigation
     implementation ("androidx.navigation:navigation-fragment-ktx:2.7.7")
     implementation ("androidx.navigation:navigation-ui-ktx:2.7.7")
+
+    // 카카오 로그인
+    implementation("com.kakao.sdk:v2-user:2.21.3")
 
     // 기존
     implementation(libs.androidx.core.ktx)

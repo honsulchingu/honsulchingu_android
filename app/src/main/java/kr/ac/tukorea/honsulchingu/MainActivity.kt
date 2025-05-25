@@ -16,8 +16,7 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
 
         // 네비게이션 컨트롤러 얻기
-        val navHostFragment = supportFragmentManager
-            .findFragmentById(R.id.fragment_container) as NavHostFragment
+        val navHostFragment = supportFragmentManager.findFragmentById(R.id.fragment_container) as NavHostFragment
         val navController = navHostFragment.navController
 
         // BottomNavigationView 설정
@@ -98,5 +97,4 @@ class MainActivity : AppCompatActivity() {
             else -> R.anim.fade_out // 기본 부드러운 전환
         }
     }
-
 }

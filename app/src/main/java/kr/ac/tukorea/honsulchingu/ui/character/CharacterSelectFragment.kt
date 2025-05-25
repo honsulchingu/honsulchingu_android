@@ -23,7 +23,7 @@ class CharacterSelectFragment : Fragment(R.layout.fragment_character_select) {
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         _binding = FragmentCharacterSelectBinding.inflate(inflater, container, false)
 
         // ViewModel 초기화

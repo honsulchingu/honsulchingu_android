@@ -1,5 +1,6 @@
 package kr.ac.tukorea.honsulchingu.ui.history
 
+import android.content.Context.MODE_PRIVATE
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
@@ -7,16 +8,14 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import kr.ac.tukorea.honsulchingu.R
 import kr.ac.tukorea.honsulchingu.databinding.FragmentHistoryBinding
+import kr.ac.tukorea.honsulchingu.viewmodel.CharacterViewModel
 import org.json.JSONObject
-import java.io.BufferedReader
-import java.io.InputStreamReader
-import java.io.OutputStream
 import java.net.HttpURLConnection
-import java.net.URL
 import java.time.LocalDateTime
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
@@ -26,6 +25,9 @@ class HistoryFragment : Fragment() {
     private var _binding: FragmentHistoryBinding? = null
     private val binding get() = _binding!!
     private lateinit var historyAdapter: HistoryAdapter
+
+    private var chatList: MutableList<ChatRecord> = mutableListOf()
+    private val characterViewModel: CharacterViewModel by activityViewModels()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -41,14 +43,16 @@ class HistoryFragment : Fragment() {
         load_last()
 
         historyAdapter = HistoryAdapter(chatList) { chatRecord ->
-            // bundle에 select_user, start_user 담기
-            val bundle = Bundle().apply {
+            val sharedPreferences_chat = requireContext().getSharedPreferences("prefs_chat", MODE_PRIVATE)
+
+            sharedPreferences_chat.edit().apply {
                 putString("select_user", chatRecord.name)
                 putString("start_user", chatRecord.start_time)
+                putBoolean("isFirst", false)
+                apply()
             }
 
-            // ChatFragment에 보내기
-            findNavController().navigate(R.id.chatFragment, bundle)
+            findNavController().navigate(R.id.chatFragment)
         }
 
         binding.chatRecyclerView.apply {
@@ -57,88 +61,117 @@ class HistoryFragment : Fragment() {
         }
     }
 
-    private var chatList: MutableList<ChatRecord> = mutableListOf()
-
-    private fun createURL(endPoint: String): URL {
-        val IPv4 = "13.208.186.203"
-        return URL("http://$IPv4:8000$endPoint")
-    }
-
     private fun load_last() {
         Thread {
-            val url = createURL("/load_last")
+            val sharedPreferences_history = requireContext().getSharedPreferences("prefs_history", MODE_PRIVATE)
 
-            val connection = url.openConnection() as HttpURLConnection
+            val sharedPreferences_setting = requireContext().getSharedPreferences("prefs_setting", MODE_PRIVATE)
 
-            connection.requestMethod = "POST"
-            connection.setRequestProperty("Content-Type", "application/json; charset=UTF-8")
-            connection.doOutput = true
+            val jsonString = sharedPreferences_history.getString("savedChatList", "[]")
 
+            val savedChatList = try { org.json.JSONArray(jsonString).let { jsonArray -> MutableList(jsonArray.length()) { i -> ChatRecord.fromJson(jsonArray.getJSONObject(i)) } } }
+                                catch (e: Exception) { mutableListOf() }
 
-            // arguments?.getString("id_user")?.let {
-            //     chatViewModel.id_user = it
-            // }
+            val loadedChatList = run {
+                val url = characterViewModel.updateURL("/load_last")
 
-            val jsonInput = JSONObject()
-
-            // jsonInput.put("id_user", chatViewModel.id_user)
-            jsonInput.put("id_user", "alps1248@gmail.com")
-            jsonInput.put("select_user", "")
-            jsonInput.put("input_user", "")
-            jsonInput.put("time_user", "")
-            jsonInput.put("start_user", "")
-            jsonInput.put("shown_user", "true")
+                val connection = (url.openConnection() as HttpURLConnection).apply {
+                    requestMethod = "POST"
+                    setRequestProperty("Content-Type", "application/json; charset=UTF-8")
+                    doOutput = true
+                }
 
 
-            val outputStream: OutputStream = connection.outputStream
+                val jsonInput = JSONObject().apply {
+                    put("id_user", sharedPreferences_setting.getString("EMAIL", ""))
+                    put("select_user", "")
+                    put("input_user", "")
+                    put("time_user", "")
+                    put("start_user", "")
+                    put("shown_user", "true")
+                }
 
-            outputStream.write(jsonInput.toString().toByteArray(Charsets.UTF_8))
-            outputStream.flush()
-            outputStream.close()
-
-
-            val reader = BufferedReader(InputStreamReader(connection.inputStream))
-
-            val responseBuilder = StringBuilder()
-
-            var line: String?
-
-            while (reader.readLine().also { line = it } != null) responseBuilder.append(line)
-
-            reader.close()
+                connection.outputStream.use { it.write(jsonInput.toString().toByteArray(Charsets.UTF_8)) }
 
 
-            val responseJsonObject = JSONObject(responseBuilder.toString())
+                val responseString = connection.inputStream.bufferedReader().use { it.readText() }
 
-            val responseJsonArray = responseJsonObject.getJSONArray("last")
+                val responseJsonObject = JSONObject(responseString)
 
-            val chatList_temp = mutableListOf<ChatRecord>()
+                val responseJsonArray = responseJsonObject.getJSONArray("last")
 
-            for (i in 0 until responseJsonArray.length()) {
-                val responseJsonItem = responseJsonArray.getJSONObject(i)
-
-                val name = responseJsonItem.getString("select_user")
-
-                val last_chat = responseJsonItem.getString("text")
-
-                val last_time = LocalDateTime.parse(responseJsonItem.getString("time"), DateTimeFormatter.ofPattern("yyyy. MM. dd. HH-mm-ss")).atZone(ZoneId.of("Asia/Seoul")).toInstant().toEpochMilli()
-
-                val start_time = responseJsonItem.getString("start")
-
-                val tagJsonArray = responseJsonItem.getJSONArray("tag")
-
-                val tag = (0 until tagJsonArray.length()).map { i -> tagJsonArray.getString(i) }
-
-                val profileImageRes = requireContext().resources.getIdentifier(responseJsonItem.getString("image"), "drawable", requireContext().packageName)
-
-                chatList_temp.add(ChatRecord(name, last_chat, last_time, start_time, tag, profileImageRes))
+                MutableList(responseJsonArray.length()) { i ->
+                    val item = responseJsonArray.getJSONObject(i)
+                    val name = item.getString("select_user")
+                    val last_chat = item.getString("text")
+                    val last_time = LocalDateTime.parse(item.getString("time"), DateTimeFormatter.ofPattern("yyyy. MM. dd. HH-mm-ss")).atZone(ZoneId.of("Asia/Seoul")).toInstant().toEpochMilli()
+                    val start_time = item.getString("start")
+                    val profileImageRes = requireContext().resources.getIdentifier(item.getString("image"), "drawable", requireContext().packageName)
+                    ChatRecord(name, last_chat, last_time, start_time, listOf(), profileImageRes)
+                }
             }
+
+
+            val needTagUpdateChats = loadedChatList.filter { loaded ->
+                val match = savedChatList.find { it.start_time == loaded.start_time }
+                match == null || match.last_time != loaded.last_time
+            }
+
+
+            val tagUpdatedChats = needTagUpdateChats.map { chat ->
+                val url = characterViewModel.updateURL("/create_tag")
+
+                val connection = (url.openConnection() as HttpURLConnection).apply {
+                    requestMethod = "POST"
+                    setRequestProperty("Content-Type", "application/json; charset=UTF-8")
+                    doOutput = true
+                }
+
+
+                val jsonInput = JSONObject()
+
+                jsonInput.put("id_user", sharedPreferences_setting.getString("EMAIL", ""))
+                jsonInput.put("select_user", chat.name)
+                jsonInput.put("input_user", sharedPreferences_setting.getString("TAG", ""))
+                jsonInput.put("time_user", "")
+                jsonInput.put("start_user", chat.start_time)
+                jsonInput.put("shown_user", "true")
+
+                connection.outputStream.use { it.write(jsonInput.toString().toByteArray(Charsets.UTF_8)) }
+
+
+                val responseText = connection.inputStream.bufferedReader().use { it.readText() }
+
+                val responseJson = JSONObject(responseText)
+
+                val tagArray = responseJson.getJSONArray("tag")
+
+                val tagList = List(tagArray.length()) { i -> tagArray.getString(i) }
+
+                chat.copy(tag = tagList)
+            }
+
+
+            val updatedChatList = savedChatList.filter { saved -> needTagUpdateChats.none { it.start_time == saved.start_time } } + tagUpdatedChats
+
+            val chatList_temp = updatedChatList.sortedByDescending { it.last_time }.toMutableList()
 
             Handler(Looper.getMainLooper()).post {
                 chatList.clear()
                 chatList.addAll(chatList_temp)
                 historyAdapter.notifyDataSetChanged()
             }
+
+
+            val editor = sharedPreferences_history.edit()
+
+            val jsonArray = org.json.JSONArray()
+
+            for (chat in chatList_temp) jsonArray.put(chat.toJson())
+
+            editor.putString("savedChatList", jsonArray.toString())
+
+            editor.apply()
         }.start()
     }
 

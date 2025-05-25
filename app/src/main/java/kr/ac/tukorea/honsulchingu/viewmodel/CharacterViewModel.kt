@@ -5,6 +5,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import kr.ac.tukorea.honsulchingu.R
 import kr.ac.tukorea.honsulchingu.model.ChatCharacter
+import java.net.URL
 
 class CharacterViewModel : ViewModel() {
 
@@ -22,5 +23,11 @@ class CharacterViewModel : ViewModel() {
     fun updateCharacters(type: String) {
         val filteredList = allCharacters.filter { it.type == type }
         _filteredCharacters.value = filteredList
+    }
+
+    // 특정 앤드포인트의 URL 업데이트
+    fun updateURL(endPoint: String): URL {
+        val IPv4 = "13.208.186.203"
+        return URL("http://$IPv4:8000$endPoint")
     }
 }

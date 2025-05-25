@@ -18,13 +18,13 @@ class CharacterListAdapter(
         RecyclerView.ViewHolder(binding.root) {
 
         fun bind(character: ChatCharacter) {
-            binding.characterName.text = character.name
+            binding.characterName.text = character.name.substringAfterLast("_")
             binding.characterMessage.text = character.greet
             binding.characterTag1.text = character.tag[0]
             binding.characterTag2.text = character.tag[1]
             binding.characterTag3.text = character.tag[2]
-            binding.characterDescription.text = character.descript
-            binding.characterImage.setImageResource(character.profileImage)
+            binding.characterDescription.text = character.description
+            binding.characterImage.setImageResource(character.image)
 
             // 클릭 이벤트 처리
             binding.root.setOnClickListener {
