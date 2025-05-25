@@ -85,7 +85,7 @@ class ChatFragment : Fragment() {
             binding.loadingText.visibility = View.GONE
             binding.recyclerViewChat.visibility = View.VISIBLE
             handler.removeCallbacks(loadingTextRunnable)
-        }, 3000) // 3초 후 제거. 필요 시 데이터 로딩 완료 기준으로 조정 가능
+        }, 2000) // 3초 후 제거. 필요 시 데이터 로딩 완료 기준으로 조정 가능
 
 
         setupRecyclerView()

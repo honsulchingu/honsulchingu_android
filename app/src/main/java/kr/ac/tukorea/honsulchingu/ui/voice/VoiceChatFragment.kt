@@ -1,6 +1,6 @@
 package kr.ac.tukorea.honsulchingu.ui.voice
 
-import ChatAdapter
+import android.graphics.Color
 import android.os.Bundle
 import android.text.method.ScrollingMovementMethod
 import android.view.LayoutInflater
@@ -11,11 +11,11 @@ import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentContainerView
 import androidx.navigation.fragment.findNavController
+import com.airbnb.lottie.LottieAnimationView
 import com.google.android.material.imageview.ShapeableImageView
 import kr.ac.tukorea.honsulchingu.R
 import kr.ac.tukorea.honsulchingu.navigation.NavAnimationUtil
 import kr.ac.tukorea.honsulchingu.ui.chat.ChatFragment
-import kr.ac.tukorea.honsulchingu.ui.chat.ChatMessage
 
 class VoiceChatFragment : Fragment() {
 
@@ -25,10 +25,11 @@ class VoiceChatFragment : Fragment() {
     private lateinit var buttonMic: ImageButton
     private lateinit var buttonChat: ImageButton
     private lateinit var dimmedView: View
-    private lateinit var chatAdapter: ChatAdapter
-    private lateinit var chatMessages: MutableList<ChatMessage>
+    private lateinit var micLottie: LottieAnimationView
+    private lateinit var LodingDotLottie: LottieAnimationView
 
-    private var isMicOn = false
+    private var isRecording = false
+    private var isWaitingForAnswer = false
     private var isChatVisible = false
 
     override fun onCreateView(
@@ -46,7 +47,8 @@ class VoiceChatFragment : Fragment() {
         buttonChat = view.findViewById(R.id.buttonChat)
         chatFragmentContainer = view.findViewById(R.id.chatFragmentContainer)
         dimmedView = view.findViewById(R.id.dimmedView) // dimmedView 연결
-
+        micLottie = view.findViewById(R.id.micLottie)
+        LodingDotLottie = view.findViewById(R.id.voiceWaveLottie)
 
         // 텍스트 스크롤
         textSpeech.movementMethod = ScrollingMovementMethod()
@@ -56,8 +58,32 @@ class VoiceChatFragment : Fragment() {
 
         // 버튼 이벤트
         buttonMic.setOnClickListener {
-            isMicOn = !isMicOn
+            // 테스트용: 녹음 상태 → 대기 상태 → 기본 상태 순환
+            // 대기 상태는 AI 응답 시간에 쓰일 예정
+            when {
+                !isRecording && !isWaitingForAnswer -> {
+                    isRecording = true
+                    isWaitingForAnswer = false
+                }
+                isRecording -> {
+                    isRecording = false
+                    isWaitingForAnswer = true
+                }
+                else -> {
+                    isRecording = false
+                    isWaitingForAnswer = false
+                }
+            }
             updateMicUI()
+        }
+
+
+        micLottie.setOnClickListener {
+            if (isRecording) {
+                isRecording = false
+                isWaitingForAnswer = true
+                updateMicUI()
+            }
         }
 
         buttonChat.setOnClickListener {
@@ -68,16 +94,64 @@ class VoiceChatFragment : Fragment() {
 
 
     private fun updateMicUI() {
-        if (isMicOn) {
-            buttonMic.setBackgroundResource(R.drawable.bg_button_circle_large)
-            buttonMic.setImageResource(R.drawable.ic_mic2)
-            textSpeech.text = "음성 채팅 시작..."
-        } else {
-            buttonMic.setBackgroundResource(R.drawable.bg_off_button_circle_large)
-            buttonMic.setImageResource(R.drawable.ic_mic_off)
-            textSpeech.text = "AI 대답 위치"
+        when {
+            isRecording -> {
+                buttonMic.visibility = View.GONE
+                micLottie.visibility = View.VISIBLE
+                micLottie.setAnimation("mic_recording.json")
+                micLottie.playAnimation()
+
+                buttonMic.setBackgroundResource(R.drawable.bg_mic_recording)
+                buttonMic.setImageResource(R.drawable.ic_mic_recording)
+                buttonMic.setColorFilter(Color.WHITE)
+
+                textSpeech.visibility = View.VISIBLE
+                textSpeech.text = "술 이야기 듣는 중..."
+
+                LodingDotLottie.visibility = View.GONE
+                LodingDotLottie.cancelAnimation()
+            }
+
+
+            // 이부분은 나중에 AI 응답 대기할때 쓸 것
+            isWaitingForAnswer -> {
+                buttonMic.visibility = View.VISIBLE
+                micLottie.visibility = View.GONE
+                micLottie.cancelAnimation()
+
+                buttonMic.setBackgroundResource(R.drawable.bg_mic_waiting)
+                buttonMic.setImageResource(R.drawable.ic_mic_off)
+                buttonMic.setColorFilter(Color.parseColor("#D0C5F9"))
+
+                // 대기 상태일 때 빈 텍스트
+                textSpeech.text = ""
+
+                LodingDotLottie.visibility = View.VISIBLE
+                LodingDotLottie.setAnimation("loading_dot.json")
+                LodingDotLottie.playAnimation()
+            }
+
+            else -> {
+                buttonMic.visibility = View.VISIBLE
+                micLottie.visibility = View.GONE
+                micLottie.cancelAnimation()
+
+                buttonMic.setBackgroundResource(R.drawable.bg_mic_idle)
+                buttonMic.setImageResource(R.drawable.ic_mic_idle)
+                buttonMic.setColorFilter(Color.parseColor("#5B2DB3"))
+
+                textSpeech.visibility = View.VISIBLE
+                textSpeech.text = "혼술 대기 중"
+
+                LodingDotLottie.visibility = View.GONE
+                LodingDotLottie.cancelAnimation()
+            }
         }
     }
+
+
+
+
 
     private fun showChatFragment() {
         val navController = findNavController()

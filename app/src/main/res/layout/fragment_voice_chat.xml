@@ -7,10 +7,19 @@
     android:layout_height="match_parent"
     android:paddingStart="24dp"
     android:paddingEnd="24dp"
-    android:background="@drawable/bg_voicechat">
+    android:background="@drawable/bg_voicechat"
+    android:clipChildren="false">
+
+    <!-- 세로 가이드라인 (버튼 위치 조절용) -->
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guideline_start"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_percent="0.5" />
 
 
-    <!--배경 흐림도-->
+    <!-- 배경 흐림도 -->
     <View
         android:id="@+id/dimmedView"
         android:layout_width="0dp"
@@ -24,59 +33,106 @@
         app:layout_constraintEnd_toEndOf="parent" />
 
 
-
-    <!-- 캐릭터 이미지 -->
-    <com.google.android.material.imageview.ShapeableImageView
-        android:id="@+id/imageCharacter"
+    <FrameLayout
+        android:id="@+id/imageFrame"
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:layout_marginBottom="16dp"
         android:layout_marginTop="104dp"
-        android:scaleType="centerCrop"
-        app:shapeAppearanceOverlay="@style/CircleImage"
+        android:background="@drawable/profile_border"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintBottom_toTopOf="@id/textSpeech"
+        app:layout_constraintBottom_toTopOf="@id/speechWaveContainer"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintDimensionRatio="1:1"
         app:layout_constraintHeight_percent="0.35"
-        android:visibility="visible" /> <!-- 초기에는 보임 -->
+        >
+    <!-- 캐릭터 이미지 -->
+    <com.google.android.material.imageview.ShapeableImageView
+        android:id="@+id/imageCharacter"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_margin="5dp"
+        android:scaleType="centerCrop"
+        app:shapeAppearanceOverlay="@style/CircleImage"
+        app:layout_constraintDimensionRatio="1:1"
+        app:layout_constraintHeight_percent="0.35" />
+    </FrameLayout>
 
-    <!-- 대화 텍스트 -->
-    <TextView
-        android:id="@+id/textSpeech"
+    <!-- textSpeech와 voiceWaveLottie를 감싸는 FrameLayout 추가 -->
+    <FrameLayout
+        android:id="@+id/speechWaveContainer"
         android:layout_width="0dp"
-        android:layout_height="80dp"
-        android:maxLines="3"
-        android:scrollbars="vertical"
-        android:overScrollMode="ifContentScrolls"
-        android:text="요즘 제일 웃겼던 일 있어?\n말해주면 나도 하나 말해줄게.\nㅋㅋㅋㅋㅋㅋ\n진짜 웃김\n헐 대박\n이거 진짜야?\n믿기지 않지?"
-        android:textColor="@android:color/white"
-        android:textSize="16sp"
-        android:gravity="center"
-        android:textAlignment="center"
-        android:fontFamily="@font/pretendard_medium"
-        app:layout_constraintTop_toBottomOf="@id/imageCharacter"
-        app:layout_constraintBottom_toTopOf="@id/buttonMic"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toBottomOf="@id/imageFrame"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="40dp">
 
+        <!-- 대화 텍스트 -->
+        <TextView
+            android:id="@+id/textSpeech"
+            android:layout_width="match_parent"
+            android:layout_height="80dp"
+            android:maxLines="3"
+            android:scrollbars="vertical"
+            android:overScrollMode="ifContentScrolls"
+            android:text="요즘 제일 웃겼던 일 있어?\n말해주면 나도 하나 말해줄게.\nㅋㅋㅋㅋㅋㅋ\n진짜 웃김\n헐 대박\n이거 진짜야?\n믿기지 않지?"
+            android:textColor="@color/bg_color"
+            android:textSize="16sp"
+            android:gravity="center"
+            android:textAlignment="center"
+            android:fontFamily="@font/pretendard_medium"
+            android:scaleType="centerInside"
+            />
 
-    <!-- 마이크 버튼 -->
-    <ImageButton
-        android:id="@+id/buttonMic"
+        <!-- 🆕 Lottie 파형 뷰, 텍스트 위에 겹치도록 -->
+        <com.airbnb.lottie.LottieAnimationView
+            android:id="@+id/voiceWaveLottie"
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:layout_gravity="center"
+            android:scaleType="centerInside"
+            app:lottie_autoPlay="false"
+            app:lottie_loop="true"
+            app:lottie_fileName="loading_dot.json"
+            android:visibility="invisible"/>
+    </FrameLayout>
+
+    <FrameLayout
+        android:id="@+id/micContainer"
         android:layout_width="96dp"
         android:layout_height="96dp"
-        android:background="@drawable/bg_button_circle_large"
-        android:src="@drawable/ic_mic2"
-        android:contentDescription="Mic"
-        android:padding="16dp"
-        android:scaleType="centerInside"
-        app:layout_constraintTop_toBottomOf="@id/textSpeech"
+        android:clipToPadding="false"
+        android:clipChildren="false"
+        app:layout_constraintTop_toBottomOf="@id/speechWaveContainer"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toStartOf="@id/buttonChat"
-        android:layout_marginEnd="16dp" />
+        app:layout_constraintEnd_toStartOf="@id/guideline_start">
+
+        <ImageButton
+            android:id="@+id/buttonMic"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@drawable/bg_mic_idle"
+            android:src="@drawable/ic_mic_idle"
+            android:scaleType="centerInside" />
+
+
+        <com.airbnb.lottie.LottieAnimationView
+            android:id="@+id/micLottie"
+            android:layout_width="220dp"
+            android:layout_height="220dp"
+            android:layout_gravity="center"
+            android:visibility="gone"
+            android:scaleType="centerCrop"
+            app:lottie_fileName="mic_recording.json"
+            app:lottie_autoPlay="false"
+            app:lottie_loop="true"
+            />
+    </FrameLayout>
+
+
 
     <!-- 채팅 버튼 -->
     <ImageButton
@@ -85,15 +141,11 @@
         android:layout_height="72dp"
         android:background="@drawable/bg_button_circle"
         android:src="@drawable/ic_message"
-        android:contentDescription="Chat"
-        android:padding="16dp"
         android:scaleType="centerInside"
-        app:layout_constraintTop_toBottomOf="@id/textSpeech"
+        app:layout_constraintTop_toBottomOf="@id/speechWaveContainer"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toEndOf="@id/buttonMic"
-        app:layout_constraintEnd_toEndOf="parent"
-        android:layout_marginStart="16dp" />
-
+        app:layout_constraintStart_toEndOf="@id/guideline_start"
+        app:layout_constraintEnd_toEndOf="parent" />
 
     <!-- 채팅 프래그먼트 -->
     <androidx.fragment.app.FragmentContainerView

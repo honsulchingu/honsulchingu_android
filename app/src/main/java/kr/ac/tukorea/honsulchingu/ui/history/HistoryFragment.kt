@@ -103,7 +103,7 @@ class HistoryFragment : Fragment() {
             // 메시지 변경 중단
             handler.removeCallbacks(loadingTextRunnable)
 
-        }, 5000)
+        }, 2000)
     }
 
     private fun parseDateToMillis(dateString: String): Long {
