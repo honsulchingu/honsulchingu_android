@@ -105,10 +105,9 @@
             android:id="@+id/unfavButtonWrapper"
             android:layout_width="60dp"
             android:layout_height="60dp"
-            android:layout_marginEnd="20dp"
             android:background="?attr/selectableItemBackground"
             app:layout_constraintTop_toBottomOf="@id/messageContainer"
-            app:layout_constraintEnd_toStartOf="@id/moveButton">
+            app:layout_constraintStart_toStartOf="@id/messageContainer">
 
             <ImageButton
                 android:id="@+id/unfavButton"
@@ -116,7 +115,7 @@
                 android:layout_height="40dp"
                 android:src="@drawable/ic_delete"
                 android:background="?attr/selectableItemBackground"
-                android:layout_gravity="center" />
+                android:layout_gravity="center_vertical" />
         </FrameLayout>
         <!-- 대화 이동 버튼 -->
         <androidx.appcompat.widget.AppCompatButton
