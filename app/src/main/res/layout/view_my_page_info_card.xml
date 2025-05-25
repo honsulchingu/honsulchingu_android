@@ -31,7 +31,7 @@
                 android:id="@+id/text_join_date_value"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="2024년 3월"
+                android:text="2025년 5월"
                 android:textColor="@color/purple"
                 android:textSize="14sp"
                 android:fontFamily="@font/pretendard_bold"

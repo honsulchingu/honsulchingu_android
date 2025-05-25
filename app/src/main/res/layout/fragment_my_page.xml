@@ -47,17 +47,28 @@
             android:orientation="horizontal"
             android:gravity="center_vertical">
 
-            <ImageView
+            <FrameLayout
+                android:id="@+id/profileImageContainer"
                 android:layout_width="64dp"
                 android:layout_height="64dp"
-                android:src="@drawable/ic_app_logo"
-                android:background="@drawable/bg_button_circle"
-                android:padding="12dp" />
+                android:background="@drawable/bg_button_white">
 
+            <!-- 실제 프로필 이미지 -->
+            <com.google.android.material.imageview.ShapeableImageView
+                android:id="@+id/profileImage"
+                android:layout_width="64dp"
+                android:layout_height="64dp"
+                android:padding="3dp"
+                android:background="@drawable/bg_button_white"
+                android:src="@drawable/friend1"
+                android:scaleType="centerCrop"
+                app:shapeAppearanceOverlay="@style/CircleImage" />
+            />
+            </FrameLayout>
             <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="16dp"
+                android:layout_marginStart="24dp"
                 android:orientation="vertical">
 
                 <TextView
@@ -66,15 +77,10 @@
                     android:text="김혼술"
                     android:textSize="16sp"
                     android:fontFamily="@font/pretendard_bold"
-                    android:textColor="@android:color/white" />
+                    android:textColor="@color/bg_color"
+                    android:layout_marginBottom="10dp"
+                    />
 
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="혼술러"
-                    android:textSize="14sp"
-                    android:fontFamily="@font/pretendard_medium"
-                    android:textColor="@android:color/white" />
 
                 <TextView
                     android:layout_width="wrap_content"
@@ -82,7 +88,7 @@
                     android:text="user@kakao.com"
                     android:textSize="13sp"
                     android:fontFamily="@font/pretendard_light"
-                    android:textColor="@android:color/white" />
+                    android:textColor="@color/bg_color" />
             </LinearLayout>
         </LinearLayout>
     </LinearLayout>
