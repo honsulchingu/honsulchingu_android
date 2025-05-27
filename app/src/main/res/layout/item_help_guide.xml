@@ -1,5 +1,4 @@
-<androidx.cardview.widget.CardView
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
@@ -8,10 +7,10 @@
     app:cardElevation="1dp">
 
     <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/container"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:padding="16dp"
-        android:id="@+id/container">
+        android:padding="16dp">
 
         <!-- 가이드 아이콘 -->
         <ImageView
@@ -27,13 +26,13 @@
             android:id="@+id/guide_text"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:text="음성 채팅 기능 사용하기"
-            android:textSize="14sp"
-            android:textColor="@color/info_black"
             android:layout_marginStart="8dp"
+            android:text="음성 채팅 기능 사용하기"
+            android:textColor="@color/info_black"
+            android:textSize="14sp"
+            app:layout_constraintEnd_toStartOf="@id/guide_arrow"
             app:layout_constraintStart_toEndOf="@id/guide_icon"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintEnd_toStartOf="@id/guide_arrow" />
+            app:layout_constraintTop_toTopOf="parent" />
 
         <!-- 화살표 아이콘 -->
         <ImageView
@@ -49,15 +48,16 @@
             android:id="@+id/guide_answer"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:text="여기에는 음성 채팅 기능을 어떻게 사용하는지에 대한 설명이 들어갑니다."
-            android:textSize="12sp"
-            android:textColor="#555555"
             android:layout_marginTop="12dp"
-            android:visibility="gone"
             android:alpha="0.0"
-            app:layout_constraintTop_toBottomOf="@id/guide_icon"
+            android:text="기능설명 기능설명 기능설명 기능설명"
+            android:textColor="#555555"
+            android:textSize="12sp"
+            android:visibility="gone"
+            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent" />
+            app:layout_constraintTop_toBottomOf="@id/guide_icon" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
+
 </androidx.cardview.widget.CardView>

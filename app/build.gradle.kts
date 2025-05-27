@@ -54,6 +54,12 @@ dependencies {
     // 카카오 로그인
     implementation("com.kakao.sdk:v2-user:2.21.3")
 
+    // Lottie 애니메이션
+    implementation ("com.airbnb.android:lottie:6.4.0")
+
+    // URL 이미지 로딩
+    implementation("io.coil-kt:coil:2.4.0")
+
     // 기존
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)

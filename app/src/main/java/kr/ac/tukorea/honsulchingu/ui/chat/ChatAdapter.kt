@@ -2,7 +2,12 @@ package kr.ac.tukorea.honsulchingu.ui.chat
 
 import android.animation.ObjectAnimator
 import android.content.ClipData
+import android.content.ClipboardManager
 import android.content.Context
+import android.content.Context.MODE_PRIVATE
+import android.os.Build
+import android.os.VibrationEffect
+import android.os.Vibrator
 import android.view.GestureDetector
 import android.view.LayoutInflater
 import android.view.MotionEvent
@@ -13,16 +18,11 @@ import android.widget.TextView
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
-import android.os.VibrationEffect
-import android.os.Vibrator
-import android.os.Build
+import com.google.android.material.imageview.ShapeableImageView
 import kr.ac.tukorea.honsulchingu.R
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
-import android.content.ClipboardManager
-import android.content.Context.MODE_PRIVATE
-import com.google.android.material.imageview.ShapeableImageView
 
 class ChatAdapter(private val context: Context) : ListAdapter<ChatItem, RecyclerView.ViewHolder>(DiffCallback) {
 

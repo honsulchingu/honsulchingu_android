@@ -9,7 +9,7 @@ data class ChatRecord(
     val last_time: Long,
     val start_time: String,
     val tag: List<String>,
-    val profileImageRes: Int
+    val image: Int
 ) {
     fun toJson(): JSONObject {
         val json = JSONObject()
@@ -18,7 +18,7 @@ data class ChatRecord(
         json.put("last_time", last_time)
         json.put("start_time", start_time)
         json.put("tag", JSONArray(tag))
-        json.put("profileImageRes", profileImageRes)
+        json.put("image", image)
         return json
     }
 
@@ -33,7 +33,7 @@ data class ChatRecord(
                 json.getLong("last_time"),
                 json.getString("start_time"),
                 tagList,
-                json.getInt("profileImageRes")
+                json.getInt("image")
             )
         }
     }

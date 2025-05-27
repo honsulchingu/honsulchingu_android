@@ -48,64 +48,6 @@ class LoginActivity : AppCompatActivity() {
             insets
         }
 
-        // ✅ 기본 셋팅 값 DB 로딩
-        val sharedPreferences_setting = getSharedPreferences("prefs_setting", MODE_PRIVATE)
-
-        Thread {
-            val url = characterViewModel.updateURL("/load_setting")
-
-            val connection = (url.openConnection() as HttpURLConnection).apply {
-                requestMethod = "POST"
-                setRequestProperty("Content-Type", "application/json; charset=UTF-8")
-                doOutput = true
-            }
-
-
-            val jsonInput = JSONObject()
-
-            connection.outputStream.use { it.write(jsonInput.toString().toByteArray(Charsets.UTF_8)) }
-
-
-            val responseJson = JSONObject(connection.inputStream.bufferedReader().use { it.readText() })
-
-            val KAKAO = responseJson.getString("kakao")
-
-            val BEGIN = responseJson.getString("begin")
-
-            val TAG = responseJson.getString("tag")
-
-            sharedPreferences_setting.edit().apply {
-                putString("BEGIN", BEGIN)
-                putString("TAG", TAG)
-                apply()
-            }
-
-            Handler(Looper.getMainLooper()).post {
-                KakaoSdk.init(this, KAKAO)
-
-                // ✅ 자동 로그인
-                if (AuthApiClient.instance.hasToken()) {
-                    UserApiClient.instance.accessTokenInfo { tokenInfo, error ->
-                        if (error != null) {
-                            if (error is KakaoSdkError && error.isInvalidTokenError() == true) Log.w("db", "유효하지 않은 토큰 ID: {${tokenInfo?.id}}")
-                            else Log.e("db", "토큰 정보 보기 실패", error)
-                        }
-                        else if (tokenInfo != null) {
-                            Log.i("db", "토큰 정보 보기 성공 ID: ${tokenInfo.id} (만료 시간: ${tokenInfo.expiresIn}초)")
-                            requestUserAdditionalScopes(sharedPreferences_setting) {
-                                startActivity(Intent(this, MainActivity::class.java))
-                                overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out)
-                                finish()
-                            }
-                        }
-                    }
-                }
-                else {
-                    Log.d("db", "토큰 정보 없음")
-                }
-            }
-        }.start()
-
         // ✅ 로그인 카드, 텍스트, 버튼 초기 설정
         val loginCard = findViewById<androidx.constraintlayout.widget.ConstraintLayout>(R.id.loginCard)
         val welcomeText = findViewById<TextView>(R.id.welcomeText)
@@ -140,7 +82,44 @@ class LoginActivity : AppCompatActivity() {
             }
         })
 
+        // ✅ 기본 셋팅 값 DB 로딩
+        Thread {
+            Thread.sleep(800) // 800ms 지연, 애니메이션 전환
+
+            val sharedPreferences_setting = getSharedPreferences("prefs_setting", MODE_PRIVATE)
+
+            val url = characterViewModel.updateURL("/load_setting")
+
+            val connection = (url.openConnection() as HttpURLConnection).apply {
+                requestMethod = "POST"
+                setRequestProperty("Content-Type", "application/json; charset=UTF-8")
+                doOutput = true
+            }
+
+
+            val jsonInput = JSONObject()
+
+            connection.outputStream.use { it.write(jsonInput.toString().toByteArray(Charsets.UTF_8)) }
+
+
+            val responseJson = JSONObject(connection.inputStream.bufferedReader().use { it.readText() })
+
+            val KAKAO = responseJson.getString("kakao")
+
+            val BEGIN = responseJson.getString("begin")
+
+            val TAG = responseJson.getString("tag")
+
+            sharedPreferences_setting.edit().apply {
+                putString("BEGIN", BEGIN)
+                putString("TAG", TAG)
+                apply()
+            }
+        }.start()
+
         kakaoLoginButton.setOnClickListener {
+            val sharedPreferences_setting = getSharedPreferences("prefs_setting", MODE_PRIVATE)
+
             // ✅ 로그인
             val callback: (OAuthToken?, Throwable?) -> Unit = { token, error ->
                 if (error != null) {
@@ -148,6 +127,7 @@ class LoginActivity : AppCompatActivity() {
                 }
                 else if (token != null) {
                     Log.i("db", "카카오계정으로 로그인 성공 ID: ${token.accessToken}")
+
                     requestUserAdditionalScopes(sharedPreferences_setting) {
                         startActivity(Intent(this, MainActivity::class.java))
                         overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out)
@@ -171,6 +151,7 @@ class LoginActivity : AppCompatActivity() {
                     }
                     else if (token != null) {
                         Log.i("db", "카카오톡으로 로그인 성공 ID: ${token.accessToken}")
+
                         requestUserAdditionalScopes(sharedPreferences_setting) {
                             startActivity(Intent(this, MainActivity::class.java))
                             overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out)
@@ -192,6 +173,8 @@ class LoginActivity : AppCompatActivity() {
         UserApiClient.instance.me { user, error ->
             if (error != null) {
                 Log.e("db", "사용자 정보 요청 실패", error)
+
+                onComplete()
             }
             else if (user != null) {
                 val scopes = mutableListOf<String>()
@@ -204,12 +187,17 @@ class LoginActivity : AppCompatActivity() {
                     UserApiClient.instance.loginWithNewScopes(this, scopes) { token, error ->
                         if (error != null) {
                             Log.e("db", "사용자 추가 동의 실패", error)
+
+                            onComplete()
                         }
                         else {
                             Log.d("db", "허용된 동의 항목: ${token?.scopes}")
+
                             UserApiClient.instance.me { user, error ->
                                 if (error != null) {
                                     Log.e("db", "사용자 정보 요청 실패", error)
+
+                                    onComplete()
                                 }
                                 else if (user != null) {
                                     Log.d("db", "사용자 정보 요청 성공")
@@ -235,15 +223,19 @@ class LoginActivity : AppCompatActivity() {
 
 
                                         connection.inputStream.bufferedReader().use { it.readText() }
+
+                                        sharedPreferences_setting.edit().apply {
+                                            putString("EMAIL", "kakao_" + user.kakaoAccount?.email)
+                                            putString("NICKNAME", user.kakaoAccount?.profile?.nickname)
+                                            putString("IMAGE", user.kakaoAccount?.profile?.thumbnailImageUrl)
+                                            apply()
+                                        }
+
+                                        Log.d("db", "if")
+                                        Log.d("db", sharedPreferences_setting.getString("EMAIL", "") ?: "")
+                                        Log.d("db", sharedPreferences_setting.getString("NICKNAME", "") ?: "")
+                                        Log.d("db", sharedPreferences_setting.getString("IMAGE", "") ?: "")
                                     }.start()
-
-
-                                    sharedPreferences_setting.edit().apply {
-                                        putString("EMAIL", "kakao_" + user.kakaoAccount?.email)
-                                        putString("NICKNAME", user.kakaoAccount?.profile?.nickname)
-                                        putString("IMAGE", user.kakaoAccount?.profile?.thumbnailImageUrl)
-                                        apply()
-                                    }
 
                                     onComplete()
                                 }
@@ -273,19 +265,19 @@ class LoginActivity : AppCompatActivity() {
 
 
                         connection.inputStream.bufferedReader().use { it.readText() }
+
+                        sharedPreferences_setting.edit().apply {
+                            putString("EMAIL", "kakao_" + user.kakaoAccount?.email)
+                            putString("NICKNAME", user.kakaoAccount?.profile?.nickname)
+                            putString("IMAGE", user.kakaoAccount?.profile?.thumbnailImageUrl)
+                            apply()
+                        }
+
+                        Log.d("db", "else")
+                        Log.d("db", sharedPreferences_setting.getString("EMAIL", "") ?: "")
+                        Log.d("db", sharedPreferences_setting.getString("NICKNAME", "") ?: "")
+                        Log.d("db", sharedPreferences_setting.getString("IMAGE", "") ?: "")
                     }.start()
-
-
-                    Log.d("db", sharedPreferences_setting.getString("EMAIL", "") ?: "")
-                    Log.d("db", sharedPreferences_setting.getString("NICKNAME", "") ?: "")
-                    Log.d("db", sharedPreferences_setting.getString("IMAGE", "") ?: "")
-
-                    sharedPreferences_setting.edit().apply {
-                        putString("EMAIL", "kakao_" + user.kakaoAccount?.email)
-                        putString("NICKNAME", user.kakaoAccount?.profile?.nickname)
-                        putString("IMAGE", user.kakaoAccount?.profile?.thumbnailImageUrl)
-                        apply()
-                    }
 
                     onComplete()
                 }

@@ -10,35 +10,36 @@
         android:id="@+id/headerLayout"
         android:layout_width="0dp"
         android:layout_height="0dp"
+        android:background="@drawable/gradient_background"
         android:orientation="vertical"
         android:paddingStart="24dp"
         android:paddingTop="64dp"
         android:paddingEnd="24dp"
-        android:background="@drawable/gradient_background"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHeight_percent="0.2">
+        app:layout_constraintHeight_percent="0.2"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
 
         <TextView
             android:id="@+id/titleText"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:fontFamily="@font/pretendard_bold"
             android:text="대화기록"
             android:textColor="@color/white"
             android:textSize="20sp"
-            android:textStyle="bold"
-            android:fontFamily="@font/pretendard_bold" />
+            android:textStyle="bold" />
 
         <TextView
             android:id="@+id/subtitleText"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:fontFamily="@font/pretendard_medium"
             android:text="이전에 나눴던 대화를 찾아보세요"
             android:textColor="@color/white"
-            android:textSize="14sp"
-            android:layout_marginTop="10dp"
-            android:fontFamily="@font/pretendard_medium" />
+            android:textSize="14sp" />
+
     </LinearLayout>
 
     <!-- RecyclerView -->
@@ -46,9 +47,57 @@
         android:id="@+id/chatRecyclerView"
         android:layout_width="0dp"
         android:layout_height="0dp"
+        android:layout_marginStart="10dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="10dp"
         android:clipToPadding="false"
-        app:layout_constraintTop_toBottomOf="@id/headerLayout"
         app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
+        app:layout_constraintTop_toBottomOf="@id/headerLayout" />
+
+    <TextView
+        android:id="@+id/loadingInitText"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:fontFamily="@font/pretendard_medium"
+        android:gravity="center"
+        android:text="아직 대화한 기록이 없어요"
+        android:textSize="16sp"
+        android:visibility="invisible"
+        android:textColor="@color/info_black"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/headerLayout" />
+
+    <!-- 로딩 애니메이션 -->
+    <com.airbnb.lottie.LottieAnimationView
+        android:id="@+id/loadingAnimation"
+        android:layout_width="150dp"
+        android:layout_height="150dp"
+        android:layout_marginTop="32dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/headerLayout"
+        app:lottie_autoPlay="true"
+        app:lottie_fileName="loading_wine.json"
+        app:lottie_loop="true" />
+
+    <!-- 로딩 메시지 -->
+    <TextView
+        android:id="@+id/loadingText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:fontFamily="@font/pretendard_medium"
+        android:text="가나다라"
+        android:textColor="@color/info_black"
+        android:textSize="16sp"
+        android:visibility="gone"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/loadingAnimation" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -18,10 +18,12 @@ class CharacterViewModel : ViewModel() {
 
     private val allCharacters = mutableListOf<ChatCharacter>()
 
+    var greet_live = MutableLiveData<String>()
+    var chatcount_live = MutableLiveData<Int>()
+
     // 특정 타입의 캐릭터 업데이트
     fun updateCharacters(type: String) {
-        val filteredList = allCharacters.filter { it.type == type }
-        _filteredCharacters.value = filteredList
+        _filteredCharacters.value = allCharacters.filter { it.type == type }
     }
 
     // 특정 앤드포인트의 URL 업데이트
@@ -33,6 +35,8 @@ class CharacterViewModel : ViewModel() {
     // 캐릭터 리스트 DB 로딩 후 업데이트
     fun loadCharacters(context: Context, onLoaded: () -> Unit) {
         Thread {
+            Thread.sleep(100) // 100ms 지연, 애니메이션 전환
+
             val url = updateURL("/load_character")
 
             val connection = (url.openConnection() as HttpURLConnection).apply {
@@ -60,7 +64,7 @@ class CharacterViewModel : ViewModel() {
                 val tag = item.getString("tag").split(',').map { it.trim() }
                 val description = item.getString("description")
                 val image = context.resources.getIdentifier(item.getString("image"), "drawable", context.packageName)
-                ChatCharacter(i, name.substringBeforeLast('_'), name.substringAfterLast('_'), greet, tag, description, image)
+                ChatCharacter(i, name.substringBefore('_'), name.substringAfter('_'), greet, tag, description, image)
             }
 
 
