@@ -1,5 +1,4 @@
-<androidx.constraintlayout.widget.ConstraintLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
@@ -13,63 +12,77 @@
         android:layout_height="40dp"
         android:layout_marginStart="16dp"
         android:src="@drawable/ic_profile_placeholder"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintVertical_bias="0.5"
         app:shapeAppearanceOverlay="@style/RoundedCornerImageView" />
 
-    <!-- 말풍선 + 시간 + 하트 묶음 -->
+    <!-- 전체 말풍선 + 부가정보 묶음 -->
     <androidx.constraintlayout.widget.ConstraintLayout
-        android:layout_width="wrap_content"
+        android:id="@+id/bubbleWrapper"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
-        app:layout_constraintStart_toEndOf="@id/chatCharacterImage"
-        app:layout_constraintTop_toTopOf="parent"
+        android:layout_marginEnd="16dp"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintVertical_bias="0.5">
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@id/chatCharacterImage"
+        app:layout_constraintTop_toTopOf="parent">
 
-        <!-- 메시지 텍스트 -->
-        <TextView
-            android:id="@+id/messageText"
+        <!-- 말풍선 내부 내용 (Text + 하트 + 시간) -->
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/bubbleContent"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:maxWidth="162dp"
-            android:background="@drawable/chat_bubble_ai"
-            android:padding="12dp"
-            android:text="AI의 메시지가 여기 들어갑니다."
-            android:textColor="@android:color/black"
-            android:fontFamily="@font/pretendard_medium"
-            android:textSize="14sp"
-            app:layout_constraintTop_toTopOf="parent"
+            android:maxWidth="260dp"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toStartOf="parent"/>
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
 
-        <!-- 하트 버튼 -->
-        <ImageButton
-            android:id="@+id/btnHeart"
-            android:layout_width="20dp"
-            android:layout_height="20dp"
-            android:layout_marginStart="4dp"
-            android:layout_marginBottom="4dp"
-            android:src="@drawable/ic_heart"
-            android:background="@android:color/transparent"
-            android:contentDescription="하트"
-            android:visibility="invisible"
-            app:layout_constraintStart_toEndOf="@id/messageText"
-            app:layout_constraintBottom_toTopOf="@id/timeText"/>
+            <!-- 메시지 텍스트 -->
+            <TextView
+                android:id="@+id/messageText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@drawable/chat_bubble_ai"
+                android:fontFamily="@font/pretendard_medium"
+                android:maxWidth="162dp"
+                android:padding="12dp"
+                android:text="가나다라"
+                android:textColor="@android:color/black"
+                android:textSize="14sp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
 
-        <!-- 타임스탬프 -->
-        <TextView
-            android:id="@+id/timeText"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="4dp"
-            android:text="12:45 PM"
-            android:textColor="@android:color/darker_gray"
-            android:textSize="10sp"
-            app:layout_constraintStart_toEndOf="@id/messageText"
-            app:layout_constraintBottom_toBottomOf="@id/messageText"/>
+            <!-- 하트 버튼 -->
+            <ImageButton
+                android:id="@+id/btnHeart"
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:layout_marginStart="4dp"
+                android:layout_marginBottom="4dp"
+                android:background="@android:color/transparent"
+                android:contentDescription="하트"
+                android:src="@drawable/ic_heart"
+                android:visibility="invisible"
+                app:layout_constraintBottom_toTopOf="@id/timeText"
+                app:layout_constraintStart_toEndOf="@id/messageText" />
+
+            <!-- 타임스탬프 -->
+            <TextView
+                android:id="@+id/timeText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="4dp"
+                android:text="12:00 AM"
+                android:textColor="@android:color/darker_gray"
+                android:textSize="10sp"
+                app:layout_constraintBottom_toBottomOf="@id/messageText"
+                app:layout_constraintStart_toEndOf="@id/messageText" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

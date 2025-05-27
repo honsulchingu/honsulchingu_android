@@ -4,30 +4,48 @@ import android.content.Context.MODE_PRIVATE
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
-import kr.ac.tukorea.honsulchingu.R
-import kr.ac.tukorea.honsulchingu.databinding.FragmentHistoryBinding
-import kr.ac.tukorea.honsulchingu.viewmodel.CharacterViewModel
-import org.json.JSONObject
 import java.net.HttpURLConnection
 import java.time.LocalDateTime
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
+import kotlin.random.Random
+import kr.ac.tukorea.honsulchingu.R
+import kr.ac.tukorea.honsulchingu.databinding.FragmentHistoryBinding
+import kr.ac.tukorea.honsulchingu.navigation.NavAnimationUtil
+import kr.ac.tukorea.honsulchingu.viewmodel.CharacterViewModel
+import org.json.JSONObject
 
 class HistoryFragment : Fragment() {
 
     private var _binding: FragmentHistoryBinding? = null
     private val binding get() = _binding!!
+    private val handler = Handler(Looper.getMainLooper())
     private lateinit var historyAdapter: HistoryAdapter
 
     private var chatList: MutableList<ChatRecord> = mutableListOf()
     private val characterViewModel: CharacterViewModel by activityViewModels()
+
+    private val loadingMessages = listOf(
+        "대화 기록 불러오는 중이에요…",
+        "추억 한 장씩 넘기는 중이에요.",
+        "기억을 한 모금씩 따르고 있어요.",
+        "조용히 대화를 깨우는 중이에요.",
+        "기린은 태어나자마자 2m에서 떨어진대요.",
+        "수달은 서로 손잡고 잔다고 해요.",
+        "사람은 평균 8초 안에 집중을 잃는대요.",
+        "고양이는 술 냄새를 싫어한대요.",
+        "맥주는 탄산 때문에 흡수가 더 빨라져요.",
+        "올빼미는 얼굴 움직임 없이 소리 방향을 구별해요.",
+        "초콜릿이랑 술은 같이 먹으면 흡수가 빨라져요.",
+        "차가운 잔이 술맛을 20% 더 좋게 느끼게 한대요."
+    )
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -42,27 +60,34 @@ class HistoryFragment : Fragment() {
 
         load_last()
 
-        historyAdapter = HistoryAdapter(chatList) { chatRecord ->
-            val sharedPreferences_chat = requireContext().getSharedPreferences("prefs_chat", MODE_PRIVATE)
+        // 초기 UI 설정
+        val sharedPreferences_history = requireContext().getSharedPreferences("prefs_history", MODE_PRIVATE)
 
-            sharedPreferences_chat.edit().apply {
-                putString("select_user", chatRecord.name)
-                putString("start_user", chatRecord.start_time)
-                putBoolean("isFirst", false)
-                apply()
-            }
-
-            findNavController().navigate(R.id.chatFragment)
+        if (sharedPreferences_history.getBoolean("isDeleted", false)) {
+            binding.loadingAnimation.visibility = View.GONE
+            binding.loadingText.visibility = View.GONE
+            binding.chatRecyclerView.visibility = View.VISIBLE
         }
+        else {
+            binding.loadingAnimation.visibility = View.VISIBLE
+            binding.loadingText.visibility = View.VISIBLE
+            binding.chatRecyclerView.visibility = View.GONE
 
-        binding.chatRecyclerView.apply {
-            layoutManager = LinearLayoutManager(requireContext())
-            adapter = historyAdapter
+            // 로딩 메시지 애니메이션 시작
+            handler.post(loadingTextRunnable)
+
+            // 무한대 로딩 애니메이션
+            view.postDelayed({ if (!isAdded || _binding == null) return@postDelayed }, Integer.MAX_VALUE.toLong()) // 무한대 대기
         }
     }
 
     private fun load_last() {
         Thread {
+            Thread.sleep(100) // 100ms 지연, 애니메이션 전환
+
+            val startTime = System.currentTimeMillis()
+
+
             val sharedPreferences_history = requireContext().getSharedPreferences("prefs_history", MODE_PRIVATE)
 
             val sharedPreferences_setting = requireContext().getSharedPreferences("prefs_setting", MODE_PRIVATE)
@@ -128,14 +153,14 @@ class HistoryFragment : Fragment() {
                 }
 
 
-                val jsonInput = JSONObject()
-
-                jsonInput.put("id_user", sharedPreferences_setting.getString("EMAIL", ""))
-                jsonInput.put("select_user", chat.name)
-                jsonInput.put("input_user", sharedPreferences_setting.getString("TAG", ""))
-                jsonInput.put("time_user", "")
-                jsonInput.put("start_user", chat.start_time)
-                jsonInput.put("shown_user", "true")
+                val jsonInput = JSONObject().apply {
+                    put("id_user", sharedPreferences_setting.getString("EMAIL", ""))
+                    put("select_user", chat.name)
+                    put("input_user", sharedPreferences_setting.getString("TAG", ""))
+                    put("time_user", "")
+                    put("start_user", chat.start_time)
+                    put("shown_user", "true")
+                }
 
                 connection.outputStream.use { it.write(jsonInput.toString().toByteArray(Charsets.UTF_8)) }
 
@@ -152,15 +177,107 @@ class HistoryFragment : Fragment() {
             }
 
 
+            val sharedPreferences_chat = requireContext().getSharedPreferences("prefs_chat", MODE_PRIVATE)
+
             val updatedChatList = savedChatList.filter { saved -> needTagUpdateChats.none { it.start_time == saved.start_time } } + tagUpdatedChats
 
             val chatList_temp = updatedChatList.sortedByDescending { it.last_time }.toMutableList()
 
-            Handler(Looper.getMainLooper()).post {
+            val elapsedTime = System.currentTimeMillis() - startTime
+
+            var delay = maxOf(0L, 3000L - elapsedTime)
+
+            if (sharedPreferences_history.getBoolean("isDeleted", false)) {
+                delay = 0L
+                sharedPreferences_history.edit().putBoolean("isDeleted", false).apply()
+            }
+
+            Handler(Looper.getMainLooper()).postDelayed({
+                if (!isAdded || _binding == null) return@postDelayed
+
                 chatList.clear()
                 chatList.addAll(chatList_temp)
-                historyAdapter.notifyDataSetChanged()
-            }
+                if (chatList.isEmpty()) binding.loadingInitText.visibility = View.VISIBLE
+                else binding.loadingInitText.visibility = View.INVISIBLE
+
+                historyAdapter = HistoryAdapter(
+                    chatList,
+                    onMoveClick = { chatRecord ->
+                        sharedPreferences_chat.edit().apply {
+                            putString("select_user", chatRecord.name)
+                            putString("start_user", chatRecord.start_time)
+                            putBoolean("isFirst", false)
+                            putInt("image", chatRecord.image)
+                            putString("greet", chatRecord.last_chat)
+                            characterViewModel.greet_live.value = chatRecord.last_chat
+                            apply()
+                        }
+
+                        sharedPreferences_setting.edit().apply {
+                            putInt("CHATCOUNT", chatList.size)
+                            apply()
+                        }
+
+                        findNavController().navigate(R.id.nav_voiceChat, null, NavAnimationUtil.getSlideFromRightOptions())
+                    },
+                    onDeleteClick = { chatRecord ->
+                        Thread {
+                            val url = characterViewModel.updateURL("/delete_chat")
+
+                            val connection = (url.openConnection() as HttpURLConnection).apply {
+                                requestMethod = "POST"
+                                setRequestProperty("Content-Type", "application/json; charset=UTF-8")
+                                doOutput = true
+                            }
+
+
+                            val jsonInput = JSONObject().apply {
+                                put("id_user", sharedPreferences_setting.getString("EMAIL", ""))
+                                put("select_user", chatRecord.name)
+                                put("input_user", "")
+                                put("time_user", "")
+                                put("start_user", chatRecord.start_time)
+                                put("shown_user", "")
+                            }
+
+                            connection.outputStream.use { it.write(jsonInput.toString().toByteArray(Charsets.UTF_8)) }
+
+
+                            connection.inputStream.bufferedReader().use { it.readText() }
+
+
+                            val savedList = org.json.JSONArray(sharedPreferences_history.getString("savedChatList", "[]"))
+
+                            val updatedList = org.json.JSONArray()
+
+                            for (i in 0 until savedList.length()) {
+                                val obj = savedList.getJSONObject(i)
+                                if (obj.getString("start_time") != chatRecord.start_time) updatedList.put(obj)
+                            }
+
+                            sharedPreferences_history.edit().putString("savedChatList", updatedList.toString()).apply()
+
+                            sharedPreferences_history.edit().putBoolean("isDeleted", true).apply()
+
+                            Handler(Looper.getMainLooper()).post {
+                                sharedPreferences_setting.edit().putInt("CHATCOUNT", sharedPreferences_setting.getInt("CHATCOUNT", 0) - 1).apply()
+                                characterViewModel.chatcount_live.value = sharedPreferences_setting.getInt("CHATCOUNT", 0)
+                                findNavController().navigate(R.id.nav_history)
+                            }
+                        }.start()
+                    }
+                )
+
+                binding.chatRecyclerView.apply {
+                    layoutManager = LinearLayoutManager(requireContext())
+                    adapter = historyAdapter
+                }
+
+                binding.loadingAnimation.visibility = View.GONE
+                binding.loadingText.visibility = View.GONE
+                binding.chatRecyclerView.visibility = View.VISIBLE
+                handler.removeCallbacks(loadingTextRunnable)
+            }, delay) // 최소 3초 로딩 애니메이션 보장
 
 
             val editor = sharedPreferences_history.edit()
@@ -175,8 +292,15 @@ class HistoryFragment : Fragment() {
         }.start()
     }
 
+    private val loadingTextRunnable = object : Runnable {
+        override fun run() {
+            binding.loadingText.text = loadingMessages[Random.nextInt(loadingMessages.size)]
+        }
+    }
+
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
+        handler.removeCallbacks(loadingTextRunnable)
     }
 }

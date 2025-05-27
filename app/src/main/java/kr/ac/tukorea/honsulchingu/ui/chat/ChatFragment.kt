@@ -28,16 +28,24 @@ import java.time.format.DateTimeFormatter
 import java.util.Calendar
 import java.util.Date
 import java.util.Locale
+import kotlin.random.Random
 
 class ChatFragment : Fragment() {
 
     private var _binding: FragmentChatBinding? = null
     private val binding get() = _binding!!
-    private var defaultBottomMargin: Int = 0
-
+    private val handler = Handler(Looper.getMainLooper())
     private lateinit var chatAdapter: ChatAdapter
+
     private val chatItems = mutableListOf<ChatItem>()
     private val characterViewModel: CharacterViewModel by activityViewModels()
+
+    private val loadingMessages = listOf(
+        "대화를 꺼내는 중이에요…",
+        "생각의 스위치를 켜는 중이에요.",
+        "기억과 술 사이를 잇는 중이에요.",
+        "조용히 대화를 깨우는 중이에요.",
+    )
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         _binding = FragmentChatBinding.inflate(inflater, container, false)
@@ -47,13 +55,25 @@ class ChatFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        // 1. 로딩 애니메이션 보이기
+        binding.loadingAnimation.visibility = View.VISIBLE
+        binding.loadingText.visibility = View.VISIBLE
+        binding.recyclerViewChat.visibility = View.GONE
+
+        // 2. 로딩 텍스트 주기적 변경 시작
+        handler.post(loadingTextRunnable)
+
+        // 3. 리사이클러뷰 세팅
         setupRecyclerView()
 
+        // 4. 무한대 로딩 UI 표시
+        handler.postDelayed({ if (!isAdded || _binding == null) return@postDelayed }, Integer.MAX_VALUE.toLong()) // 무한대 대기
+
+        // 5. 로딩 중 잠금
         val sharedPreferences_chat = requireContext().getSharedPreferences("prefs_chat", MODE_PRIVATE)
 
         binding.editTextMessage.isEnabled = !sharedPreferences_chat.getBoolean("isFirst", true)
         binding.buttonSend.isEnabled = !sharedPreferences_chat.getBoolean("isFirst", true)
-        binding.btnCloseChat.isEnabled = !sharedPreferences_chat.getBoolean("isFirst", true)
 
         loadChat()
 
@@ -73,8 +93,6 @@ class ChatFragment : Fragment() {
         // 키보드가 올라왔을 때 입력창 마진을 동적으로 설정
         val params = binding.layoutChatInput.layoutParams as ViewGroup.MarginLayoutParams
 
-        defaultBottomMargin = params.bottomMargin
-
         ViewCompat.setOnApplyWindowInsetsListener(binding.root) { _, insets ->
             val imeInsets = insets.getInsets(WindowInsetsCompat.Type.ime())
             val imeHeight = imeInsets.bottom
@@ -82,10 +100,10 @@ class ChatFragment : Fragment() {
 
             binding.layoutChatInput.updateLayoutParams<ViewGroup.MarginLayoutParams> {
                 bottomMargin = if (isKeyboardVisible) {
-                    (imeHeight * 0.8).toInt() // 키보드가 올라왔을 때 입력창과의 간격 조정
+                    (imeHeight * 0.05).toInt() // 키보드가 올라왔을 때 입력창과의 간격 조정
                 }
                 else {
-                    defaultBottomMargin
+                    params.bottomMargin
                 }
             }
 
@@ -117,6 +135,9 @@ class ChatFragment : Fragment() {
 
     private fun sendToServer(input_user: String, time_user: Long) {
         Thread {
+            val startTime = System.currentTimeMillis()
+
+
             val sharedPreferences_setting = requireContext().getSharedPreferences("prefs_setting", MODE_PRIVATE)
 
             val sharedPreferences_chat = requireContext().getSharedPreferences("prefs_chat", MODE_PRIVATE)
@@ -130,10 +151,14 @@ class ChatFragment : Fragment() {
             }
 
 
-            if (!sharedPreferences_chat.getBoolean("isFirst", true)) {
+            if (sharedPreferences_chat.getBoolean("isFirst", true)) {
                 Handler(Looper.getMainLooper()).post {
-                    sendMessage(input_user, true, time_user)
+                    sharedPreferences_setting.edit().putInt("CHATCOUNT", sharedPreferences_setting.getInt("CHATCOUNT", 0) + 1).apply()
+                    characterViewModel.chatcount_live.value = sharedPreferences_setting.getInt("CHATCOUNT", 0)
                 }
+            }
+            else {
+                Handler(Looper.getMainLooper()).post { sendMessage(input_user, true, time_user) }
             }
 
             val jsonInput = JSONObject().apply {
@@ -154,19 +179,30 @@ class ChatFragment : Fragment() {
 
             val time_ai = LocalDateTime.parse(responseJson.getString("time_ai"), DateTimeFormatter.ofPattern("yyyy. MM. dd. HH-mm-ss")).atZone(ZoneId.of("Asia/Seoul")).toInstant().toEpochMilli()
 
-            Handler(Looper.getMainLooper()).post {
+            val elapsedTime = System.currentTimeMillis() - startTime
+
+            val delay = maxOf(0L, 3000L - elapsedTime)
+
+            Handler(Looper.getMainLooper()).postDelayed({
                 if (sharedPreferences_chat.getBoolean("isFirst", true)) sharedPreferences_chat.edit().putBoolean("isFirst", false).apply()
 
-                if (!isAdded || _binding == null) return@post
+                sharedPreferences_chat.edit().putString("greet", output_ai).apply()
+                characterViewModel.greet_live.value = sharedPreferences_chat.getString("greet", "")
+
+                if (!isAdded || _binding == null) return@postDelayed
+
+                binding.loadingAnimation.visibility = View.GONE
+                binding.loadingText.visibility = View.GONE
+                binding.recyclerViewChat.visibility = View.VISIBLE
+                handler.removeCallbacks(loadingTextRunnable)
 
                 if (!binding.editTextMessage.isEnabled && !binding.buttonSend.isEnabled) {
                     binding.editTextMessage.isEnabled = true
                     binding.buttonSend.isEnabled = true
-                    binding.btnCloseChat.isEnabled = true
                 }
 
                 sendMessage(output_ai, false, time_ai)
-            }
+            }, delay) // 최소 3초 로딩 애니메이션 보장
         }.start()
     }
 
@@ -212,6 +248,9 @@ class ChatFragment : Fragment() {
 
     private fun loadChat() {
         Thread {
+            val startTime = System.currentTimeMillis()
+
+
             val sharedPreferences_setting = requireContext().getSharedPreferences("prefs_setting", MODE_PRIVATE)
 
             val sharedPreferences_chat = requireContext().getSharedPreferences("prefs_chat", MODE_PRIVATE)
@@ -261,10 +300,31 @@ class ChatFragment : Fragment() {
                 chatItems.add(ChatItem.MessageItem(message))
             }
 
+            val elapsedTime = System.currentTimeMillis() - startTime
+
+            val delay = maxOf(0L, 3000L - elapsedTime)
+
             Handler(Looper.getMainLooper()).postDelayed({
+                if (!isAdded || _binding == null) return@postDelayed
+
+                sharedPreferences_chat.edit().putString("greet", Messages.lastOrNull()?.message).apply()
+                characterViewModel.greet_live.value = Messages.lastOrNull()?.message
                 chatAdapter.submitList(chatItems.toList()) { binding.recyclerViewChat.scrollToPosition(chatItems.size - 1) }
-            }, 450) // 450ms 지연
+
+                if (!sharedPreferences_chat.getBoolean("isFirst", true)) {
+                    binding.loadingAnimation.visibility = View.GONE
+                    binding.loadingText.visibility = View.GONE
+                    binding.recyclerViewChat.visibility = View.VISIBLE
+                    handler.removeCallbacks(loadingTextRunnable)
+                }
+            }, delay) // 최소 3초 로딩 애니메이션 보장
         }.start()
+    }
+
+    private val loadingTextRunnable = object : Runnable {
+        override fun run() {
+            binding.loadingText.text = loadingMessages[Random.nextInt(loadingMessages.size)]
+        }
     }
 
     private fun isSameDay(cal1: Calendar, cal2: Calendar): Boolean {
@@ -295,5 +355,6 @@ class ChatFragment : Fragment() {
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
+        handler.removeCallbacks(loadingTextRunnable)
     }
 }

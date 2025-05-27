@@ -17,8 +17,8 @@
             android:layout_width="20dp"
             android:layout_height="20dp"
             android:src="@drawable/ic_help"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintStart_toStartOf="parent" />
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
         <!-- 질문 텍스트 -->
         <TextView
@@ -27,12 +27,12 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
             android:text="혼술친구는 어떤 앱인가요?"
+            android:textColor="#000000"
             android:textSize="14sp"
             android:textStyle="bold"
-            android:textColor="#000000"
+            app:layout_constraintEnd_toStartOf="@id/faq_arrow"
             app:layout_constraintStart_toEndOf="@id/faq_icon"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintEnd_toStartOf="@id/faq_arrow" />
+            app:layout_constraintTop_toTopOf="parent" />
 
         <!-- 화살표 아이콘 -->
         <ImageView
@@ -40,8 +40,8 @@
             android:layout_width="20dp"
             android:layout_height="20dp"
             android:src="@drawable/ic_arrow_down"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintEnd_toEndOf="parent" />
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
         <!-- 답변 텍스트 -->
         <TextView
@@ -49,14 +49,15 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginTop="12dp"
-            android:text="혼술친구는 혼자 술을 즐기는 사람들을 위한 대화형 앱으로, 가상의 친구(또는 연인)와 함께 혼술자리의 즐거움을 느낄 수 있습니다."
-            android:textSize="13sp"
-            android:textColor="#666666"
-            android:visibility="gone"
             android:alpha="0.0"
-            app:layout_constraintTop_toBottomOf="@id/faq_icon"
+            android:text="혼술친구는 혼자 술을 즐기는 사람들을 위한 대화형 앱으로, 가상의 친구(또는 연인)와 함께 혼술자리의 즐거움을 느낄 수 있습니다."
+            android:textColor="#666666"
+            android:textSize="13sp"
+            android:visibility="gone"
+            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent" />
+            app:layout_constraintTop_toBottomOf="@id/faq_icon" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
+
 </androidx.cardview.widget.CardView>

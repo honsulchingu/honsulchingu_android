@@ -2,22 +2,22 @@ package kr.ac.tukorea.honsulchingu.ui.character
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
+import kr.ac.tukorea.honsulchingu.R
 import kr.ac.tukorea.honsulchingu.databinding.ItemCharacterBinding
 
-// ChatCharacter의 항목들을 표시하는 Adapter
-class CharacterListAdapter(
-    private val onClick: (ChatCharacter) -> Unit,
-    private val onStartChatClick: (ChatCharacter) -> Unit // 버튼 클릭 콜백 추가
-) : ListAdapter<ChatCharacter, CharacterListAdapter.CharacterViewHolder>(CharacterDiffCallback()) {
+class CharacterListAdapter : ListAdapter<ChatCharacter, CharacterListAdapter.CharacterViewHolder>(CharacterDiffCallback()) {
+
+    var onChatButtonClick: ((ChatCharacter) -> Unit)? = null
 
     inner class CharacterViewHolder(private val binding: ItemCharacterBinding) :
         RecyclerView.ViewHolder(binding.root) {
 
         fun bind(character: ChatCharacter) {
-            binding.characterName.text = character.name.substringAfterLast('_')
+            binding.characterName.text = character.name.substringAfter('_')
             binding.characterMessage.text = character.greet
             binding.characterTag1.text = character.tag[0]
             binding.characterTag2.text = character.tag[1]
@@ -25,14 +25,18 @@ class CharacterListAdapter(
             binding.characterDescription.text = character.description
             binding.characterImage.setImageResource(character.image)
 
-            // 클릭 이벤트 처리
-            binding.root.setOnClickListener {
-                onClick(character)
+            // 프로필 이미지 둥글게, 배경 둥근 drawable로 설정
+            binding.characterImage.apply {
+                setImageResource(character.image)
+                // 둥근 배경 drawable 적용 (이미 있던 profile_circle_bg)
+                background = ContextCompat.getDrawable(context, R.drawable.profile_circle_bg)
+                clipToOutline = true  // 둥근 배경 따라 이미지 자르기
+                scaleType = android.widget.ImageView.ScaleType.CENTER_CROP
             }
 
-            // 버튼 클릭 처리
+            // 대화 시작 버튼 클릭 이벤트
             binding.startChatButton.setOnClickListener {
-                onStartChatClick(character)
+                onChatButtonClick?.invoke(character)
             }
         }
     }
@@ -58,3 +62,4 @@ class CharacterListAdapter(
         }
     }
 }
+
