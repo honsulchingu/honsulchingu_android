@@ -1,6 +1,5 @@
 package kr.ac.tukorea.honsulchingu
 
-
 import android.os.Bundle
 import android.view.View
 import androidx.activity.enableEdgeToEdge
@@ -10,7 +9,6 @@ import androidx.core.content.ContextCompat
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.setupWithNavController
 import com.google.android.material.bottomnavigation.BottomNavigationView
-
 import kr.ac.tukorea.honsulchingu.navigation.NavAnimationUtil
 
 class MainActivity : AppCompatActivity() {
@@ -21,8 +19,7 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
 
         // 네비게이션 컨트롤러 얻기
-        val navHostFragment = supportFragmentManager
-            .findFragmentById(R.id.fragment_container) as NavHostFragment
+        val navHostFragment = supportFragmentManager.findFragmentById(R.id.fragment_container) as NavHostFragment
         val navController = navHostFragment.navController
 
         // BottomNavigationView 설정
@@ -34,9 +31,7 @@ class MainActivity : AppCompatActivity() {
             when (destination.id) {
                 R.id.nav_character -> bottomNav.menu.findItem(R.id.nav_character).isChecked = true
                 R.id.nav_history -> bottomNav.menu.findItem(R.id.nav_history).isChecked = true
-                R.id.nav_voiceChat, R.id.chatFragment -> bottomNav.menu.findItem(R.id.nav_voiceChat).isChecked =
-                    true
-
+                R.id.nav_voiceChat, R.id.chatFragment -> bottomNav.menu.findItem(R.id.nav_voiceChat).isChecked = true
                 R.id.nav_favorite -> bottomNav.menu.findItem(R.id.nav_favorite).isChecked = true
                 R.id.nav_mypage -> bottomNav.menu.findItem(R.id.nav_mypage).isChecked = true
             }
@@ -45,10 +40,7 @@ class MainActivity : AppCompatActivity() {
         // 구분선 View 생성
         val divider = View(this).apply {
             id = View.generateViewId()
-            layoutParams = ConstraintLayout.LayoutParams(
-                ConstraintLayout.LayoutParams.MATCH_PARENT,
-                1 //
-            ).apply {
+            layoutParams = ConstraintLayout.LayoutParams(ConstraintLayout.LayoutParams.MATCH_PARENT, 1).apply {
                 bottomToTop = bottomNav.id
                 startToStart = ConstraintLayout.LayoutParams.PARENT_ID
                 endToEnd = ConstraintLayout.LayoutParams.PARENT_ID
@@ -56,10 +48,9 @@ class MainActivity : AppCompatActivity() {
             setBackgroundColor(ContextCompat.getColor(context, R.color.divider_color))
         }
 
-// 구분선 추가
+        // 구분선 추가
         val rootLayout = findViewById<ConstraintLayout>(R.id.main)
         rootLayout.addView(divider)
-
 
         // BottomNavigationView 아이템 선택 시 애니메이션과 함께 네비게이션 처리
         bottomNav.setOnItemSelectedListener { item ->
@@ -72,21 +63,15 @@ class MainActivity : AppCompatActivity() {
                 else -> null
             }
             if (destinationId != null) {
-                // 현재 네비게이션 그래프의 루트 (예: R.id.nav_graph_root) 혹은
-                // 전체 스택을 비우고 이동할 화면 ID를 popUpTo로 지정
+                // 현재 네비게이션 그래프의 루트 (예: R.id.nav_graph_root) 혹은 전체 스택을 비우고 이동할 화면 ID를 popUpTo로 지정
                 val navOptions = NavAnimationUtil.getFadeOptions(popUpToId = navController.graph.startDestinationId, inclusive = false)
-
                 navController.navigate(destinationId, null, navOptions)
                 true
-            } else {
+            }
+            else {
                 false
             }
         }
-
         bottomNav.itemBackground = ContextCompat.getDrawable(this, R.drawable.transparent_ripple)
-
     }
 }
-
-
-

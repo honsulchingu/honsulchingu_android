@@ -14,8 +14,7 @@ class GradientTextView @JvmOverloads constructor(
     override fun onSizeChanged(w: Int, h: Int, oldw: Int, oldh: Int) {
         super.onSizeChanged(w, h, oldw, oldh)
         if (w > 0) {
-            gradientShader = LinearGradient(
-                0f, 0f, w.toFloat(), 0f, // 가로 방향 그라데이션
+            gradientShader = LinearGradient(0f, 0f, w.toFloat(), 0f, // 가로 방향 그라데이션
                 intArrayOf(
                     Color.parseColor("#7c2ae8"),  // 더 짙은 보라 (Purple 700)
                     Color.parseColor("#9333ea"),  // 중간 자주색 (Purple 800)

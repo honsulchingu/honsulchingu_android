@@ -1,13 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.cardview.widget.CardView
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_marginHorizontal="16dp"
+    android:backgroundTint="@android:color/white"
     app:cardCornerRadius="16dp"
-    app:cardElevation="10dp"
-    android:backgroundTint="@android:color/white">
+    app:cardElevation="10dp">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
@@ -16,36 +15,37 @@
 
         <!-- 가입일 -->
         <LinearLayout
-            android:id="@+id/info_join_date"
+            android:id="@+id/info_start_day"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
             android:gravity="center"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toStartOf="@id/divider1"
-            app:layout_constraintTop_toTopOf="parent"
+            android:orientation="vertical"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintHorizontal_chainStyle="spread">
+            app:layout_constraintEnd_toStartOf="@id/divider1"
+            app:layout_constraintHorizontal_chainStyle="spread"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
 
             <TextView
-                android:id="@+id/text_join_date_value"
+                android:id="@+id/profileStartday"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:fontFamily="@font/pretendard_bold"
+                android:gravity="center"
                 android:text="2025년 5월"
                 android:textColor="@color/purple"
-                android:textSize="14sp"
-                android:fontFamily="@font/pretendard_bold"
-                android:gravity="center" />
+                android:textSize="14sp" />
 
             <TextView
-                android:id="@+id/text_join_date_label"
+                android:id="@+id/text_start_day_label"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:fontFamily="@font/pretendard_medium"
+                android:gravity="center"
                 android:text="가입일"
                 android:textColor="@color/gray"
-                android:textSize="13sp"
-                android:fontFamily="@font/pretendard_medium"
-                android:gravity="center" />
+                android:textSize="13sp" />
+
         </LinearLayout>
 
         <!-- 구분선 1 -->
@@ -54,42 +54,43 @@
             android:layout_width="1dp"
             android:layout_height="40dp"
             android:background="#E0E0E0"
-            app:layout_constraintStart_toEndOf="@id/info_join_date"
+            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toStartOf="@id/info_chat_count"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintBottom_toBottomOf="parent" />
+            app:layout_constraintStart_toEndOf="@id/info_start_day"
+            app:layout_constraintTop_toTopOf="parent" />
 
         <!-- 대화 수 -->
         <LinearLayout
             android:id="@+id/info_chat_count"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
             android:gravity="center"
-            app:layout_constraintStart_toEndOf="@id/divider1"
+            android:orientation="vertical"
+            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toStartOf="@id/divider2"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintBottom_toBottomOf="parent">
+            app:layout_constraintStart_toEndOf="@id/divider1"
+            app:layout_constraintTop_toTopOf="parent">
 
             <TextView
-                android:id="@+id/text_chat_count_value"
+                android:id="@+id/profileChatCount"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:fontFamily="@font/pretendard_bold"
+                android:gravity="center"
                 android:text="28"
                 android:textColor="@color/purple"
-                android:textSize="14sp"
-                android:fontFamily="@font/pretendard_bold"
-                android:gravity="center" />
+                android:textSize="14sp" />
 
             <TextView
                 android:id="@+id/text_chat_count_label"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:fontFamily="@font/pretendard_medium"
+                android:gravity="center"
                 android:text="대화 수"
                 android:textColor="@color/gray"
-                android:textSize="13sp"
-                android:fontFamily="@font/pretendard_medium"
-                android:gravity="center" />
+                android:textSize="13sp" />
+
         </LinearLayout>
 
         <!-- 구분선 2 -->
@@ -98,43 +99,45 @@
             android:layout_width="1dp"
             android:layout_height="40dp"
             android:background="#E0E0E0"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@id/info_favorite_count"
             app:layout_constraintStart_toEndOf="@id/info_chat_count"
-            app:layout_constraintEnd_toStartOf="@id/info_favorites"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintBottom_toBottomOf="parent" />
+            app:layout_constraintTop_toTopOf="parent" />
 
         <!-- 즐겨찾기 -->
         <LinearLayout
-            android:id="@+id/info_favorites"
+            android:id="@+id/info_favorite_count"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
             android:gravity="center"
-            app:layout_constraintStart_toEndOf="@id/divider2"
+            android:orientation="vertical"
+            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintBottom_toBottomOf="parent">
+            app:layout_constraintStart_toEndOf="@id/divider2"
+            app:layout_constraintTop_toTopOf="parent">
 
             <TextView
-                android:id="@+id/text_favorite_count_value"
+                android:id="@+id/profileFavoriteCount"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:fontFamily="@font/pretendard_bold"
+                android:gravity="center"
                 android:text="3"
                 android:textColor="@color/purple"
-                android:textSize="14sp"
-                android:fontFamily="@font/pretendard_bold"
-                android:gravity="center" />
+                android:textSize="14sp" />
 
             <TextView
                 android:id="@+id/text_favorite_count_label"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:fontFamily="@font/pretendard_medium"
+                android:gravity="center"
                 android:text="즐겨찾기"
                 android:textColor="@color/gray"
-                android:textSize="13sp"
-                android:fontFamily="@font/pretendard_medium"
-                android:gravity="center" />
+                android:textSize="13sp" />
+
         </LinearLayout>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
+
 </androidx.cardview.widget.CardView>

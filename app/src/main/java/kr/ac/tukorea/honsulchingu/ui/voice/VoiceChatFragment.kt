@@ -1,5 +1,6 @@
 package kr.ac.tukorea.honsulchingu.ui.voice
 
+import android.content.Context.MODE_PRIVATE
 import android.graphics.Color
 import android.os.Bundle
 import android.text.method.ScrollingMovementMethod
@@ -10,12 +11,14 @@ import android.widget.ImageButton
 import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentContainerView
+import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
 import com.airbnb.lottie.LottieAnimationView
 import com.google.android.material.imageview.ShapeableImageView
 import kr.ac.tukorea.honsulchingu.R
 import kr.ac.tukorea.honsulchingu.navigation.NavAnimationUtil
 import kr.ac.tukorea.honsulchingu.ui.chat.ChatFragment
+import kr.ac.tukorea.honsulchingu.viewmodel.CharacterViewModel
 
 class VoiceChatFragment : Fragment() {
 
@@ -32,6 +35,8 @@ class VoiceChatFragment : Fragment() {
     private var isWaitingForAnswer = false
     private var isChatVisible = false
 
+    private val characterViewModel: CharacterViewModel by activityViewModels()
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -41,6 +46,8 @@ class VoiceChatFragment : Fragment() {
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        val sharedPreferences_chat = requireContext().getSharedPreferences("prefs_chat", MODE_PRIVATE)
+
         imageCharacter = view.findViewById(R.id.imageCharacter)
         textSpeech = view.findViewById(R.id.textSpeech)
         buttonMic = view.findViewById(R.id.buttonMic)
@@ -53,13 +60,18 @@ class VoiceChatFragment : Fragment() {
         // 텍스트 스크롤
         textSpeech.movementMethod = ScrollingMovementMethod()
 
-        // 캐릭터 정보 불러오기 - 추후 ViewModel 연동
-        imageCharacter.setImageResource(R.drawable.friend1)
+        // 캐릭터 정보 불러오기
+        imageCharacter.setImageResource(sharedPreferences_chat.getInt("image", R.drawable.friend_choiminhyeok))
+        textSpeech.text = sharedPreferences_chat.getString("greet", "혼술친구를 먼저 정해주세요")
+        characterViewModel.greet_live.observe(viewLifecycleOwner) { greet -> textSpeech.text = greet }
+
+        // 캐릭터 선택 전 버튼 잠금
+        buttonMic.isEnabled = sharedPreferences_chat.getBoolean("isSelected", false)
+        buttonChat.isEnabled = sharedPreferences_chat.getBoolean("isSelected", false)
 
         // 버튼 이벤트
         buttonMic.setOnClickListener {
-            // 테스트용: 녹음 상태 → 대기 상태 → 기본 상태 순환
-            // 대기 상태는 AI 응답 시간에 쓰일 예정
+            // 녹음 상태 → 대기 상태 → 기본 상태 순환
             when {
                 !isRecording && !isWaitingForAnswer -> {
                     isRecording = true
@@ -77,7 +89,6 @@ class VoiceChatFragment : Fragment() {
             updateMicUI()
         }
 
-
         micLottie.setOnClickListener {
             if (isRecording) {
                 isRecording = false
@@ -91,7 +102,6 @@ class VoiceChatFragment : Fragment() {
             else hideChatFragment()
         }
     }
-
 
     private fun updateMicUI() {
         when {
@@ -112,8 +122,7 @@ class VoiceChatFragment : Fragment() {
                 LodingDotLottie.cancelAnimation()
             }
 
-
-            // 이부분은 나중에 AI 응답 대기할때 쓸 것
+            // AI 응답 대기
             isWaitingForAnswer -> {
                 buttonMic.visibility = View.VISIBLE
                 micLottie.visibility = View.GONE
@@ -125,7 +134,6 @@ class VoiceChatFragment : Fragment() {
 
                 // 대기 상태일 때 빈 텍스트
                 textSpeech.text = ""
-
                 LodingDotLottie.visibility = View.VISIBLE
                 LodingDotLottie.setAnimation("loading_dot.json")
                 LodingDotLottie.playAnimation()
@@ -141,7 +149,7 @@ class VoiceChatFragment : Fragment() {
                 buttonMic.setColorFilter(Color.parseColor("#5B2DB3"))
 
                 textSpeech.visibility = View.VISIBLE
-                textSpeech.text = "혼술 대기 중"
+                textSpeech.text = "혼술 대기 중..."
 
                 LodingDotLottie.visibility = View.GONE
                 LodingDotLottie.cancelAnimation()
@@ -149,17 +157,9 @@ class VoiceChatFragment : Fragment() {
         }
     }
 
-
-
-
-
     private fun showChatFragment() {
         val navController = findNavController()
-        navController.navigate(
-            R.id.chatFragment,
-            null,
-            NavAnimationUtil.getVoiceChatToChatAnim()
-        )
+        navController.navigate(R.id.chatFragment, null, NavAnimationUtil.getVoiceChatToChatAnim())
 
         // 배경 흐림 애니메이션
         dimmedView.visibility = View.VISIBLE
@@ -167,7 +167,6 @@ class VoiceChatFragment : Fragment() {
 
         isChatVisible = true
     }
-
 
     private fun hideChatFragment() {
         // 흐림 배경 제거 애니메이션
@@ -190,7 +189,8 @@ class VoiceChatFragment : Fragment() {
         if (isChatVisible) {
             dimmedView.visibility = View.VISIBLE
             dimmedView.alpha = 1f
-        } else {
+        }
+        else {
             dimmedView.visibility = View.GONE
             dimmedView.alpha = 0f
         }

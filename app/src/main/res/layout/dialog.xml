@@ -4,11 +4,11 @@
     android:id="@+id/dialogRoot"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:orientation="vertical"
-    android:padding="24dp"
     android:background="@drawable/bg_dialog_rounded"
+    android:elevation="1dp"
     android:gravity="center_horizontal"
-    android:elevation="1dp">
+    android:orientation="vertical"
+    android:padding="24dp">
 
     <!-- 아이콘 (선택 사항) -->
     <ImageView
@@ -16,78 +16,74 @@
         android:layout_width="56dp"
         android:layout_height="56dp"
         android:layout_marginBottom="20dp"
+        android:contentDescription="@null"
         android:src="@drawable/ic_info"
-        android:visibility="gone"
-        android:contentDescription="@null" />
+        android:visibility="gone" />
 
     <!-- 타이틀 -->
     <TextView
         android:id="@+id/tvTitle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="정말 로그아웃 하시겠어요?"
-        android:textColor="@color/info_black"
-        android:textSize="19sp"
+        android:layout_marginBottom="10dp"
         android:fontFamily="@font/pretendard_bold"
         android:gravity="center"
-        android:layout_marginBottom="10dp" />
+        android:text="정말 로그아웃 하시겠어요?"
+        android:textColor="@color/info_black"
+        android:textSize="19sp" />
 
     <!-- 메시지 -->
     <TextView
         android:id="@+id/tvMessage"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="지금까지의 대화가 저장되지 않을 수 있어요."
-        android:textColor="@color/gray"
-        android:textSize="15sp"
+        android:layout_marginBottom="28dp"
         android:fontFamily="@font/pretendard_medium"
         android:gravity="center"
-        android:layout_marginBottom="28dp" />
+        android:text="지금까지의 대화가 저장되지 않을 수 있어요."
+        android:textColor="@color/gray"
+        android:textSize="15sp" />
 
     <!-- 버튼 영역 -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
+        android:layout_marginTop="12dp"
         android:gravity="center"
-        android:weightSum="2"
-        android:layout_marginTop="12dp">
+        android:orientation="horizontal"
+        android:weightSum="2">
 
         <!-- 취소 버튼: 투명 배경 + 보라색 테두리 + 보라색 텍스트 -->
         <com.google.android.material.button.MaterialButton
             android:id="@+id/btnCancel"
-            android:layout_weight="1"
             android:layout_width="0dp"
             android:layout_height="48dp"
-            android:text="취소"
-            android:background="@drawable/bg_button_outline_purple"
-            android:textSize="16sp"
-            android:textColor="#9333EA"
-            android:fontFamily="@font/pretendard_semibold"
             android:layout_marginEnd="12dp"
+            android:layout_weight="1"
+            android:background="@drawable/bg_button_outline_purple"
+            android:fontFamily="@font/pretendard_semibold"
             android:stateListAnimator="@null"
-            app:backgroundTint="@null"/>
+            android:text="취소"
+            android:textColor="#9333EA"
+            android:textSize="16sp"
+            app:backgroundTint="@null" />
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/btnConfirm"
-            android:layout_weight="1"
+            style="@style/Widget.MaterialComponents.Button"
             android:layout_width="0dp"
             android:layout_height="48dp"
-            android:text="확인"
-            android:textColor="@color/bg_color"
+            android:layout_marginStart="12dp"
+            android:layout_weight="1"
             android:background="@drawable/bg_button_gradient_purple"
             android:backgroundTint="@null"
-            android:textSize="16sp"
             android:fontFamily="@font/pretendard_semibold"
-            android:layout_marginStart="12dp"
-            style="@style/Widget.MaterialComponents.Button"
-            app:backgroundTint="@null"
-            android:stateListAnimator="@null" />
-
-
+            android:stateListAnimator="@null"
+            android:text="확인"
+            android:textColor="@color/bg_color"
+            android:textSize="16sp"
+            app:backgroundTint="@null" />
 
     </LinearLayout>
-
-
 
 </LinearLayout>

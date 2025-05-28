@@ -40,7 +40,8 @@ object DialogUtil {
         if (iconRes != null) {
             imgIcon.setImageResource(iconRes)
             imgIcon.visibility = View.VISIBLE
-        } else {
+        }
+        else {
             imgIcon.visibility = View.GONE
         }
 

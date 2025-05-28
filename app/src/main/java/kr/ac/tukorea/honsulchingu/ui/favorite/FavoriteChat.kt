@@ -4,6 +4,6 @@ data class FavoriteChat(
     val name: String,
     val message: String,
     val time: Long,
-    val profileImageRes: Int
+    // val start_time: String,
+    val image: Int
 )
-

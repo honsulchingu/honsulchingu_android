@@ -8,8 +8,6 @@ import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import kr.ac.tukorea.honsulchingu.R
-import kr.ac.tukorea.honsulchingu.databinding.FragmentHelpBinding
-
 
 class HelpFragment : Fragment() {
 
@@ -33,12 +31,12 @@ class HelpFragment : Fragment() {
             FaqItem("취한 정도는 어떻게 측정하나요?", "음성 분석 기술을 활용해 현재 취한 정도를 판단합니다.")
         )
 
-
         // FAQ Adapter 설정
         faqAdapter = FaqAdapter(faqList)
         val rvFaqList = view.findViewById<RecyclerView>(R.id.rv_faq_list)
         rvFaqList.layoutManager = LinearLayoutManager(context)
         rvFaqList.adapter = faqAdapter
+
 
         // 가이드 리스트 (간단한 문자열 리스트)
         val guideList = listOf(
@@ -48,18 +46,10 @@ class HelpFragment : Fragment() {
             GuideItem("프로필 수정하기", "마이페이지에서 프로필 정보를 편리하게 변경할 수 있습니다.")
         )
 
-
         // Guide Adapter 설정
         guideAdapter = GuideAdapter(guideList)
         val rvGuideList = view.findViewById<RecyclerView>(R.id.rv_guide_list)
         rvGuideList.layoutManager = LinearLayoutManager(context)
         rvGuideList.adapter = guideAdapter
     }
-
-    // onDestroyView는 해당 Fragment가 화면에서 사라질 때 호출됨
-    override fun onDestroyView() {
-        super.onDestroyView()
-    }
 }
-
-

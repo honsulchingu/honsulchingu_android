@@ -5,8 +5,8 @@ import java.util.Calendar
 import java.util.Date
 import java.util.Locale
 
-
 fun Date.toSmartDateString(): String {
+
     val now = Calendar.getInstance()
     val target = Calendar.getInstance().apply { time = this@toSmartDateString }
 

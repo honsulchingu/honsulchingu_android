@@ -66,6 +66,7 @@
         android:label="채팅">
         <argument
             android:name="characterId"
+            android:defaultValue="0"
             app:argType="integer" />
         <action
             android:id="@+id/action_chatFragment_to_nav_voiceChat"
@@ -125,4 +126,5 @@
         android:id="@+id/helpFragment"
         android:name="kr.ac.tukorea.honsulchingu.ui.mypage.HelpFragment"
         android:label="도움말" />
+
 </navigation>

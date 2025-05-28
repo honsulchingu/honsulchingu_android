@@ -12,13 +12,12 @@ import kr.ac.tukorea.honsulchingu.R
 import kr.ac.tukorea.honsulchingu.databinding.FragmentCharacterSelectBinding
 import kr.ac.tukorea.honsulchingu.viewmodel.CharacterViewModel
 
-
-class CharacterSelectFragment : Fragment(R.layout.fragment_character_select) {
+class CharacterSelectFragment : Fragment() {
 
     private var _binding: FragmentCharacterSelectBinding? = null
     private val binding get() = _binding!!
-
     private lateinit var characterPagerAdapter: CharacterPagerAdapter
+
     private lateinit var characterViewModel: CharacterViewModel
 
     override fun onCreateView(
@@ -27,8 +26,14 @@ class CharacterSelectFragment : Fragment(R.layout.fragment_character_select) {
     ): View {
         _binding = FragmentCharacterSelectBinding.inflate(inflater, container, false)
 
-        characterViewModel = ViewModelProvider(requireActivity())[CharacterViewModel::class.java]
+        // ViewModel 초기화
+        characterViewModel = ViewModelProvider(requireActivity()).get(CharacterViewModel::class.java)
+
+        // ViewPager2 어댑터 설정
         characterPagerAdapter = CharacterPagerAdapter(this)
+        binding.characterViewPager.adapter = characterPagerAdapter
+
+        // PageTransformer로 애니메이션 제어 (부드럽게 전환)
         binding.characterViewPager.apply {
             adapter = characterPagerAdapter
             isUserInputEnabled = false
@@ -41,24 +46,29 @@ class CharacterSelectFragment : Fragment(R.layout.fragment_character_select) {
             }
         }
 
-        updateTabColors(isFriend = true)
-        characterViewModel.updateCharacters("friend")
+        // 초기 탭을 친구형으로 설정
+        characterViewModel.loadCharacters(requireContext()) {
+            characterViewModel.updateCharacters("친구")
+            updateTabColors(isFriend = true)
+        }
 
+        // 탭 클릭 시 캐릭터 필터링 및 ViewPager2 페이지 전환
         binding.friendTab.setOnClickListener {
-            characterViewModel.updateCharacters("friend")
+            characterViewModel.updateCharacters("친구")
             binding.characterViewPager.setCurrentItem(0, false)
             updateTabColors(isFriend = true)
         }
 
         binding.loverTab.setOnClickListener {
-            characterViewModel.updateCharacters("lover")
+            characterViewModel.updateCharacters("연인")
             binding.characterViewPager.setCurrentItem(1, false)
             updateTabColors(isFriend = false)
         }
 
+        // 💡 스와이프 시에도 ViewModel 데이터 갱신하도록 수정
         binding.characterViewPager.registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
             override fun onPageSelected(position: Int) {
-                characterViewModel.updateCharacters(if (position == 0) "friend" else "lover")
+                characterViewModel.updateCharacters(if (position == 0) "친구" else "연인")
                 updateTabColors(isFriend = (position == 0))
             }
         })
@@ -66,25 +76,30 @@ class CharacterSelectFragment : Fragment(R.layout.fragment_character_select) {
         return binding.root
     }
 
+    // 탭 색상 업데이트 함수
     private fun updateTabColors(isFriend: Boolean) {
+        val context = requireContext()
+
         if (isFriend) {
             // 친구형 탭 선택
-            binding.friendTabText.setTextColor(ContextCompat.getColor(requireContext(), R.color.purple))
-            binding.friendTabUnderline.setBackgroundColor(ContextCompat.getColor(requireContext(), R.color.purple))
+            binding.friendTabText.setTextColor(ContextCompat.getColor(context, R.color.purple))
+            binding.friendTabUnderline.setBackgroundColor(ContextCompat.getColor(context, R.color.purple))
 
             // 연인형 탭 비선택
-            binding.loverTabText.setTextColor(ContextCompat.getColor(requireContext(), R.color.gray))
-            binding.loverTabUnderline.setBackgroundColor(ContextCompat.getColor(requireContext(), R.color.trans))
-        } else {
+            binding.loverTabText.setTextColor(ContextCompat.getColor(context, R.color.gray))
+            binding.loverTabUnderline.setBackgroundColor(ContextCompat.getColor(context, R.color.trans))
+        }
+        else {
             // 연인형 탭 선택
-            binding.loverTabText.setTextColor(ContextCompat.getColor(requireContext(), R.color.purple))
-            binding.loverTabUnderline.setBackgroundColor(ContextCompat.getColor(requireContext(), R.color.purple))
+            binding.loverTabText.setTextColor(ContextCompat.getColor(context, R.color.purple))
+            binding.loverTabUnderline.setBackgroundColor(ContextCompat.getColor(context, R.color.purple))
 
             // 친구형 탭 비선택
-            binding.friendTabText.setTextColor(ContextCompat.getColor(requireContext(), R.color.gray))
-            binding.friendTabUnderline.setBackgroundColor(ContextCompat.getColor(requireContext(), R.color.trans))
+            binding.friendTabText.setTextColor(ContextCompat.getColor(context, R.color.gray))
+            binding.friendTabUnderline.setBackgroundColor(ContextCompat.getColor(context, R.color.trans))
         }
     }
+
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null

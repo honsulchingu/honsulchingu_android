@@ -4,7 +4,6 @@ plugins {
     id("androidx.navigation.safeargs.kotlin") version "2.5.0"
 }
 
-
 android {
     namespace = "kr.ac.tukorea.honsulchingu"
     compileSdk = 35
@@ -45,17 +44,23 @@ android {
 }
 
 dependencies {
+    // fragment
+    implementation("androidx.fragment:fragment-ktx:1.5.0")
 
-    implementation("androidx.fragment:fragment-ktx:1.5.0")      // 추가
-
-    // navigation 라이브러리
+    // navigation
     implementation ("androidx.navigation:navigation-fragment-ktx:2.7.7")
     implementation ("androidx.navigation:navigation-ui-ktx:2.7.7")
 
+    // 카카오 로그인
+    implementation("com.kakao.sdk:v2-user:2.21.3")
 
     // Lottie 애니메이션
     implementation ("com.airbnb.android:lottie:6.4.0")
 
+    // URL 이미지 로딩
+    implementation("io.coil-kt:coil:2.4.0")
+
+    // 기존
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
     implementation(libs.material)

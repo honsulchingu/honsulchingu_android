@@ -52,13 +52,12 @@ class FaqAdapter(private val faqList: List<FaqItem>) : RecyclerView.Adapter<FaqA
                     .alpha(1f)
                     .setDuration(200)
                     .start()
-            } else {
+            }
+            else {
                 holder.answerText.animate()
                     .alpha(0f)
                     .setDuration(200)
-                    .withEndAction {
-                        holder.answerText.visibility = View.GONE
-                    }
+                    .withEndAction { holder.answerText.visibility = View.GONE }
                     .start()
             }
         }

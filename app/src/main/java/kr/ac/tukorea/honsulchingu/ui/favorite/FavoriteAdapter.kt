@@ -1,6 +1,5 @@
 package kr.ac.tukorea.honsulchingu.ui.favorite
 
-import android.app.AlertDialog
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -8,8 +7,6 @@ import android.widget.Button
 import android.widget.ImageButton
 import android.widget.ImageView
 import android.widget.TextView
-import androidx.core.content.ContentProviderCompat.requireContext
-import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import kr.ac.tukorea.honsulchingu.R
 import kr.ac.tukorea.honsulchingu.ui.DialogUtil
@@ -31,7 +28,7 @@ class FavoriteAdapter(
         private val moveButton: Button = itemView.findViewById(R.id.moveButton)
 
         fun bind(item: FavoriteChat) {
-            imageProfile.setImageResource(item.profileImageRes)
+            imageProfile.setImageResource(item.image)
             nameText.text = item.name
             messageText.text = item.message
             dateText.text = Date(item.time).toSmartDateString()
@@ -49,18 +46,17 @@ class FavoriteAdapter(
                     message = "이 대화를 즐겨찾기에서 삭제해도\n언제든 다시 추가할 수 있어요.",
                     iconRes = R.drawable.ic_delete,
                     positiveText = "해제하기",
-                    negativeText = "취소"
-                ) {
-                    // 해제 처리
-                }
-
+                    negativeText = "취소",
+                    onPositiveClick = {
+                        onUnfavoriteClick(item)
+                    }
+                )
             }
         }
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): FavoriteViewHolder {
-        val view = LayoutInflater.from(parent.context)
-            .inflate(R.layout.item_favorite_chat, parent, false)
+        val view = LayoutInflater.from(parent.context).inflate(R.layout.item_favorite_chat, parent, false)
         return FavoriteViewHolder(view)
     }
 
@@ -70,6 +66,7 @@ class FavoriteAdapter(
 
     override fun getItemCount(): Int = items.size
 }
+
 // 터치 영역 확장 함수
 private fun expandTouchArea(view: View, extraPadding: Int) {
     val parent = view.parent as View

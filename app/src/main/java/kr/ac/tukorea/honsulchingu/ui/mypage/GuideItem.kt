@@ -4,4 +4,3 @@ data class GuideItem(
     val title: String,
     val description: String
 )
-

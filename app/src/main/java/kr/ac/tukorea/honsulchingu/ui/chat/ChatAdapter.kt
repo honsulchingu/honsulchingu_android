@@ -1,6 +1,13 @@
+package kr.ac.tukorea.honsulchingu.ui.chat
+
 import android.animation.ObjectAnimator
 import android.content.ClipData
+import android.content.ClipboardManager
 import android.content.Context
+import android.content.Context.MODE_PRIVATE
+import android.os.Build
+import android.os.VibrationEffect
+import android.os.Vibrator
 import android.view.GestureDetector
 import android.view.LayoutInflater
 import android.view.MotionEvent
@@ -11,27 +18,15 @@ import android.widget.TextView
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
-import android.os.VibrationEffect
-import android.os.Vibrator
-import android.os.Build
-
+import com.google.android.material.imageview.ShapeableImageView
 import kr.ac.tukorea.honsulchingu.R
-import kr.ac.tukorea.honsulchingu.ui.chat.ChatItem
-import kr.ac.tukorea.honsulchingu.ui.chat.ChatMessage
-
 import java.text.SimpleDateFormat
-import java.util.Calendar
 import java.util.Date
 import java.util.Locale
 
+class ChatAdapter(private val context: Context) : ListAdapter<ChatItem, RecyclerView.ViewHolder>(DiffCallback) {
 
-import android.content.ClipboardManager
-
-
-
-class ChatAdapter : ListAdapter<ChatItem, RecyclerView.ViewHolder>(DiffCallback) {
-
-    // DiffCallback의 areItemsTheSame와 areContentsTheSame 함수에서 실제 데이터 비교
+    // DiffCallback의 areItemsTheSame와 areContentsTheSame에서 실제 데이터 비교
     object DiffCallback : DiffUtil.ItemCallback<ChatItem>() {
         override fun areItemsTheSame(oldItem: ChatItem, newItem: ChatItem): Boolean {
             return oldItem == newItem
@@ -71,9 +66,11 @@ class ChatAdapter : ListAdapter<ChatItem, RecyclerView.ViewHolder>(DiffCallback)
         when (val item = getItem(position)) {
             is ChatItem.MessageItem -> {
                 val message = item.chatMessage
+
                 if (holder is UserViewHolder) {
                     holder.bind(message)
-                } else if (holder is AIViewHolder) {
+                }
+                else if (holder is AIViewHolder) {
                     holder.bind(message)
                 }
             }
@@ -89,12 +86,7 @@ class ChatAdapter : ListAdapter<ChatItem, RecyclerView.ViewHolder>(DiffCallback)
 
         fun bind(message: ChatMessage) {
             messageText.text = message.message
-            if (message.showTime) {
-                timeText.visibility = View.VISIBLE
-                timeText.text = formatTime(message.timestamp)
-            } else {
-                timeText.visibility = View.GONE
-            }
+            timeText.text = formatTime(message.timestamp)
 
             // 페이드 인 애니메이션
             ObjectAnimator.ofFloat(messageText, "alpha", 0f, 1f).apply {
@@ -107,23 +99,22 @@ class ChatAdapter : ListAdapter<ChatItem, RecyclerView.ViewHolder>(DiffCallback)
     inner class AIViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         private val messageText: TextView = itemView.findViewById(R.id.messageText)
         private val timeText: TextView = itemView.findViewById(R.id.timeText)
+        private val imageText: ShapeableImageView = itemView.findViewById(R.id.chatCharacterImage)
         private val gestureDetector = GestureDetector(itemView.context, GestureListener())
+
+        private val sharedPreferences_chat = context.getSharedPreferences("prefs_chat", MODE_PRIVATE)
 
         fun bind(message: ChatMessage) {
             messageText.text = message.message
-            if (message.showTime) {
-                timeText.visibility = View.VISIBLE
-                timeText.text = formatTime(message.timestamp)
-            } else {
-                timeText.visibility = View.GONE
-            }
+            timeText.text = formatTime(message.timestamp)
+            imageText.setImageResource(sharedPreferences_chat.getInt("image", R.drawable.ic_profile_placeholder))
 
             ObjectAnimator.ofFloat(messageText, "alpha", 0f, 1f).apply {
                 duration = 300
                 start()
             }
 
-            messageText.setOnTouchListener { v, event ->
+            messageText.setOnTouchListener { _, event ->
                 gestureDetector.onTouchEvent(event)
                 true
             }
@@ -140,7 +131,8 @@ class ChatAdapter : ListAdapter<ChatItem, RecyclerView.ViewHolder>(DiffCallback)
 
                     // 하트 버튼 숨기기
                     btnHeart.visibility = View.INVISIBLE
-                } else {
+                }
+                else {
                     // 하트 버튼을 보이게 하고 즐겨찾기에 추가하는 로직
                     addToFavorites(adapterPosition)
 
@@ -160,23 +152,23 @@ class ChatAdapter : ListAdapter<ChatItem, RecyclerView.ViewHolder>(DiffCallback)
 
             private fun vibratePhone() {
                 val vibrator = itemView.context.getSystemService(Context.VIBRATOR_SERVICE) as Vibrator
+
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                     vibrator.vibrate(VibrationEffect.createOneShot(100, VibrationEffect.DEFAULT_AMPLITUDE))
-                } else {
+                }
+                else {
                     vibrator.vibrate(100)
                 }
             }
-
         }
-
 
         private fun copyTextToClipboard(text: String) {
             val clipboard = itemView.context.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
             val clip = ClipData.newPlainText("Copied Message", text)
+
             clipboard.setPrimaryClip(clip)
         }
     }
-
 
     inner class DateDividerViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         private val dateTextView: TextView = itemView.findViewById(R.id.textViewDateDivider)
@@ -188,31 +180,13 @@ class ChatAdapter : ListAdapter<ChatItem, RecyclerView.ViewHolder>(DiffCallback)
 
     private fun formatTime(timestamp: Long): String {
         val sdf = SimpleDateFormat("a h:mm", Locale.getDefault())
+
         return sdf.format(Date(timestamp))
-    }
-
-    private fun formatDateForDivider(timestamp: Long): String {
-        val messageDate = Calendar.getInstance().apply { timeInMillis = timestamp }
-        val today = Calendar.getInstance()
-        val yesterday = Calendar.getInstance().apply { add(Calendar.DAY_OF_YEAR, -1) }
-
-        return when {
-            isSameDay(messageDate, today) -> "오늘"
-            isSameDay(messageDate, yesterday) -> "어제"
-            else -> {
-                val sdf = SimpleDateFormat("yyyy년 M월 d일", Locale.getDefault())
-                sdf.format(Date(timestamp))
-            }
-        }
-    }
-
-    private fun isSameDay(cal1: Calendar, cal2: Calendar): Boolean {
-        return cal1.get(Calendar.YEAR) == cal2.get(Calendar.YEAR) &&
-                cal1.get(Calendar.DAY_OF_YEAR) == cal2.get(Calendar.DAY_OF_YEAR)
     }
 
     private fun addToFavorites(position: Int) {
         val item = getItem(position)
+
         if (item is ChatItem.MessageItem) {
             val message = item.chatMessage
             // 여기에 즐겨찾기 등록하는 로직을 작성하면 돼
@@ -223,6 +197,7 @@ class ChatAdapter : ListAdapter<ChatItem, RecyclerView.ViewHolder>(DiffCallback)
 
     private fun removeFromFavorites(position: Int) {
         val item = getItem(position)
+
         if (item is ChatItem.MessageItem) {
             val message = item.chatMessage
             // 즐겨찾기에서 삭제하는 로직 추가
@@ -231,11 +206,9 @@ class ChatAdapter : ListAdapter<ChatItem, RecyclerView.ViewHolder>(DiffCallback)
         }
     }
 
-
     companion object {
         private const val VIEW_TYPE_USER = 0
         private const val VIEW_TYPE_AI = 1
         private const val VIEW_TYPE_DATE_DIVIDER = 2
     }
 }
-

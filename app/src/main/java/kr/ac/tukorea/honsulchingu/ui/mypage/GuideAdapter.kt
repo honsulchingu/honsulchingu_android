@@ -51,13 +51,12 @@ class GuideAdapter(private val guideList: List<GuideItem>) : RecyclerView.Adapte
                     .alpha(1f)
                     .setDuration(200)
                     .start()
-            } else {
+            }
+            else {
                 holder.guideDescription.animate()
                     .alpha(0f)
                     .setDuration(200)
-                    .withEndAction {
-                        holder.guideDescription.visibility = View.GONE
-                    }
+                    .withEndAction { holder.guideDescription.visibility = View.GONE }
                     .start()
             }
         }
