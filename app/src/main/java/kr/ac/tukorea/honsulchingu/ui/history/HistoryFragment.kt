@@ -58,7 +58,7 @@ class HistoryFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        load_last()
+        loadLast()
 
         // 초기 UI 설정
         val sharedPreferences_history = requireContext().getSharedPreferences("prefs_history", MODE_PRIVATE)
@@ -81,16 +81,18 @@ class HistoryFragment : Fragment() {
         }
     }
 
-    private fun load_last() {
+    private fun loadLast() {
         Thread {
-            Thread.sleep(100) // 100ms 지연, 애니메이션 전환
-
             val startTime = System.currentTimeMillis()
 
 
-            val sharedPreferences_history = requireContext().getSharedPreferences("prefs_history", MODE_PRIVATE)
+            val context = context ?: return@Thread
 
-            val sharedPreferences_setting = requireContext().getSharedPreferences("prefs_setting", MODE_PRIVATE)
+            val sharedPreferences_history = context.getSharedPreferences("prefs_history", MODE_PRIVATE)
+
+            val sharedPreferences_setting = context.getSharedPreferences("prefs_setting", MODE_PRIVATE)
+
+            val sharedPreferences_chat = context.getSharedPreferences("prefs_chat", MODE_PRIVATE)
 
             val jsonString = sharedPreferences_history.getString("savedChatList", "[]")
 
@@ -113,7 +115,7 @@ class HistoryFragment : Fragment() {
                     put("input_user", "")
                     put("time_user", "")
                     put("start_user", "")
-                    put("shown_user", "true")
+                    put("shown_user", "")
                 }
 
                 connection.outputStream.use { it.write(jsonInput.toString().toByteArray(Charsets.UTF_8)) }
@@ -131,8 +133,9 @@ class HistoryFragment : Fragment() {
                     val last_chat = item.getString("text")
                     val last_time = LocalDateTime.parse(item.getString("time"), DateTimeFormatter.ofPattern("yyyy. MM. dd. HH-mm-ss")).atZone(ZoneId.of("Asia/Seoul")).toInstant().toEpochMilli()
                     val start_time = item.getString("start")
-                    val profileImageRes = requireContext().resources.getIdentifier(item.getString("image"), "drawable", requireContext().packageName)
-                    ChatRecord(name, last_chat, last_time, start_time, listOf(), profileImageRes)
+                    val image = context.resources.getIdentifier(item.getString("image"), "drawable", context.packageName)
+                    val isFavorite = item.getString("favorite") != ""
+                    ChatRecord(name, last_chat, last_time, start_time, listOf(), image, isFavorite)
                 }
             }
 
@@ -159,7 +162,7 @@ class HistoryFragment : Fragment() {
                     put("input_user", sharedPreferences_setting.getString("TAG", ""))
                     put("time_user", "")
                     put("start_user", chat.start_time)
-                    put("shown_user", "true")
+                    put("shown_user", "")
                 }
 
                 connection.outputStream.use { it.write(jsonInput.toString().toByteArray(Charsets.UTF_8)) }
@@ -176,8 +179,6 @@ class HistoryFragment : Fragment() {
                 chat.copy(tag = tagList)
             }
 
-
-            val sharedPreferences_chat = requireContext().getSharedPreferences("prefs_chat", MODE_PRIVATE)
 
             val updatedChatList = savedChatList.filter { saved -> needTagUpdateChats.none { it.start_time == saved.start_time } } + tagUpdatedChats
 
@@ -269,7 +270,7 @@ class HistoryFragment : Fragment() {
                 )
 
                 binding.chatRecyclerView.apply {
-                    layoutManager = LinearLayoutManager(requireContext())
+                    layoutManager = LinearLayoutManager(context)
                     adapter = historyAdapter
                 }
 
@@ -295,6 +296,7 @@ class HistoryFragment : Fragment() {
     private val loadingTextRunnable = object : Runnable {
         override fun run() {
             binding.loadingText.text = loadingMessages[Random.nextInt(loadingMessages.size)]
+            handler.postDelayed(this, 3500) // 3.5초 후 메시지 전환
         }
     }
 

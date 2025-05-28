@@ -24,12 +24,12 @@ class FavoriteAdapter(
         private val nameText: TextView = itemView.findViewById(R.id.nameText)
         private val dateText: TextView = itemView.findViewById(R.id.dateText)
         private val messageText: TextView = itemView.findViewById(R.id.messageText)
-        private val unfavButton: ImageButton = itemView.findViewById(R.id.unfavButton)
+        private val unfavButton: ImageButton = itemView.findViewById(R.id.unfavoriteButton)
         private val moveButton: Button = itemView.findViewById(R.id.moveButton)
 
         fun bind(item: FavoriteChat) {
             imageProfile.setImageResource(item.image)
-            nameText.text = item.name
+            nameText.text = item.name.substringAfter('_')
             messageText.text = item.message
             dateText.text = Date(item.time).toSmartDateString()
 

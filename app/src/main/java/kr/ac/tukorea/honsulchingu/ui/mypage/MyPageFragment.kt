@@ -63,8 +63,6 @@ class MyPageFragment : Fragment(R.layout.fragment_my_page) {
 
     private fun load_user(view: View) {
         Thread {
-            Thread.sleep(100) // 100ms 지연, 애니메이션 전환
-
             val sharedPreferences_setting = requireContext().getSharedPreferences("prefs_setting", MODE_PRIVATE)
 
             val url = characterViewModel.updateURL("/load_user")

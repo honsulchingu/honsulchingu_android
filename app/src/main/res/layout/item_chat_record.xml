@@ -71,13 +71,13 @@
                 android:text="가나다라"
                 android:textSize="14sp"
                 app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toStartOf="@id/btnHeart"
+                app:layout_constraintEnd_toStartOf="@id/textHeart"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
 
             <!-- 하트 아이콘 -->
             <ImageView
-                android:id="@+id/btnHeart"
+                android:id="@+id/textHeart"
                 android:layout_width="30dp"
                 android:layout_height="30dp"
                 android:layout_marginStart="6dp"

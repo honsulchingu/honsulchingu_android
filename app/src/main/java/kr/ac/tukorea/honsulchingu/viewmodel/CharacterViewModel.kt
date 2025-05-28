@@ -20,6 +20,7 @@ class CharacterViewModel : ViewModel() {
 
     var greet_live = MutableLiveData<String>()
     var chatcount_live = MutableLiveData<Int>()
+    var favoritecount_live = MutableLiveData<Int>()
 
     // 특정 타입의 캐릭터 업데이트
     fun updateCharacters(type: String) {
@@ -35,8 +36,6 @@ class CharacterViewModel : ViewModel() {
     // 캐릭터 리스트 DB 로딩 후 업데이트
     fun loadCharacters(context: Context, onLoaded: () -> Unit) {
         Thread {
-            Thread.sleep(100) // 100ms 지연, 애니메이션 전환
-
             val url = updateURL("/load_character")
 
             val connection = (url.openConnection() as HttpURLConnection).apply {

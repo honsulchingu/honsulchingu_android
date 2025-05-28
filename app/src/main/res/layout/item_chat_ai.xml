@@ -7,7 +7,7 @@
 
     <!-- 캐릭터 이미지 -->
     <com.google.android.material.imageview.ShapeableImageView
-        android:id="@+id/chatCharacterImage"
+        android:id="@+id/imageText"
         android:layout_width="40dp"
         android:layout_height="40dp"
         android:layout_marginStart="16dp"
@@ -27,7 +27,7 @@
         android:layout_marginEnd="16dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@id/chatCharacterImage"
+        app:layout_constraintStart_toEndOf="@id/imageText"
         app:layout_constraintTop_toTopOf="parent">
 
         <!-- 말풍선 내부 내용 (Text + 하트 + 시간) -->
@@ -58,7 +58,7 @@
 
             <!-- 하트 버튼 -->
             <ImageButton
-                android:id="@+id/btnHeart"
+                android:id="@+id/heartText"
                 android:layout_width="20dp"
                 android:layout_height="20dp"
                 android:layout_marginStart="4dp"

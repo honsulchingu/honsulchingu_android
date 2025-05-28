@@ -78,6 +78,8 @@ class CharacterSelectFragment : Fragment() {
 
     // 탭 색상 업데이트 함수
     private fun updateTabColors(isFriend: Boolean) {
+        val binding = _binding ?: return
+
         val context = requireContext()
 
         if (isFriend) {

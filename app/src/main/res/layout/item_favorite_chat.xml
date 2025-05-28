@@ -109,7 +109,7 @@
             app:layout_constraintTop_toBottomOf="@id/messageContainer">
 
             <ImageButton
-                android:id="@+id/unfavButton"
+                android:id="@+id/unfavoriteButton"
                 android:layout_width="40dp"
                 android:layout_height="40dp"
                 android:layout_gravity="center_vertical"

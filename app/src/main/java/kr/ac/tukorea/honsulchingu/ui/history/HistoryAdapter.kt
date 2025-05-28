@@ -26,6 +26,7 @@ class HistoryAdapter(
         private val tag2: TextView = itemView.findViewById(R.id.textTag2)
         private val tag3: TextView = itemView.findViewById(R.id.textTag3)
         private val image: ImageView = itemView.findViewById(R.id.textImage)
+        private val heart: ImageView = itemView.findViewById(R.id.textHeart)
         private val moveButton: Button = itemView.findViewById(R.id.moveButton)
         private val deleteButton: ImageButton = itemView.findViewById(R.id.deleteButton)
 
@@ -37,6 +38,7 @@ class HistoryAdapter(
             tag2.text = item.tag[1]
             tag3.text = item.tag[2]
             image.setImageResource(item.image)
+            heart.visibility = if (item.isFavorite) View.VISIBLE else View.INVISIBLE
 
             moveButton.setOnClickListener {
                 onMoveClick(item)

@@ -9,7 +9,8 @@ data class ChatRecord(
     val last_time: Long,
     val start_time: String,
     val tag: List<String>,
-    val image: Int
+    val image: Int,
+    val isFavorite: Boolean
 ) {
     fun toJson(): JSONObject {
         val json = JSONObject()
@@ -19,6 +20,7 @@ data class ChatRecord(
         json.put("start_time", start_time)
         json.put("tag", JSONArray(tag))
         json.put("image", image)
+        // json.put("favorite", isFavorite)
         return json
     }
 
@@ -33,7 +35,8 @@ data class ChatRecord(
                 json.getLong("last_time"),
                 json.getString("start_time"),
                 tagList,
-                json.getInt("image")
+                json.getInt("image"),
+                json.getBoolean("favorite")
             )
         }
     }

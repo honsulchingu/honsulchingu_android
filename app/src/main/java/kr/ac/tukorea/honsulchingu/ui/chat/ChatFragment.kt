@@ -1,7 +1,7 @@
 package kr.ac.tukorea.honsulchingu.ui.chat
 
-import android.animation.ObjectAnimator
 import android.content.Context.MODE_PRIVATE
+import android.animation.ObjectAnimator
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
@@ -138,9 +138,11 @@ class ChatFragment : Fragment() {
             val startTime = System.currentTimeMillis()
 
 
-            val sharedPreferences_setting = requireContext().getSharedPreferences("prefs_setting", MODE_PRIVATE)
+            val context = context ?: return@Thread
 
-            val sharedPreferences_chat = requireContext().getSharedPreferences("prefs_chat", MODE_PRIVATE)
+            val sharedPreferences_setting = context.getSharedPreferences("prefs_setting", MODE_PRIVATE)
+
+            val sharedPreferences_chat = context.getSharedPreferences("prefs_chat", MODE_PRIVATE)
 
             val url = characterViewModel.updateURL("/conversation_model")
 
@@ -281,7 +283,11 @@ class ChatFragment : Fragment() {
             val Messages = responseJson.getJSONArray("chat").let { array ->
                 List(array.length()) { i ->
                     val obj = array.getJSONObject(i)
-                    ChatMessage(obj.getString("text"), obj.getString("role") == "user", LocalDateTime.parse(obj.getString("time"), DateTimeFormatter.ofPattern("yyyy. MM. dd. HH-mm-ss")).atZone(ZoneId.of("Asia/Seoul")).toInstant().toEpochMilli())
+                    val message = obj.getString("text")
+                    val isUser = obj.getString("role") == "user"
+                    val time = LocalDateTime.parse(obj.getString("time"), DateTimeFormatter.ofPattern("yyyy. MM. dd. HH-mm-ss")).atZone(ZoneId.of("Asia/Seoul")).toInstant().toEpochMilli()
+                    val isFavorite = obj.getString("favorite") != ""
+                    ChatMessage(message, isUser, time, isFavorite)
                 }
             }
 
@@ -324,6 +330,7 @@ class ChatFragment : Fragment() {
     private val loadingTextRunnable = object : Runnable {
         override fun run() {
             binding.loadingText.text = loadingMessages[Random.nextInt(loadingMessages.size)]
+            handler.postDelayed(this, 3500) // 3.5초 후 메시지 전환
         }
     }
 
@@ -347,7 +354,7 @@ class ChatFragment : Fragment() {
     }
 
     private fun setupRecyclerView() {
-        chatAdapter = ChatAdapter(requireContext())
+        chatAdapter = ChatAdapter(binding.root.context, characterViewModel)
         binding.recyclerViewChat.adapter = chatAdapter
         binding.recyclerViewChat.layoutManager = LinearLayoutManager(requireContext())
     }

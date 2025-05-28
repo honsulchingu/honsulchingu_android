@@ -31,6 +31,7 @@ class ProfileFragment : Fragment() {
 
         val characterViewModel: CharacterViewModel by activityViewModels()
 
+        val sharedPreferences_favorite = requireContext().getSharedPreferences("prefs_favorite", MODE_PRIVATE)
         val sharedPreferences_setting = requireContext().getSharedPreferences("prefs_setting", MODE_PRIVATE)
         val sharedPreferences_history = requireContext().getSharedPreferences("prefs_history", MODE_PRIVATE)
         val sharedPreferences_chat = requireContext().getSharedPreferences("prefs_chat", MODE_PRIVATE)
@@ -121,6 +122,8 @@ class ProfileFragment : Fragment() {
 
                                     connection.inputStream.bufferedReader().use { it.readText() }
 
+
+                                    sharedPreferences_favorite.edit().clear().apply()
                                     sharedPreferences_setting.edit().clear().apply()
                                     sharedPreferences_history.edit().clear().apply()
                                     sharedPreferences_chat.edit().clear().apply()
