@@ -10,7 +10,6 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
-import androidx.core.view.updateLayoutParams
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.NavOptions
@@ -55,6 +54,9 @@ class ChatFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        // 뷰가 attach된 후 리스너 설정
+        view.post { ViewCompat.requestApplyInsets(binding.chatRoot) } // 인셋 요청 (리스너 설정 후)
+
         // 1. 로딩 애니메이션 보이기
         binding.loadingAnimation.visibility = View.VISIBLE
         binding.loadingText.visibility = View.VISIBLE
@@ -91,30 +93,31 @@ class ChatFragment : Fragment() {
         }
 
         // 키보드가 올라왔을 때 입력창 마진을 동적으로 설정
-        val params = binding.layoutChatInput.layoutParams as ViewGroup.MarginLayoutParams
-
-        ViewCompat.setOnApplyWindowInsetsListener(binding.root) { _, insets ->
+        ViewCompat.setOnApplyWindowInsetsListener(binding.root) { view, insets ->
+            // 키보드(IME) 높이 얻기
             val imeInsets = insets.getInsets(WindowInsetsCompat.Type.ime())
             val imeHeight = imeInsets.bottom
+
             val isKeyboardVisible = imeHeight > 0
-
-            binding.layoutChatInput.updateLayoutParams<ViewGroup.MarginLayoutParams> {
-                bottomMargin = if (isKeyboardVisible) {
-                    (imeHeight * 0.05).toInt() // 키보드가 올라왔을 때 입력창과의 간격 조정
-                }
-                else {
-                    params.bottomMargin
-                }
-            }
-
-            // 입력창이 가려지지 않도록 RecyclerView 자동 스크롤
             if (isKeyboardVisible) {
-                binding.recyclerViewChat.post {
-                    binding.recyclerViewChat.scrollToPosition(chatItems.size - 1)
-                }
+                val marginPx = (100 * resources.displayMetrics.density).toInt()
+                val offset = imeHeight - marginPx
+                binding.containerUI.translationY = -offset.toFloat()
+            }
+            else {
+                binding.containerUI.translationY = 0f
             }
 
-            WindowInsetsCompat.CONSUMED
+            // 시스템바(상단, 하단, 네비게이션) 인셋 처리 (우측 패딩 적용 예시)
+            val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
+            view.setPadding(
+                view.paddingLeft,
+                view.paddingTop,
+                systemBars.right,
+                view.paddingBottom
+            )
+
+            insets
         }
 
         // 키보드 올라갈 때 스크롤 자동화 및 플릭커 방지
