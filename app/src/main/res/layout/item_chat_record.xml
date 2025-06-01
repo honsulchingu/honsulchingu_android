@@ -144,7 +144,7 @@
 
         </LinearLayout>
 
-        <!-- 삭제 버튼 -->
+        <!-- 대화기록 삭제 버튼 -->
         <FrameLayout
             android:id="@+id/delButtonWrapper"
             android:layout_width="60dp"

@@ -3,13 +3,13 @@ package kr.ac.tukorea.honsulchingu.viewmodel
 import android.content.Context
 import android.os.Handler
 import android.os.Looper
+import androidx.lifecycle.ViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
+import java.net.URL
+import java.net.HttpURLConnection
 import kr.ac.tukorea.honsulchingu.ui.character.ChatCharacter
 import org.json.JSONObject
-import java.net.HttpURLConnection
-import java.net.URL
 
 class CharacterViewModel : ViewModel() {
 
@@ -21,11 +21,10 @@ class CharacterViewModel : ViewModel() {
     var greet_live = MutableLiveData<String>()
     var chatcount_live = MutableLiveData<Int>()
     var favoritecount_live = MutableLiveData<Int>()
+    var isSelected_live = MutableLiveData<Boolean>()
 
     // 특정 타입의 캐릭터 업데이트
-    fun updateCharacters(type: String) {
-        _filteredCharacters.value = allCharacters.filter { it.type == type }
-    }
+    fun updateCharacters(type: String) { _filteredCharacters.value = allCharacters.filter { it.type == type } }
 
     // 특정 앤드포인트의 URL 업데이트
     fun updateURL(endPoint: String): URL {

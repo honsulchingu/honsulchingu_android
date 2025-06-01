@@ -1,22 +1,22 @@
 package kr.ac.tukorea.honsulchingu.ui.mypage
 
+import            coil.load
 import android.content.Context.MODE_PRIVATE
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
-import androidx.fragment.app.Fragment
 import android.view.View
 import android.widget.TextView
+import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
-import coil.load
 import com.google.android.material.imageview.ShapeableImageView
 import kr.ac.tukorea.honsulchingu.R
 import kr.ac.tukorea.honsulchingu.viewmodel.CharacterViewModel
-import org.json.JSONObject
 import java.net.HttpURLConnection
 import java.text.SimpleDateFormat
 import java.util.Locale
+import org.json.JSONObject
 
 class MyPageFragment : Fragment(R.layout.fragment_my_page) {
 
@@ -25,18 +25,18 @@ class MyPageFragment : Fragment(R.layout.fragment_my_page) {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        // 프로필 정보 표시 설정
         load_user(view)
 
+        // 프로필 정보 표시 설정
         val sharedPreferences_setting = requireContext().getSharedPreferences("prefs_setting", MODE_PRIVATE)
 
-        val profileImage = view.findViewById<ShapeableImageView>(R.id.profileImage)
         val profileNickname = view.findViewById<TextView>(R.id.profileNickname)
         val profileEmail = view.findViewById<TextView>(R.id.profileEmail)
         val profileGreet = view.findViewById<TextView>(R.id.profileGreet)
+        val profileImage = view.findViewById<ShapeableImageView>(R.id.profileImage)
         // val profileStartDay = view.findViewById<TextView>(R.id.profileStartDay)
-        val profileChatCount = view.findViewById<TextView>(R.id.profileChatCount)
         val profileFavoriteCount = view.findViewById<TextView>(R.id.profileFavoriteCount)
+        val profileChatCount = view.findViewById<TextView>(R.id.profileChatCount)
 
         profileEmail.text = sharedPreferences_setting.getString("EMAIL", "")?.substringAfter('_')
         profileNickname.text = sharedPreferences_setting.getString("NICKNAME", "")
@@ -51,14 +51,10 @@ class MyPageFragment : Fragment(R.layout.fragment_my_page) {
         characterViewModel.chatcount_live.observe(viewLifecycleOwner) { chatcount -> profileChatCount.text = chatcount.toString() }
 
         // 프로필 관리 클릭시 이동
-        view.findViewById<View>(R.id.layoutProfile).setOnClickListener {
-            findNavController().navigate(R.id.action_nav_mypage_to_profileFragment)
-        }
+        view.findViewById<View>(R.id.layoutProfile).setOnClickListener { findNavController().navigate(R.id.action_nav_mypage_to_profileFragment) }
 
         // 도움말 클릭시 이동
-        view.findViewById<View>(R.id.layoutHelp).setOnClickListener {
-            findNavController().navigate(R.id.action_nav_mypage_to_helpFragment)
-        }
+        view.findViewById<View>(R.id.layoutHelp).setOnClickListener { findNavController().navigate(R.id.action_nav_mypage_to_helpFragment) }
     }
 
     private fun load_user(view: View) {
@@ -102,9 +98,7 @@ class MyPageFragment : Fragment(R.layout.fragment_my_page) {
                 apply()
             }
 
-            Handler(Looper.getMainLooper()).post {
-                view.findViewById<TextView>(R.id.profileStartday).text = SimpleDateFormat("yyyy년 M월", Locale.KOREA).format(SimpleDateFormat("yyyy. MM. dd. HH-mm-ss", Locale.KOREA).parse(sharedPreferences_setting.getString("STARTDAY", "")))
-            }
+            Handler(Looper.getMainLooper()).post { view.findViewById<TextView>(R.id.profileStartday).text = SimpleDateFormat("yyyy년 M월", Locale.KOREA).format(SimpleDateFormat("yyyy. MM. dd. HH-mm-ss", Locale.KOREA).parse(sharedPreferences_setting.getString("STARTDAY", ""))) }
         }.start()
     }
 }

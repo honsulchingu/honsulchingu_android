@@ -2,15 +2,14 @@ package kr.ac.tukorea.honsulchingu
 
 import android.os.Bundle
 import android.view.View
-import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
-import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.ContextCompat
-import androidx.core.view.WindowCompat
-import androidx.navigation.fragment.NavHostFragment
+import androidx.activity.enableEdgeToEdge
 import androidx.navigation.ui.setupWithNavController
-import com.google.android.material.bottomnavigation.BottomNavigationView
+import androidx.navigation.fragment.NavHostFragment
+import androidx.constraintlayout.widget.ConstraintLayout
 import kr.ac.tukorea.honsulchingu.navigation.NavAnimationUtil
+import com.google.android.material.bottomnavigation.BottomNavigationView
 
 class MainActivity : AppCompatActivity() {
 
@@ -18,7 +17,6 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContentView(R.layout.activity_main)
-        WindowCompat.setDecorFitsSystemWindows(window, true)
 
         // 네비게이션 컨트롤러 얻기
         val navHostFragment = supportFragmentManager.findFragmentById(R.id.fragment_container) as NavHostFragment

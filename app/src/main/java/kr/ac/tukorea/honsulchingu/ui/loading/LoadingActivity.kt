@@ -1,32 +1,32 @@
 package kr.ac.tukorea.honsulchingu.ui.loading
 
-import android.content.Intent
 import android.content.SharedPreferences
+import android.content.Intent
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
 import android.util.Log
 import android.view.View
-import android.view.animation.AlphaAnimation
 import android.view.animation.Animation
-import androidx.activity.enableEdgeToEdge
+import android.view.animation.AlphaAnimation
 import androidx.activity.viewModels
+import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import com.kakao.sdk.auth.AuthApiClient
+import com.kakao.sdk.user.UserApiClient
 import com.kakao.sdk.common.KakaoSdk
 import com.kakao.sdk.common.model.KakaoSdkError
-import com.kakao.sdk.user.UserApiClient
-import kr.ac.tukorea.honsulchingu.MainActivity
 import kr.ac.tukorea.honsulchingu.R
+import kr.ac.tukorea.honsulchingu.MainActivity
 import kr.ac.tukorea.honsulchingu.ui.login.LoginActivity
 import kr.ac.tukorea.honsulchingu.viewmodel.CharacterViewModel
-import org.json.JSONObject
 import java.net.HttpURLConnection
 import java.text.SimpleDateFormat
-import java.util.Date
 import java.util.Locale
+import java.util.Date
+import org.json.JSONObject
 
 class LoadingActivity : AppCompatActivity() {
 
@@ -144,11 +144,17 @@ class LoadingActivity : AppCompatActivity() {
             else if (user != null) {
                 val scopes = mutableListOf<String>()
 
-                if (user.kakaoAccount?.emailNeedsAgreement == true) scopes.add("account_email")
-                if (user.kakaoAccount?.profileNeedsAgreement == true) scopes.add("profile")
+                if (user.kakaoAccount?.emailNeedsAgreement == true) { scopes.add("account_email") }
+                // if (user.kakaoAccount?.birthdayNeedsAgreement == true) { scopes.add("birthday") }
+                // if (user.kakaoAccount?.birthyearNeedsAgreement == true) { scopes.add("birthyear") }
+                // if (user.kakaoAccount?.genderNeedsAgreement == true) { scopes.add("gender") }
+                // if (user.kakaoAccount?.phoneNumberNeedsAgreement == true) { scopes.add("phone_number") }
+                if (user.kakaoAccount?.profileNeedsAgreement == true) { scopes.add("profile") }
+                // if (user.kakaoAccount?.ageRangeNeedsAgreement == true) { scopes.add("age_range") }
 
                 if (scopes.isNotEmpty()) {
                     scopes.add("openid")
+
                     UserApiClient.instance.loginWithNewScopes(this, scopes) { token, error ->
                         if (error != null) {
                             Log.e("db", "사용자 추가 동의 실패", error)
@@ -157,6 +163,7 @@ class LoadingActivity : AppCompatActivity() {
                         }
                         else {
                             Log.d("db", "허용된 동의 항목: ${token?.scopes}")
+
                             UserApiClient.instance.me { user, error ->
                                 if (error != null) {
                                     Log.e("db", "사용자 정보 요청 실패", error)
@@ -187,6 +194,7 @@ class LoadingActivity : AppCompatActivity() {
 
 
                                         connection.inputStream.bufferedReader().use { it.readText() }
+
 
                                         sharedPreferences_setting.edit().apply {
                                             putString("EMAIL", "kakao_" + user.kakaoAccount?.email)
@@ -229,6 +237,7 @@ class LoadingActivity : AppCompatActivity() {
 
 
                         connection.inputStream.bufferedReader().use { it.readText() }
+
 
                         sharedPreferences_setting.edit().apply {
                             putString("EMAIL", "kakao_" + user.kakaoAccount?.email)

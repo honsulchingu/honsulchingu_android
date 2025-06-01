@@ -1,13 +1,13 @@
 package kr.ac.tukorea.honsulchingu.ui.chat
 
+import android.view.View
 import android.content.Context
 import android.graphics.Canvas
 import android.graphics.Color
-import android.graphics.LinearGradient
 import android.graphics.Paint
 import android.graphics.Shader
+import android.graphics.LinearGradient
 import android.util.AttributeSet
-import android.view.View
 import androidx.core.content.ContextCompat
 import kr.ac.tukorea.honsulchingu.R
 
@@ -34,6 +34,7 @@ class CurveBackgroundView @JvmOverloads constructor(
             Color.parseColor("#3730A3"), // 아래쪽 진보라
             Shader.TileMode.CLAMP
         )
+
         purplePaint.shader = gradientShader
     }
 

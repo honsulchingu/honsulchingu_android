@@ -1,11 +1,11 @@
 package kr.ac.tukorea.honsulchingu.ui.voice
 
-import android.animation.ValueAnimator
-import android.content.Context
 import android.graphics.*
 import android.graphics.drawable.VectorDrawable
 import android.util.AttributeSet
 import android.view.View
+import android.content.Context
+import android.animation.ValueAnimator
 import androidx.core.content.ContextCompat
 import kr.ac.tukorea.honsulchingu.R
 
@@ -54,9 +54,7 @@ class MicWaveView @JvmOverloads constructor(
         )
     }
 
-    init {
-        waves.forEach { it.animator.start() }
-    }
+    init { waves.forEach { it.animator.start() } }
 
     override fun onDetachedFromWindow() {
         super.onDetachedFromWindow()
@@ -91,10 +89,12 @@ class MicWaveView @JvmOverloads constructor(
     }
 
     inner class Wave(
-        delay: Long,
+            delay: Long,
         val alpha: Int,
         val paint: Paint,
+
         val minScale: Float,
+
         val maxScale: Float
     ) {
         var currentScale = minScale

@@ -1,16 +1,16 @@
 package kr.ac.tukorea.honsulchingu.ui.character
 
 import android.os.Bundle
-import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.core.content.ContextCompat
+import android.view.LayoutInflater
 import androidx.fragment.app.Fragment
+import androidx.core.content.ContextCompat
 import androidx.lifecycle.ViewModelProvider
 import androidx.viewpager2.widget.ViewPager2
 import kr.ac.tukorea.honsulchingu.R
-import kr.ac.tukorea.honsulchingu.databinding.FragmentCharacterSelectBinding
 import kr.ac.tukorea.honsulchingu.viewmodel.CharacterViewModel
+import kr.ac.tukorea.honsulchingu.databinding.FragmentCharacterSelectBinding
 
 class CharacterSelectFragment : Fragment() {
 

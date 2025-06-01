@@ -1,25 +1,25 @@
 package kr.ac.tukorea.honsulchingu.ui.mypage
 
+import            coil.load
 import android.content.Context.MODE_PRIVATE
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
-import androidx.fragment.app.Fragment
-import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.LayoutInflater
 import android.widget.TextView
+import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
-import coil.load
-import com.kakao.sdk.user.UserApiClient
-import kr.ac.tukorea.honsulchingu.R
-import kr.ac.tukorea.honsulchingu.ui.login.LoginActivity
-import kr.ac.tukorea.honsulchingu.viewmodel.CharacterViewModel
-import org.json.JSONObject
-import java.net.HttpURLConnection
 import com.google.android.material.button.MaterialButton
 import com.google.android.material.imageview.ShapeableImageView
+import com.kakao.sdk.user.UserApiClient
+import kr.ac.tukorea.honsulchingu.R
 import kr.ac.tukorea.honsulchingu.ui.DialogUtil
+import kr.ac.tukorea.honsulchingu.ui.login.LoginActivity
+import kr.ac.tukorea.honsulchingu.viewmodel.CharacterViewModel
+import java.net.HttpURLConnection
+import org.json.JSONObject
 
 class ProfileFragment : Fragment() {
 
@@ -31,7 +31,6 @@ class ProfileFragment : Fragment() {
 
         val characterViewModel: CharacterViewModel by activityViewModels()
 
-        val sharedPreferences_favorite = requireContext().getSharedPreferences("prefs_favorite", MODE_PRIVATE)
         val sharedPreferences_setting = requireContext().getSharedPreferences("prefs_setting", MODE_PRIVATE)
         val sharedPreferences_history = requireContext().getSharedPreferences("prefs_history", MODE_PRIVATE)
         val sharedPreferences_chat = requireContext().getSharedPreferences("prefs_chat", MODE_PRIVATE)
@@ -123,7 +122,6 @@ class ProfileFragment : Fragment() {
                                     connection.inputStream.bufferedReader().use { it.readText() }
 
 
-                                    sharedPreferences_favorite.edit().clear().apply()
                                     sharedPreferences_setting.edit().clear().apply()
                                     sharedPreferences_history.edit().clear().apply()
                                     sharedPreferences_chat.edit().clear().apply()

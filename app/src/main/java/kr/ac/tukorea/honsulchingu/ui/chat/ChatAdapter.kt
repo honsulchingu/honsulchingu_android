@@ -1,22 +1,22 @@
 package kr.ac.tukorea.honsulchingu.ui.chat
 
-import android.animation.ObjectAnimator
+import android.content.Context.MODE_PRIVATE
+import android.content.Context
 import android.content.ClipData
 import android.content.ClipboardManager
-import android.content.Context
-import android.content.Context.MODE_PRIVATE
 import android.os.Build
 import android.os.Handler
 import android.os.Looper
-import android.os.VibrationEffect
 import android.os.Vibrator
+import android.os.VibrationEffect
 import android.view.GestureDetector
 import android.view.LayoutInflater
 import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ImageView
 import android.widget.TextView
+import android.widget.ImageView
+import android.animation.ObjectAnimator
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
@@ -34,15 +34,9 @@ class ChatAdapter(
     private val characterViewModel: CharacterViewModel
 ) : ListAdapter<ChatItem, RecyclerView.ViewHolder>(DiffCallback) {
 
-    // DiffCallback의 areItemsTheSame와 areContentsTheSame에서 실제 데이터 비교
     object DiffCallback : DiffUtil.ItemCallback<ChatItem>() {
-        override fun areItemsTheSame(oldItem: ChatItem, newItem: ChatItem): Boolean {
-            return oldItem == newItem
-        }
-
-        override fun areContentsTheSame(oldItem: ChatItem, newItem: ChatItem): Boolean {
-            return oldItem == newItem
-        }
+        override fun areItemsTheSame(oldItem: ChatItem, newItem: ChatItem): Boolean { return oldItem == newItem }
+        override fun areContentsTheSame(oldItem: ChatItem, newItem: ChatItem): Boolean { return oldItem == newItem }
     }
 
     override fun getItemViewType(position: Int): Int {
@@ -66,25 +60,17 @@ class ChatAdapter(
                 val view = LayoutInflater.from(parent.context).inflate(R.layout.item_chat_date_divider, parent, false)
                 DateDividerViewHolder(view)
             }
-            else -> throw IllegalArgumentException("Invalid viewType")
+            else -> throw IllegalArgumentException("INVALID VIEW_TYPE_...")
         }
     }
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
         when (val item = getItem(position)) {
             is ChatItem.MessageItem -> {
-                val message = item.chatMessage
-
-                if (holder is UserViewHolder) {
-                    holder.bind(message)
-                }
-                else if (holder is AIViewHolder) {
-                    holder.bind(message)
-                }
+                if (holder is UserViewHolder) holder.bind(item.chatMessage)
+                else if (holder is AIViewHolder) holder.bind(item.chatMessage)
             }
-            is ChatItem.DateDividerItem -> {
-                (holder as DateDividerViewHolder).bind(item.dateText)
-            }
+            is ChatItem.DateDividerItem -> (holder as DateDividerViewHolder).bind(item.dateText)
         }
     }
 
@@ -96,9 +82,8 @@ class ChatAdapter(
             messageText.text = message.message
             timeText.text = formatTime(message.timestamp)
 
-            // 페이드 인 애니메이션
             ObjectAnimator.ofFloat(messageText, "alpha", 0f, 1f).apply {
-                duration = 300
+                duration = 300 // 페이드 인 애니메이션
                 start()
             }
         }
@@ -120,7 +105,7 @@ class ChatAdapter(
             heartText.visibility = if (message.isFavorite) View.VISIBLE else View.INVISIBLE
 
             ObjectAnimator.ofFloat(messageText, "alpha", 0f, 1f).apply {
-                duration = 300
+                duration = 300 // 페이드 인 애니메이션
                 start()
             }
 
@@ -156,42 +141,25 @@ class ChatAdapter(
                 return true
             }
 
-            override fun onLongPress(e: MotionEvent) {
-                copyTextToClipboard(messageText.text.toString())
-            }
+            override fun onLongPress(e: MotionEvent) { copyTextToClipboard(messageText.text.toString()) }
 
             private fun vibratePhone() {
                 val vibrator = itemView.context.getSystemService(Context.VIBRATOR_SERVICE) as Vibrator
-
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                    vibrator.vibrate(VibrationEffect.createOneShot(100, VibrationEffect.DEFAULT_AMPLITUDE))
-                }
-                else {
-                    vibrator.vibrate(100)
-                }
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) vibrator.vibrate(VibrationEffect.createOneShot(100, VibrationEffect.DEFAULT_AMPLITUDE))
+                else vibrator.vibrate(100)
             }
         }
 
         private fun copyTextToClipboard(text: String) {
             val clipboard = itemView.context.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
-            val clip = ClipData.newPlainText("Copied Message", text)
-
+            val clip = ClipData.newPlainText("copy message", text)
             clipboard.setPrimaryClip(clip)
         }
     }
 
     inner class DateDividerViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         private val dateTextView: TextView = itemView.findViewById(R.id.textViewDateDivider)
-
-        fun bind(dateText: String) {
-            dateTextView.text = dateText
-        }
-    }
-
-    private fun formatTime(timestamp: Long): String {
-        val sdf = SimpleDateFormat("a h:mm", Locale.getDefault())
-
-        return sdf.format(Date(timestamp))
+        fun bind(dateText: String) { dateTextView.text = dateText }
     }
 
     private fun addToFavorites(position: Int) {
@@ -216,7 +184,6 @@ class ChatAdapter(
                     put("input_user", "")
                     put("time_user", SimpleDateFormat("yyyy. MM. dd. HH-mm-ss", Locale.KOREA).format(Date(item.chatMessage.timestamp)))
                     put("start_user", "")
-                    put("shown_user", "")
                 }
 
                 connection.outputStream.use { it.write(jsonInput.toString().toByteArray(Charsets.UTF_8)) }
@@ -255,7 +222,6 @@ class ChatAdapter(
                     put("input_user", "")
                     put("time_user", SimpleDateFormat("yyyy. MM. dd. HH-mm-ss", Locale.KOREA).format(Date(item.chatMessage.timestamp)))
                     put("start_user", "")
-                    put("shown_user", "")
                 }
 
                 connection.outputStream.use { it.write(jsonInput.toString().toByteArray(Charsets.UTF_8)) }
@@ -270,6 +236,11 @@ class ChatAdapter(
                 }
             }.start()
         }
+    }
+
+    private fun formatTime(timestamp: Long): String {
+        val sdf = SimpleDateFormat("a h:mm", Locale.getDefault())
+        return sdf.format(Date(timestamp))
     }
 
     companion object {

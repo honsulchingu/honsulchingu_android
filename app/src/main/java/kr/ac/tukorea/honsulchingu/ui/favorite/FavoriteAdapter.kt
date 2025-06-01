@@ -1,12 +1,12 @@
 package kr.ac.tukorea.honsulchingu.ui.favorite
 
-import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.LayoutInflater
 import android.widget.Button
-import android.widget.ImageButton
-import android.widget.ImageView
 import android.widget.TextView
+import android.widget.ImageView
+import android.widget.ImageButton
 import androidx.recyclerview.widget.RecyclerView
 import kr.ac.tukorea.honsulchingu.R
 import kr.ac.tukorea.honsulchingu.ui.DialogUtil
@@ -16,30 +16,28 @@ import java.util.Date
 class FavoriteAdapter(
     private val items: List<FavoriteChat>,
     private val onMoveClick: (FavoriteChat) -> Unit,
-    private val onUnfavoriteClick: (FavoriteChat) -> Unit
+    private val onUnClick: (FavoriteChat) -> Unit
 ) : RecyclerView.Adapter<FavoriteAdapter.FavoriteViewHolder>() {
 
     inner class FavoriteViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        private val imageProfile: ImageView = itemView.findViewById(R.id.imageProfile)
         private val nameText: TextView = itemView.findViewById(R.id.nameText)
-        private val dateText: TextView = itemView.findViewById(R.id.dateText)
         private val messageText: TextView = itemView.findViewById(R.id.messageText)
-        private val unfavButton: ImageButton = itemView.findViewById(R.id.unfavoriteButton)
+        private val dateText: TextView = itemView.findViewById(R.id.dateText)
+        private val imageText: ImageView = itemView.findViewById(R.id.imageText)
         private val moveButton: Button = itemView.findViewById(R.id.moveButton)
+        private val unButton: ImageButton = itemView.findViewById(R.id.unButton)
 
         fun bind(item: FavoriteChat) {
-            imageProfile.setImageResource(item.image)
             nameText.text = item.name.substringAfter('_')
             messageText.text = item.message
             dateText.text = Date(item.time).toSmartDateString()
+            imageText.setImageResource(item.image)
 
-            moveButton.setOnClickListener {
-                onMoveClick(item)
-            }
+            expandTouchArea(unButton, 20)
 
-            expandTouchArea(unfavButton, 20)
+            moveButton.setOnClickListener { onMoveClick(item) }
 
-            unfavButton.setOnClickListener {
+            unButton.setOnClickListener {
                 DialogUtil.showHonsulDialog(
                     context = itemView.context,
                     title = "즐겨찾기를 해제할까요?",
@@ -47,9 +45,7 @@ class FavoriteAdapter(
                     iconRes = R.drawable.ic_delete,
                     positiveText = "해제하기",
                     negativeText = "취소",
-                    onPositiveClick = {
-                        onUnfavoriteClick(item)
-                    }
+                    onPositiveClick = { onUnClick(item) }
                 )
             }
         }
@@ -60,9 +56,7 @@ class FavoriteAdapter(
         return FavoriteViewHolder(view)
     }
 
-    override fun onBindViewHolder(holder: FavoriteViewHolder, position: Int) {
-        holder.bind(items[position])
-    }
+    override fun onBindViewHolder(holder: FavoriteViewHolder, position: Int) { holder.bind(items[position]) }
 
     override fun getItemCount(): Int = items.size
 }

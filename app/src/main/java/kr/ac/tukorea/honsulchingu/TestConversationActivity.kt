@@ -67,7 +67,6 @@
 //                jsonInput.put("select_user", "민혁")
 //                jsonInput.put("start_user", "2025. 05. 01. 18-00-00")
 //                jsonInput.put("input_user", input_user)
-//                jsonInput.put("shown_user", "true")
 //
 //
 //                val outputStream: OutputStream = connection.outputStream

@@ -4,25 +4,25 @@ import android.content.Context.MODE_PRIVATE
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
-import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.LayoutInflater
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
-import kr.ac.tukorea.honsulchingu.R
-import kr.ac.tukorea.honsulchingu.databinding.FragmentFavoriteBinding
-import kr.ac.tukorea.honsulchingu.navigation.NavAnimationUtil
-import kr.ac.tukorea.honsulchingu.viewmodel.CharacterViewModel
-import org.json.JSONObject
 import java.net.HttpURLConnection
 import java.text.SimpleDateFormat
 import java.time.LocalDateTime
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
-import java.util.Date
 import java.util.Locale
+import java.util.Date
+import kr.ac.tukorea.honsulchingu.R
+import kr.ac.tukorea.honsulchingu.viewmodel.CharacterViewModel
+import kr.ac.tukorea.honsulchingu.navigation.NavAnimationUtil
+import kr.ac.tukorea.honsulchingu.databinding.FragmentFavoriteBinding
+import org.json.JSONObject
 
 class FavoriteFragment : Fragment() {
 
@@ -30,8 +30,9 @@ class FavoriteFragment : Fragment() {
     private val binding get() = _binding!!
     private lateinit var favoriteAdapter: FavoriteAdapter
 
-    private val favoriteList = mutableListOf<FavoriteChat>()
     private val characterViewModel: CharacterViewModel by activityViewModels()
+
+    private val favoriteList = mutableListOf<FavoriteChat>()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -44,10 +45,6 @@ class FavoriteFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        loadFavorite()
-    }
-
-    private fun loadFavorite() {
         Thread {
             val sharedPreferences_setting = requireContext().getSharedPreferences("prefs_setting", MODE_PRIVATE)
 
@@ -69,7 +66,6 @@ class FavoriteFragment : Fragment() {
                     put("input_user", "")
                     put("time_user", "")
                     put("start_user", "")
-                    put("shown_user", "")
                 }
 
                 connection.outputStream.use { it.write(jsonInput.toString().toByteArray(Charsets.UTF_8)) }
@@ -101,6 +97,7 @@ class FavoriteFragment : Fragment() {
 
                 favoriteList.clear()
                 favoriteList.addAll(favoriteList_temp)
+
                 if (favoriteList.isEmpty()) binding.loadingInitText.visibility = View.VISIBLE
                 else binding.loadingInitText.visibility = View.INVISIBLE
 
@@ -112,8 +109,6 @@ class FavoriteFragment : Fragment() {
                             putString("start_user", favoriteChat.start)
                             putBoolean("isFirst", false)
                             putInt("image", favoriteChat.image)
-                            putString("greet", favoriteChat.message)
-                            characterViewModel.greet_live.value = favoriteChat.message
                             apply()
                         }
 
@@ -122,9 +117,11 @@ class FavoriteFragment : Fragment() {
                             apply()
                         }
 
+                        characterViewModel.greet_live.value = favoriteChat.message
+
                         findNavController().navigate(R.id.nav_voiceChat, null, NavAnimationUtil.getSlideFromLeftOptions())
                     },
-                    onUnfavoriteClick = { favoriteChat ->
+                    onUnClick = { favoriteChat ->
                         Thread {
                             val url = characterViewModel.updateURL("/delete_favorite")
 
@@ -141,7 +138,6 @@ class FavoriteFragment : Fragment() {
                                 put("input_user", "")
                                 put("time_user", SimpleDateFormat("yyyy. MM. dd. HH-mm-ss", Locale.KOREA).format(Date(favoriteChat.time)))
                                 put("start_user", "")
-                                put("shown_user", "")
                             }
 
                             connection.outputStream.use { it.write(jsonInput.toString().toByteArray(Charsets.UTF_8)) }

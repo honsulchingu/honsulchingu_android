@@ -1,13 +1,13 @@
 package kr.ac.tukorea.honsulchingu.ui.chat
 
 import android.content.Context.MODE_PRIVATE
-import android.animation.ObjectAnimator
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
-import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.LayoutInflater
+import android.animation.ObjectAnimator
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.fragment.app.Fragment
@@ -16,8 +16,8 @@ import androidx.navigation.NavOptions
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import kr.ac.tukorea.honsulchingu.R
-import kr.ac.tukorea.honsulchingu.databinding.FragmentChatBinding
 import kr.ac.tukorea.honsulchingu.viewmodel.CharacterViewModel
+import kr.ac.tukorea.honsulchingu.databinding.FragmentChatBinding
 import org.json.JSONObject
 import java.net.HttpURLConnection
 import java.text.SimpleDateFormat
@@ -25,8 +25,8 @@ import java.time.LocalDateTime
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
 import java.util.Calendar
-import java.util.Date
 import java.util.Locale
+import java.util.Date
 import kotlin.random.Random
 
 class ChatFragment : Fragment() {
@@ -36,8 +36,9 @@ class ChatFragment : Fragment() {
     private val handler = Handler(Looper.getMainLooper())
     private lateinit var chatAdapter: ChatAdapter
 
-    private val chatItems = mutableListOf<ChatItem>()
     private val characterViewModel: CharacterViewModel by activityViewModels()
+
+    private val chatItems = mutableListOf<ChatItem>()
 
     private val loadingMessages = listOf(
         "대화를 꺼내는 중이에요…",
@@ -57,10 +58,12 @@ class ChatFragment : Fragment() {
         // 뷰가 attach된 후 리스너 설정
         view.post { ViewCompat.requestApplyInsets(binding.chatRoot) } // 인셋 요청 (리스너 설정 후)
 
-        // 1. 로딩 애니메이션 보이기
+        // 1. 로딩 애니메이션 보이기 및 입력창, 보내기 버튼 잠금
         binding.loadingAnimation.visibility = View.VISIBLE
         binding.loadingText.visibility = View.VISIBLE
         binding.recyclerViewChat.visibility = View.GONE
+        binding.editTextMessage.isEnabled = false
+        binding.buttonSend.isEnabled = false
 
         // 2. 로딩 텍스트 주기적 변경 시작
         handler.post(loadingTextRunnable)
@@ -71,12 +74,7 @@ class ChatFragment : Fragment() {
         // 4. 무한대 로딩 UI 표시
         handler.postDelayed({ if (!isAdded || _binding == null) return@postDelayed }, Integer.MAX_VALUE.toLong()) // 무한대 대기
 
-        // 5. 로딩 중 잠금
-        val sharedPreferences_chat = requireContext().getSharedPreferences("prefs_chat", MODE_PRIVATE)
-
-        binding.editTextMessage.isEnabled = !sharedPreferences_chat.getBoolean("isFirst", true)
-        binding.buttonSend.isEnabled = !sharedPreferences_chat.getBoolean("isFirst", true)
-
+        // 5. 채팅 로딩
         loadChat()
 
         // btnCloseChat 버튼 클릭 시 VoiceChatFragment로 돌아가기
@@ -100,15 +98,22 @@ class ChatFragment : Fragment() {
 
             val isKeyboardVisible = imeHeight > 0
             if (isKeyboardVisible) {
-                val marginPx = (100 * resources.displayMetrics.density).toInt()
-                val offset = imeHeight - marginPx
-                binding.containerUI.translationY = -offset.toFloat()
+                // 디바이스 화면 높이 및 밀도 고려
+                val screenHeight = resources.displayMetrics.heightPixels
+                val screenDensity = resources.displayMetrics.density
+
+                // 밀도 보정 적용한 오프셋 설정
+                val offsetDp = 100
+                val offsetPx = (offsetDp * screenDensity).toInt()
+                val translation = imeHeight - offsetPx
+
+                binding.containerUI.translationY = -translation.coerceAtLeast(0).toFloat()
             }
             else {
                 binding.containerUI.translationY = 0f
             }
 
-            // 시스템바(상단, 하단, 네비게이션) 인셋 처리 (우측 패딩 적용 예시)
+            // 시스템 바 인셋 적용
             val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
             view.setPadding(
                 view.paddingLeft,
@@ -133,6 +138,7 @@ class ChatFragment : Fragment() {
         binding.buttonSend.setOnClickListener {
             sendToServer(binding.editTextMessage.text.toString().trim(), System.currentTimeMillis())
             binding.editTextMessage.text.clear()
+            binding.buttonSend.isEnabled = false
         }
     }
 
@@ -172,7 +178,6 @@ class ChatFragment : Fragment() {
                 put("input_user", input_user)
                 put("time_user", SimpleDateFormat("yyyy. MM. dd. HH-mm-ss", Locale.KOREA).format(Date(time_user)))
                 put("start_user", sharedPreferences_chat.getString("start_user", ""))
-                put("shown_user", "true")
             }
 
             connection.outputStream.use { it.write(jsonInput.toString().toByteArray(Charsets.UTF_8)) }
@@ -192,19 +197,12 @@ class ChatFragment : Fragment() {
                 if (sharedPreferences_chat.getBoolean("isFirst", true)) sharedPreferences_chat.edit().putBoolean("isFirst", false).apply()
 
                 sharedPreferences_chat.edit().putString("greet", output_ai).apply()
-                characterViewModel.greet_live.value = sharedPreferences_chat.getString("greet", "")
+                characterViewModel.greet_live.value = output_ai
 
                 if (!isAdded || _binding == null) return@postDelayed
 
-                binding.loadingAnimation.visibility = View.GONE
-                binding.loadingText.visibility = View.GONE
-                binding.recyclerViewChat.visibility = View.VISIBLE
-                handler.removeCallbacks(loadingTextRunnable)
-
-                if (!binding.editTextMessage.isEnabled && !binding.buttonSend.isEnabled) {
-                    binding.editTextMessage.isEnabled = true
-                    binding.buttonSend.isEnabled = true
-                }
+                binding.buttonSend.isEnabled = true
+                // TODO: 응답 중 ... 애니메이션 띄우기, sendButton에도 애니메이션 띄우기?
 
                 sendMessage(output_ai, false, time_ai)
             }, delay) // 최소 3초 로딩 애니메이션 보장
@@ -225,17 +223,13 @@ class ChatFragment : Fragment() {
         // 날짜 구분선 추가
         val lastDate = previousMessage?.let { formatDate(it.timestamp) }
         val currentDate = formatDate(newMessage.timestamp)
+        if (lastDate == null || lastDate != currentDate) chatItems.add(ChatItem.DateDividerItem(currentDate))
 
-        if (lastDate == null || lastDate != currentDate) {
-            chatItems.add(ChatItem.DateDividerItem(currentDate))
-        }
-
+        // 채팅 하단 자동 스크롤
         chatItems.add(ChatItem.MessageItem(newMessage))
         chatAdapter.submitList(chatItems.toList()) {
             val position = chatItems.size - 1
-            if (position >= 0) {
-                binding.recyclerViewChat.scrollToPosition(position)
-            }
+            if (position >= 0) binding.recyclerViewChat.scrollToPosition(position)
         }
 
         // 애니메이션 효과 추가
@@ -275,7 +269,6 @@ class ChatFragment : Fragment() {
                 put("input_user", "")
                 put("time_user", "")
                 put("start_user", sharedPreferences_chat.getString("start_user", ""))
-                put("shown_user", "true")
             }
 
             connection.outputStream.use { it.write(jsonInput.toString().toByteArray(Charsets.UTF_8)) }
@@ -314,18 +307,19 @@ class ChatFragment : Fragment() {
             val delay = maxOf(0L, 3000L - elapsedTime)
 
             Handler(Looper.getMainLooper()).postDelayed({
-                if (!isAdded || _binding == null) return@postDelayed
-
                 sharedPreferences_chat.edit().putString("greet", Messages.lastOrNull()?.message).apply()
                 characterViewModel.greet_live.value = Messages.lastOrNull()?.message
-                chatAdapter.submitList(chatItems.toList()) { binding.recyclerViewChat.scrollToPosition(chatItems.size - 1) }
 
-                if (!sharedPreferences_chat.getBoolean("isFirst", true)) {
-                    binding.loadingAnimation.visibility = View.GONE
-                    binding.loadingText.visibility = View.GONE
-                    binding.recyclerViewChat.visibility = View.VISIBLE
-                    handler.removeCallbacks(loadingTextRunnable)
-                }
+                if (!isAdded || _binding == null) return@postDelayed
+
+                binding.loadingAnimation.visibility = View.GONE
+                binding.loadingText.visibility = View.GONE
+                binding.recyclerViewChat.visibility = View.VISIBLE
+                binding.editTextMessage.isEnabled = true
+                binding.buttonSend.isEnabled = true
+                handler.removeCallbacks(loadingTextRunnable)
+
+                chatAdapter.submitList(chatItems.toList()) { binding.recyclerViewChat.scrollToPosition(chatItems.size - 1) }
             }, delay) // 최소 3초 로딩 애니메이션 보장
         }.start()
     }
@@ -337,9 +331,7 @@ class ChatFragment : Fragment() {
         }
     }
 
-    private fun isSameDay(cal1: Calendar, cal2: Calendar): Boolean {
-        return cal1.get(Calendar.YEAR) == cal2.get(Calendar.YEAR) && cal1.get(Calendar.DAY_OF_YEAR) == cal2.get(Calendar.DAY_OF_YEAR)
-    }
+    private fun isSameDay(cal1: Calendar, cal2: Calendar): Boolean { return cal1.get(Calendar.YEAR) == cal2.get(Calendar.YEAR) && cal1.get(Calendar.DAY_OF_YEAR) == cal2.get(Calendar.DAY_OF_YEAR) }
 
     private fun formatDate(timestamp: Long): String {
         val messageDate = Calendar.getInstance().apply { timeInMillis = timestamp }
@@ -357,9 +349,11 @@ class ChatFragment : Fragment() {
     }
 
     private fun setupRecyclerView() {
+        val layoutManager = LinearLayoutManager(requireContext())
+        layoutManager.stackFromEnd = true
         chatAdapter = ChatAdapter(binding.root.context, characterViewModel)
         binding.recyclerViewChat.adapter = chatAdapter
-        binding.recyclerViewChat.layoutManager = LinearLayoutManager(requireContext())
+        binding.recyclerViewChat.layoutManager = layoutManager
     }
 
     override fun onDestroyView() {

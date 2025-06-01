@@ -1,7 +1,8 @@
 package kr.ac.tukorea.honsulchingu.navigation
 
-import androidx.navigation.NavOptions
 import kr.ac.tukorea.honsulchingu.R
+
+import androidx.navigation.NavOptions
 
 object NavAnimationUtil {
 

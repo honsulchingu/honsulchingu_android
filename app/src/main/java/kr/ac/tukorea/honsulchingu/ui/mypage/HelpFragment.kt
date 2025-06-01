@@ -1,9 +1,9 @@
 package kr.ac.tukorea.honsulchingu.ui.mypage
 
 import android.os.Bundle
-import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.LayoutInflater
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -36,7 +36,6 @@ class HelpFragment : Fragment() {
         val rvFaqList = view.findViewById<RecyclerView>(R.id.rv_faq_list)
         rvFaqList.layoutManager = LinearLayoutManager(context)
         rvFaqList.adapter = faqAdapter
-
 
         // 가이드 리스트 (간단한 문자열 리스트)
         val guideList = listOf(

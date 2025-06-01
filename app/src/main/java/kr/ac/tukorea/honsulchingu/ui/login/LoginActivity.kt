@@ -1,36 +1,31 @@
 package kr.ac.tukorea.honsulchingu.ui.login
 
-import android.animation.AnimatorSet
-import android.animation.ObjectAnimator
-import android.content.Intent
 import android.content.SharedPreferences
+import android.content.Intent
 import android.os.Bundle
-import android.os.Handler
-import android.os.Looper
 import android.util.Log
 import android.view.ViewTreeObserver
-import android.widget.ImageButton
 import android.widget.TextView
-import androidx.activity.enableEdgeToEdge
+import android.widget.ImageButton
+import android.animation.AnimatorSet
+import android.animation.ObjectAnimator
 import androidx.activity.viewModels
+import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
-import com.kakao.sdk.auth.AuthApiClient
+import com.kakao.sdk.user.UserApiClient
 import com.kakao.sdk.auth.model.OAuthToken
-import com.kakao.sdk.common.KakaoSdk
 import com.kakao.sdk.common.model.ClientError
 import com.kakao.sdk.common.model.ClientErrorCause
-import com.kakao.sdk.common.model.KakaoSdkError
-import com.kakao.sdk.user.UserApiClient
-import kr.ac.tukorea.honsulchingu.MainActivity
 import kr.ac.tukorea.honsulchingu.R
+import kr.ac.tukorea.honsulchingu.MainActivity
 import kr.ac.tukorea.honsulchingu.viewmodel.CharacterViewModel
-import org.json.JSONObject
 import java.net.HttpURLConnection
 import java.text.SimpleDateFormat
-import java.util.Date
 import java.util.Locale
+import java.util.Date
+import org.json.JSONObject
 
 class LoginActivity : AppCompatActivity() {
 
@@ -83,11 +78,9 @@ class LoginActivity : AppCompatActivity() {
         })
 
         // ✅ 기본 셋팅 값 DB 로딩
+        val sharedPreferences_setting = getSharedPreferences("prefs_setting", MODE_PRIVATE)
+
         Thread {
-            Thread.sleep(800) // 800ms 지연, 애니메이션 전환
-
-            val sharedPreferences_setting = getSharedPreferences("prefs_setting", MODE_PRIVATE)
-
             val url = characterViewModel.updateURL("/load_setting")
 
             val connection = (url.openConnection() as HttpURLConnection).apply {
@@ -104,7 +97,7 @@ class LoginActivity : AppCompatActivity() {
 
             val responseJson = JSONObject(connection.inputStream.bufferedReader().use { it.readText() })
 
-            val KAKAO = responseJson.getString("kakao")
+            // val KAKAO = responseJson.getString("kakao")
 
             val BEGIN = responseJson.getString("begin")
 
@@ -118,8 +111,6 @@ class LoginActivity : AppCompatActivity() {
         }.start()
 
         kakaoLoginButton.setOnClickListener {
-            val sharedPreferences_setting = getSharedPreferences("prefs_setting", MODE_PRIVATE)
-
             // ✅ 로그인
             val callback: (OAuthToken?, Throwable?) -> Unit = { token, error ->
                 if (error != null) {
@@ -179,11 +170,17 @@ class LoginActivity : AppCompatActivity() {
             else if (user != null) {
                 val scopes = mutableListOf<String>()
 
-                if (user.kakaoAccount?.emailNeedsAgreement == true) scopes.add("account_email")
-                if (user.kakaoAccount?.profileNeedsAgreement == true) scopes.add("profile")
+                if (user.kakaoAccount?.emailNeedsAgreement == true) { scopes.add("account_email") }
+                // if (user.kakaoAccount?.birthdayNeedsAgreement == true) { scopes.add("birthday") }
+                // if (user.kakaoAccount?.birthyearNeedsAgreement == true) { scopes.add("birthyear") }
+                // if (user.kakaoAccount?.genderNeedsAgreement == true) { scopes.add("gender") }
+                // if (user.kakaoAccount?.phoneNumberNeedsAgreement == true) { scopes.add("phone_number") }
+                if (user.kakaoAccount?.profileNeedsAgreement == true) { scopes.add("profile") }
+                // if (user.kakaoAccount?.ageRangeNeedsAgreement == true) { scopes.add("age_range") }
 
-                if (scopes.isNotEmpty()) {
+                if (scopes.count() > 0) {
                     scopes.add("openid")
+
                     UserApiClient.instance.loginWithNewScopes(this, scopes) { token, error ->
                         if (error != null) {
                             Log.e("db", "사용자 추가 동의 실패", error)
@@ -206,9 +203,9 @@ class LoginActivity : AppCompatActivity() {
                                         val url = characterViewModel.updateURL("/add_user")
 
                                         val connection = (url.openConnection() as HttpURLConnection).apply {
-                                                requestMethod = "POST"
-                                                setRequestProperty("Content-Type", "application/json; charset=UTF-8")
-                                                doOutput = true
+                                            requestMethod = "POST"
+                                            setRequestProperty("Content-Type", "application/json; charset=UTF-8")
+                                            doOutput = true
                                         }
 
 
@@ -223,6 +220,7 @@ class LoginActivity : AppCompatActivity() {
 
 
                                         connection.inputStream.bufferedReader().use { it.readText() }
+
 
                                         sharedPreferences_setting.edit().apply {
                                             putString("EMAIL", "kakao_" + user.kakaoAccount?.email)
@@ -265,6 +263,7 @@ class LoginActivity : AppCompatActivity() {
 
 
                         connection.inputStream.bufferedReader().use { it.readText() }
+
 
                         sharedPreferences_setting.edit().apply {
                             putString("EMAIL", "kakao_" + user.kakaoAccount?.email)

@@ -1,10 +1,10 @@
 package kr.ac.tukorea.honsulchingu.ui.mypage
 
-import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ImageView
+import android.view.LayoutInflater
 import android.widget.TextView
+import android.widget.ImageView
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.recyclerview.widget.RecyclerView
 import kr.ac.tukorea.honsulchingu.R
@@ -17,7 +17,7 @@ class GuideAdapter(private val guideList: List<GuideItem>) : RecyclerView.Adapte
         val guideText: TextView = view.findViewById(R.id.guide_text)
         val guideDescription: TextView = view.findViewById(R.id.guide_answer)
         val guideArrow: ImageView = view.findViewById(R.id.guide_arrow)
-        val container: ConstraintLayout = view.findViewById(R.id.container)  // container (최상위 레이아웃)
+        val container: ConstraintLayout = view.findViewById(R.id.container) // container (최상위 레이아웃)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): GuideViewHolder {

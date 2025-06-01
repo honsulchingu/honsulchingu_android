@@ -24,7 +24,7 @@
 
         <!-- 프로필 이미지 -->
         <com.google.android.material.imageview.ShapeableImageView
-            android:id="@+id/imageProfile"
+            android:id="@+id/imageText"
             android:layout_width="60dp"
             android:layout_height="60dp"
             android:scaleType="centerCrop"
@@ -44,8 +44,8 @@
             android:textStyle="bold"
             app:layout_constraintEnd_toStartOf="@id/dateText"
             app:layout_constraintHorizontal_bias="0"
-            app:layout_constraintStart_toEndOf="@id/imageProfile"
-            app:layout_constraintTop_toTopOf="@id/imageProfile" />
+            app:layout_constraintStart_toEndOf="@id/imageText"
+            app:layout_constraintTop_toTopOf="@id/imageText" />
 
         <!-- 날짜 -->
         <TextView
@@ -109,7 +109,7 @@
             app:layout_constraintTop_toBottomOf="@id/messageContainer">
 
             <ImageButton
-                android:id="@+id/unfavoriteButton"
+                android:id="@+id/unButton"
                 android:layout_width="40dp"
                 android:layout_height="40dp"
                 android:layout_gravity="center_vertical"

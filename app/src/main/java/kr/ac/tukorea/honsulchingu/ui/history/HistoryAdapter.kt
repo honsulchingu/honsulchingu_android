@@ -1,12 +1,12 @@
 package kr.ac.tukorea.honsulchingu.ui.history
 
-import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.LayoutInflater
 import android.widget.Button
-import android.widget.ImageButton
-import android.widget.ImageView
 import android.widget.TextView
+import android.widget.ImageView
+import android.widget.ImageButton
 import androidx.recyclerview.widget.RecyclerView
 import kr.ac.tukorea.honsulchingu.R
 import kr.ac.tukorea.honsulchingu.ui.DialogUtil
@@ -40,11 +40,9 @@ class HistoryAdapter(
             image.setImageResource(item.image)
             heart.visibility = if (item.isFavorite) View.VISIBLE else View.INVISIBLE
 
-            moveButton.setOnClickListener {
-                onMoveClick(item)
-            }
-
             expandTouchArea(deleteButton, 20)
+
+            moveButton.setOnClickListener { onMoveClick(item) }
 
             deleteButton.setOnClickListener {
                 DialogUtil.showHonsulDialog(
@@ -54,9 +52,7 @@ class HistoryAdapter(
                     iconRes = R.drawable.ic_delete,
                     positiveText = "삭제하기",
                     negativeText = "취소",
-                    onPositiveClick = {
-                        onDeleteClick(item)
-                    }
+                    onPositiveClick = { onDeleteClick(item) }
                 )
             }
         }

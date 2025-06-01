@@ -1,15 +1,15 @@
 package kr.ac.tukorea.honsulchingu.ui
 
 import android.content.Context
+import android.view.View
+import android.view.LayoutInflater
+import android.widget.Button
+import android.widget.TextView
+import android.widget.ImageView
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
-import android.view.LayoutInflater
-import android.view.View
-import android.widget.Button
-import android.widget.ImageView
-import android.widget.TextView
-import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import kr.ac.tukorea.honsulchingu.R
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 
 object DialogUtil {
     fun showHonsulDialog(

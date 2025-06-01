@@ -4,22 +4,22 @@ import android.content.Context.MODE_PRIVATE
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
-import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.LayoutInflater
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import java.net.HttpURLConnection
+import java.time.format.DateTimeFormatter
 import java.time.LocalDateTime
 import java.time.ZoneId
-import java.time.format.DateTimeFormatter
 import kotlin.random.Random
 import kr.ac.tukorea.honsulchingu.R
-import kr.ac.tukorea.honsulchingu.databinding.FragmentHistoryBinding
-import kr.ac.tukorea.honsulchingu.navigation.NavAnimationUtil
 import kr.ac.tukorea.honsulchingu.viewmodel.CharacterViewModel
+import kr.ac.tukorea.honsulchingu.navigation.NavAnimationUtil
+import kr.ac.tukorea.honsulchingu.databinding.FragmentHistoryBinding
 import org.json.JSONObject
 
 class HistoryFragment : Fragment() {
@@ -29,8 +29,9 @@ class HistoryFragment : Fragment() {
     private val handler = Handler(Looper.getMainLooper())
     private lateinit var historyAdapter: HistoryAdapter
 
-    private var chatList: MutableList<ChatRecord> = mutableListOf()
     private val characterViewModel: CharacterViewModel by activityViewModels()
+
+    private var chatList: MutableList<ChatRecord> = mutableListOf()
 
     private val loadingMessages = listOf(
         "대화 기록 불러오는 중이에요…",
@@ -88,16 +89,17 @@ class HistoryFragment : Fragment() {
 
             val context = context ?: return@Thread
 
-            val sharedPreferences_history = context.getSharedPreferences("prefs_history", MODE_PRIVATE)
-
             val sharedPreferences_setting = context.getSharedPreferences("prefs_setting", MODE_PRIVATE)
+
+            val sharedPreferences_history = context.getSharedPreferences("prefs_history", MODE_PRIVATE)
 
             val sharedPreferences_chat = context.getSharedPreferences("prefs_chat", MODE_PRIVATE)
 
             val jsonString = sharedPreferences_history.getString("savedChatList", "[]")
 
             val savedChatList = try { org.json.JSONArray(jsonString).let { jsonArray -> MutableList(jsonArray.length()) { i -> ChatRecord.fromJson(jsonArray.getJSONObject(i)) } } }
-                                catch (e: Exception) { mutableListOf() }
+            catch (e: Exception) { mutableListOf() }
+
 
             val loadedChatList = run {
                 val url = characterViewModel.updateURL("/load_last")
@@ -115,7 +117,6 @@ class HistoryFragment : Fragment() {
                     put("input_user", "")
                     put("time_user", "")
                     put("start_user", "")
-                    put("shown_user", "")
                 }
 
                 connection.outputStream.use { it.write(jsonInput.toString().toByteArray(Charsets.UTF_8)) }
@@ -162,7 +163,6 @@ class HistoryFragment : Fragment() {
                     put("input_user", sharedPreferences_setting.getString("TAG", ""))
                     put("time_user", "")
                     put("start_user", chat.start_time)
-                    put("shown_user", "")
                 }
 
                 connection.outputStream.use { it.write(jsonInput.toString().toByteArray(Charsets.UTF_8)) }
@@ -182,6 +182,7 @@ class HistoryFragment : Fragment() {
 
             val updatedChatList = savedChatList.filter { saved -> needTagUpdateChats.none { it.start_time == saved.start_time } } + tagUpdatedChats
 
+
             val chatList_temp = updatedChatList.sortedByDescending { it.last_time }.toMutableList()
 
             val elapsedTime = System.currentTimeMillis() - startTime
@@ -198,6 +199,10 @@ class HistoryFragment : Fragment() {
 
                 chatList.clear()
                 chatList.addAll(chatList_temp)
+
+                sharedPreferences_setting.edit().putInt("CHATCOUNT", chatList.size).apply()
+                characterViewModel.chatcount_live.value = chatList.size
+
                 if (chatList.isEmpty()) binding.loadingInitText.visibility = View.VISIBLE
                 else binding.loadingInitText.visibility = View.INVISIBLE
 
@@ -207,17 +212,15 @@ class HistoryFragment : Fragment() {
                         sharedPreferences_chat.edit().apply {
                             putString("select_user", chatRecord.name)
                             putString("start_user", chatRecord.start_time)
-                            putBoolean("isFirst", false)
-                            putInt("image", chatRecord.image)
                             putString("greet", chatRecord.last_chat)
-                            characterViewModel.greet_live.value = chatRecord.last_chat
+                            putInt("image", chatRecord.image)
+                            putBoolean("isFirst", false)
+                            putBoolean("isSelected", true)
                             apply()
                         }
 
-                        sharedPreferences_setting.edit().apply {
-                            putInt("CHATCOUNT", chatList.size)
-                            apply()
-                        }
+                        characterViewModel.greet_live.value = chatRecord.last_chat
+                        characterViewModel.isSelected_live.value = true
 
                         findNavController().navigate(R.id.nav_voiceChat, null, NavAnimationUtil.getSlideFromRightOptions())
                     },
@@ -238,14 +241,16 @@ class HistoryFragment : Fragment() {
                                 put("input_user", "")
                                 put("time_user", "")
                                 put("start_user", chatRecord.start_time)
-                                put("shown_user", "")
                             }
 
                             connection.outputStream.use { it.write(jsonInput.toString().toByteArray(Charsets.UTF_8)) }
 
 
-                            connection.inputStream.bufferedReader().use { it.readText() }
+                            val responseString = connection.inputStream.bufferedReader().use { it.readText() }
 
+                            val responseJson = JSONObject(responseString)
+
+                            val favoriteCount = responseJson.getInt("favorite_count")
 
                             val savedList = org.json.JSONArray(sharedPreferences_history.getString("savedChatList", "[]"))
 
@@ -261,8 +266,18 @@ class HistoryFragment : Fragment() {
                             sharedPreferences_history.edit().putBoolean("isDeleted", true).apply()
 
                             Handler(Looper.getMainLooper()).post {
+                                sharedPreferences_chat.edit().putString("greet", "혼술친구를 먼저 정해주세요").apply()
+                                characterViewModel.greet_live.value = "혼술친구를 먼저 정해주세요"
+
                                 sharedPreferences_setting.edit().putInt("CHATCOUNT", sharedPreferences_setting.getInt("CHATCOUNT", 0) - 1).apply()
                                 characterViewModel.chatcount_live.value = sharedPreferences_setting.getInt("CHATCOUNT", 0)
+
+                                sharedPreferences_setting.edit().putInt("FAVORITECOUNT", sharedPreferences_setting.getInt("FAVORITECOUNT", 0) - favoriteCount).apply()
+                                characterViewModel.favoritecount_live.value = sharedPreferences_setting.getInt("FAVORITECOUNT", 0)
+
+                                sharedPreferences_chat.edit().putBoolean("isSelected", false).apply()
+                                characterViewModel.isSelected_live.value = false
+
                                 findNavController().navigate(R.id.nav_history)
                             }
                         }.start()
