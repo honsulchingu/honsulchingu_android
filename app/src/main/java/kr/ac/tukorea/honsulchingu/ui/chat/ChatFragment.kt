@@ -18,7 +18,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import kr.ac.tukorea.honsulchingu.R
 import kr.ac.tukorea.honsulchingu.viewmodel.CharacterViewModel
 import kr.ac.tukorea.honsulchingu.databinding.FragmentChatBinding
-import org.json.JSONObject
+import kotlin.random.Random
 import java.net.HttpURLConnection
 import java.text.SimpleDateFormat
 import java.time.LocalDateTime
@@ -27,7 +27,7 @@ import java.time.format.DateTimeFormatter
 import java.util.Calendar
 import java.util.Locale
 import java.util.Date
-import kotlin.random.Random
+import org.json.JSONObject
 
 class ChatFragment : Fragment() {
 
@@ -98,13 +98,12 @@ class ChatFragment : Fragment() {
 
             val isKeyboardVisible = imeHeight > 0
             if (isKeyboardVisible) {
-                // 디바이스 화면 높이 및 밀도 고려
+                // 디바이스 화면 높이 고려
                 val screenHeight = resources.displayMetrics.heightPixels
-                val screenDensity = resources.displayMetrics.density
 
-                // 밀도 보정 적용한 오프셋 설정
-                val offsetDp = 100
-                val offsetPx = (offsetDp * screenDensity).toInt()
+                // 높이 보정 적용한 오프셋 설정
+                val offsetRatio = 0.17f
+                val offsetPx = (screenHeight * offsetRatio).toInt()
                 val translation = imeHeight - offsetPx
 
                 binding.containerUI.translationY = -translation.coerceAtLeast(0).toFloat()
