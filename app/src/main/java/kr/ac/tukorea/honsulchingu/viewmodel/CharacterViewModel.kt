@@ -28,7 +28,7 @@ class CharacterViewModel : ViewModel() {
 
     // 특정 앤드포인트의 URL 업데이트
     fun updateURL(endPoint: String): URL {
-        val IPv4 = "13.208.186.203"
+        val IPv4 = "15.168.7.91"
         return URL("http://$IPv4:8000$endPoint")
     }
 
@@ -58,11 +58,12 @@ class CharacterViewModel : ViewModel() {
             val loadedCharacters = MutableList(responseJsonArray.length()) { i ->
                 val item = responseJsonArray.getJSONObject(i)
                 val name = item.getString("name")
+                val speak = item.getString("speak")
                 val greet = item.getString("greet")
                 val tag = item.getString("tag").split(',').map { it.trim() }
                 val description = item.getString("description")
                 val image = context.resources.getIdentifier(item.getString("image"), "drawable", context.packageName)
-                ChatCharacter(i, name.substringBefore('_'), name.substringAfter('_'), greet, tag, description, image)
+                ChatCharacter(i, name.substringBefore('_'), name.substringAfter('_'), speak, greet, tag, description, image)
             }
 
 

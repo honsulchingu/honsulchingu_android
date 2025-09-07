@@ -201,7 +201,8 @@ class ChatFragment : Fragment() {
                 if (!isAdded || _binding == null) return@postDelayed
 
                 binding.buttonSend.isEnabled = true
-                // TODO: 응답 중 ... 애니메이션 띄우기, sendButton에도 애니메이션 띄우기?
+                // TODO: 응답 중 ... 애니메이션 띄우기, sendButton에 ■ 띄우기, 3초 보장 애니메이션
+                // TODO: 키보드 높이 맞춤 디바이스 적응형
 
                 sendMessage(output_ai, false, time_ai)
             }, delay) // 최소 3초 로딩 애니메이션 보장
@@ -287,7 +288,7 @@ class ChatFragment : Fragment() {
             }
 
 
-            if (Messages.isEmpty()) sendToServer(sharedPreferences_setting.getString("BEGIN", "") ?: "", System.currentTimeMillis())
+            if (Messages.isEmpty()) sendToServer("${sharedPreferences_setting.getString("BEGIN", "")}, 사용자의 이름은 \"${sharedPreferences_setting.getString("NICKNAME", "")}\"입니다.", System.currentTimeMillis())
 
 
             var lastDate: String? = null

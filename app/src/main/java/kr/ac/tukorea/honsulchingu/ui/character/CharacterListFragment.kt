@@ -43,6 +43,7 @@ class CharacterListFragment : Fragment() {
         characterListAdapter.onChatButtonClick = { character ->
             sharedPreferences_chat.edit().apply {
                 putString("select_user", character.type + '_' + character.name)
+                putString("speak", character.speak)
                 putString("start_user", SimpleDateFormat("yyyy. MM. dd. HH-mm-ss", Locale.KOREA).format(Date(System.currentTimeMillis())))
                 putString("greet", character.greet)
                 putInt("image", character.image)
