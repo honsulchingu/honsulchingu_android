@@ -97,12 +97,10 @@ class VoiceChatFragment : Fragment() {
 
         buttonMic.setOnClickListener {
             // 녹음 상태 → 대기 상태 → 기본 상태 순환
-            // TODO: DB에 .wav 대신에 64비트 변환 정보 저장
-            // TODO: 오타 수정은 response_generate()로 수행
-            // TODO: STT가 되면 cnn에 학습시키기, 다음 문장의 오타를 수정합니다, "...", 오직 "수정된 문장" 형태로 대답합니다.
             // TODO: 구글 로그인 구현
-            // TODO: .wav 넘긴 것으로 mfcc, STT 진행
-            // TODO: R.drawable.ic_profile_placeholder 변경
+            // TODO: 5분마다 분석용 요청 보내기?
+            // TODO: ( ) 이거 효과 있나?
+            // TODO: 음서 인식 타이밍 맞나?
             if (isPressed) {
                 buttonMic.visibility = View.VISIBLE
                 micLottie.visibility = View.GONE
@@ -230,7 +228,7 @@ class VoiceChatFragment : Fragment() {
                             sum += abs(sample.toDouble())
                         }
                         val amplitude = sum / (read / 2)
-                        if (abs(amplitude - prevAmplitude) > 500) soundDetected = true // 증폭이 500 이상 증가 시 말을 하는 것으로 판단
+                        if ((amplitude - prevAmplitude) > 500) soundDetected = true // 증폭이 500 이상 증가 시 말을 하는 것으로 판단
                         prevAmplitude = amplitude
                         Log.d("db", "$amplitude")
                     }
@@ -378,13 +376,10 @@ class VoiceChatFragment : Fragment() {
 
                         val responseJson = JSONObject(connection.inputStream.bufferedReader().use { it.readText() })
 
-                        val input_ai = responseJson.getString("input_ai")
-
                         val output_ai = responseJson.getString("output_ai")
 
-                        val time_ai = LocalDateTime.parse(responseJson.getString("time_ai"), DateTimeFormatter.ofPattern("yyyy. MM. dd. HH-mm-ss")).atZone(ZoneId.of("Asia/Seoul")).toInstant().toEpochMilli()
-
-                        val tts_ai = responseJson.getString("tts_ai")
+                        // 수정사항 2 (2/2)
+                        // val tts_ai = responseJson.getString("tts_ai")
 
                         Handler(Looper.getMainLooper()).post {
                             sharedPreferences_chat.edit().putString("greet", output_ai).apply()
@@ -410,26 +405,23 @@ class VoiceChatFragment : Fragment() {
                             LodingDotLottie.cancelAnimation()
                         }
 
-
-                        val decodedBytes = Base64.decode(tts_ai, Base64.DEFAULT)
-
-                        val ttsFile = File(externalDir, "tts_${id_user}_${select_user}_${time_user}_${start_user}.wav")
-
-                        ttsFile.outputStream().use { it.write(decodedBytes) }
-
-
-                        isPlaying = true
-
-                        var mediaPlayer = MediaPlayer().apply {
-                            setDataSource(ttsFile.absolutePath)
-                            prepare()
-                            start()
-                        }
-
-                        isPlaying = false
-
-
-                        Log.d("db", input_ai)
+// 수정사항 1 (1/2)
+//                        val decodedBytes = Base64.decode(tts_ai, Base64.DEFAULT)
+//
+//                        val ttsFile = File(externalDir, "tts_${id_user}_${select_user}_${time_user}_${start_user}.wav")
+//
+//                        ttsFile.outputStream().use { it.write(decodedBytes) }
+//
+//
+//                        isPlaying = true
+//
+//                        var mediaPlayer = MediaPlayer().apply {
+//                            setDataSource(ttsFile.absolutePath)
+//                            prepare()
+//                            start()
+//                        }
+//
+//                        isPlaying = false
                     }
                 }
             }.start()
