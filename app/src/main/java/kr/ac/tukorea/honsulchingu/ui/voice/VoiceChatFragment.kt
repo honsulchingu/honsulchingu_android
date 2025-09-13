@@ -99,8 +99,8 @@ class VoiceChatFragment : Fragment() {
             // 녹음 상태 → 대기 상태 → 기본 상태 순환
             // TODO: 구글 로그인 구현
             // TODO: 5분마다 분석용 요청 보내기?
-            // TODO: ( ) 이거 효과 있나?
-            // TODO: 음서 인식 타이밍 맞나?
+            // TODO: tts 생성 시 ( ) 이거 효과 있나?
+            // TODO: 대화 너무 늦지 않지?
             if (isPressed) {
                 buttonMic.visibility = View.VISIBLE
                 micLottie.visibility = View.GONE

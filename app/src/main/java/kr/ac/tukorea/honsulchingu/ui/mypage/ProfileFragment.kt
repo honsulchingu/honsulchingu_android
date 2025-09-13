@@ -113,6 +113,8 @@ class ProfileFragment : Fragment() {
                                         put("email", sharedPreferences_setting.getString("EMAIL", ""))
                                         put("nickname", "")
                                         put("image", "")
+                                        put("age", "")
+                                        put("gender", "")
                                         put("startday", "")
                                     }
 

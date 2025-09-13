@@ -112,11 +112,7 @@ class LoadingActivity : AppCompatActivity() {
                         else if (tokenInfo != null) {
                             Log.i("db", "토큰 정보 보기 성공 ID: ${tokenInfo.id} (만료 시간: ${tokenInfo.expiresIn}초)")
 
-                            requestUserAdditionalScopes(sharedPreferences_setting) {
-                                startActivity(Intent(this, MainActivity::class.java))
-                                overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out)
-                                finish()
-                            }
+                            requestUserAdditionalScopes(sharedPreferences_setting) {}
                         }
                     }
                 }
@@ -173,21 +169,57 @@ class LoadingActivity : AppCompatActivity() {
                                 else if (user != null) {
                                     Log.d("db", "사용자 정보 요청 성공")
 
-                                    Thread {
-                                        val url = characterViewModel.updateURL("/add_user")
+                                    var decision = 0
 
-                                        val connection = (url.openConnection() as HttpURLConnection).apply {
+                                    Thread {
+                                        var url = characterViewModel.updateURL("/load_user")
+
+                                        var connection = (url.openConnection() as HttpURLConnection).apply {
                                             requestMethod = "POST"
                                             setRequestProperty("Content-Type", "application/json; charset=UTF-8")
                                             doOutput = true
                                         }
 
 
-                                        val jsonInput = JSONObject().apply {
+                                        var jsonInput = JSONObject().apply {
+                                            put("email", "kakao_" + user.kakaoAccount?.email)
+                                            put("nickname", "")
+                                            put("image", "")
+                                            put("age", "")
+                                            put("gender", "")
+                                            put("startday", "")
+                                        }
+
+                                        connection.outputStream.use { it.write(jsonInput.toString().toByteArray(Charsets.UTF_8)) }
+
+
+                                        val responseJson = JSONObject(connection.inputStream.bufferedReader().use { it.readText() })
+
+                                        val AGE = responseJson.getString("age")
+
+                                        val GENDER = responseJson.getString("gender")
+
+                                        val STARTDAY = SimpleDateFormat("yyyy. MM. dd. HH-mm-ss", Locale.KOREA).format(Date(System.currentTimeMillis()))
+
+                                        if (AGE == "" || GENDER == "") decision = 1
+
+
+                                        url = characterViewModel.updateURL("/add_user")
+
+                                        connection = (url.openConnection() as HttpURLConnection).apply {
+                                            requestMethod = "POST"
+                                            setRequestProperty("Content-Type", "application/json; charset=UTF-8")
+                                            doOutput = true
+                                        }
+
+
+                                        jsonInput = JSONObject().apply {
                                             put("email", "kakao_" + user.kakaoAccount?.email)
                                             put("nickname", user.kakaoAccount?.profile?.nickname)
                                             put("image", user.kakaoAccount?.profile?.thumbnailImageUrl)
-                                            put("startday", SimpleDateFormat("yyyy. MM. dd. HH-mm-ss", Locale.KOREA).format(Date(System.currentTimeMillis())))
+                                            put("age", AGE)
+                                            put("gender", GENDER)
+                                            put("startday", STARTDAY)
                                         }
 
                                         connection.outputStream.use { it.write(jsonInput.toString().toByteArray(Charsets.UTF_8)) }
@@ -200,6 +232,9 @@ class LoadingActivity : AppCompatActivity() {
                                             putString("EMAIL", "kakao_" + user.kakaoAccount?.email)
                                             putString("NICKNAME", user.kakaoAccount?.profile?.nickname)
                                             putString("IMAGE", user.kakaoAccount?.profile?.thumbnailImageUrl)
+                                            putString("AGE", AGE)
+                                            putString("GENDER", GENDER)
+                                            putString("STARTDAY", STARTDAY)
                                             apply()
                                         }
 
@@ -207,7 +242,22 @@ class LoadingActivity : AppCompatActivity() {
                                         Log.d("db", sharedPreferences_setting.getString("EMAIL", "") ?: "")
                                         Log.d("db", sharedPreferences_setting.getString("NICKNAME", "") ?: "")
                                         Log.d("db", sharedPreferences_setting.getString("IMAGE", "") ?: "")
+                                        Log.d("db", sharedPreferences_setting.getString("AGE", "") ?: "")
+                                        Log.d("db", sharedPreferences_setting.getString("GENDER", "") ?: "")
+                                        Log.d("db", sharedPreferences_setting.getString("STARTDAY", "") ?: "")
                                     }.start()
+
+
+                                    if (decision == 1) {
+                                        startActivity(Intent(this, LoginActivity::class.java)) // TODO: 여기 바꾸기
+                                        overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out)
+                                        finish()
+                                    }
+                                    else if (decision == 0) {
+                                        startActivity(Intent(this, MainActivity::class.java))
+                                        overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out)
+                                        finish()
+                                    }
 
                                     onComplete()
                                 }
@@ -216,21 +266,57 @@ class LoadingActivity : AppCompatActivity() {
                     }
                 }
                 else {
-                    Thread {
-                        val url = characterViewModel.updateURL("/add_user")
+                    var decision = 0
 
-                        val connection = (url.openConnection() as HttpURLConnection).apply {
+                    Thread {
+                        var url = characterViewModel.updateURL("/load_user")
+
+                        var connection = (url.openConnection() as HttpURLConnection).apply {
                             requestMethod = "POST"
                             setRequestProperty("Content-Type", "application/json; charset=UTF-8")
                             doOutput = true
                         }
 
 
-                        val jsonInput = JSONObject().apply {
+                        var jsonInput = JSONObject().apply {
+                            put("email", "kakao_" + user.kakaoAccount?.email)
+                            put("nickname", "")
+                            put("image", "")
+                            put("age", "")
+                            put("gender", "")
+                            put("startday", "")
+                        }
+
+                        connection.outputStream.use { it.write(jsonInput.toString().toByteArray(Charsets.UTF_8)) }
+
+
+                        val responseJson = JSONObject(connection.inputStream.bufferedReader().use { it.readText() })
+
+                        val AGE = responseJson.getString("age")
+
+                        val GENDER = responseJson.getString("gender")
+
+                        val STARTDAY = SimpleDateFormat("yyyy. MM. dd. HH-mm-ss", Locale.KOREA).format(Date(System.currentTimeMillis()))
+
+                        if (AGE == "" || GENDER == "") decision = 1
+
+
+                        url = characterViewModel.updateURL("/add_user")
+
+                        connection = (url.openConnection() as HttpURLConnection).apply {
+                            requestMethod = "POST"
+                            setRequestProperty("Content-Type", "application/json; charset=UTF-8")
+                            doOutput = true
+                        }
+
+
+                        jsonInput = JSONObject().apply {
                             put("email", "kakao_" + user.kakaoAccount?.email)
                             put("nickname", user.kakaoAccount?.profile?.nickname)
                             put("image", user.kakaoAccount?.profile?.thumbnailImageUrl)
-                            put("startday", SimpleDateFormat("yyyy. MM. dd. HH-mm-ss", Locale.KOREA).format(Date(System.currentTimeMillis())))
+                            put("age", AGE)
+                            put("gender", GENDER)
+                            put("startday", STARTDAY)
                         }
 
                         connection.outputStream.use { it.write(jsonInput.toString().toByteArray(Charsets.UTF_8)) }
@@ -243,6 +329,9 @@ class LoadingActivity : AppCompatActivity() {
                             putString("EMAIL", "kakao_" + user.kakaoAccount?.email)
                             putString("NICKNAME", user.kakaoAccount?.profile?.nickname)
                             putString("IMAGE", user.kakaoAccount?.profile?.thumbnailImageUrl)
+                            putString("AGE", AGE)
+                            putString("GENDER", GENDER)
+                            putString("STARTDAY", STARTDAY)
                             apply()
                         }
 
@@ -250,7 +339,22 @@ class LoadingActivity : AppCompatActivity() {
                         Log.d("db", sharedPreferences_setting.getString("EMAIL", "") ?: "")
                         Log.d("db", sharedPreferences_setting.getString("NICKNAME", "") ?: "")
                         Log.d("db", sharedPreferences_setting.getString("IMAGE", "") ?: "")
+                        Log.d("db", sharedPreferences_setting.getString("AGE", "") ?: "")
+                        Log.d("db", sharedPreferences_setting.getString("GENDER", "") ?: "")
+                        Log.d("db", sharedPreferences_setting.getString("STARTDAY", "") ?: "")
                     }.start()
+
+
+                    if (decision == 1) {
+                        startActivity(Intent(this, LoginActivity::class.java)) // TODO: 여기 바꾸기
+                        overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out)
+                        finish()
+                    }
+                    else if (decision == 0) {
+                        startActivity(Intent(this, MainActivity::class.java))
+                        overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out)
+                        finish()
+                    }
 
                     onComplete()
                 }

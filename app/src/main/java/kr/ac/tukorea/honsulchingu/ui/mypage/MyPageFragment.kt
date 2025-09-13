@@ -25,8 +25,6 @@ class MyPageFragment : Fragment(R.layout.fragment_my_page) {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        load_user(view)
-
         // 프로필 정보 표시 설정
         val sharedPreferences_setting = requireContext().getSharedPreferences("prefs_setting", MODE_PRIVATE)
 
@@ -34,7 +32,7 @@ class MyPageFragment : Fragment(R.layout.fragment_my_page) {
         val profileEmail = view.findViewById<TextView>(R.id.profileEmail)
         val profileGreet = view.findViewById<TextView>(R.id.profileGreet)
         val profileImage = view.findViewById<ShapeableImageView>(R.id.profileImage)
-        // val profileStartDay = view.findViewById<TextView>(R.id.profileStartDay)
+        val profileStartday = view.findViewById<TextView>(R.id.profileStartday)
         val profileFavoriteCount = view.findViewById<TextView>(R.id.profileFavoriteCount)
         val profileChatCount = view.findViewById<TextView>(R.id.profileChatCount)
 
@@ -46,6 +44,7 @@ class MyPageFragment : Fragment(R.layout.fragment_my_page) {
             placeholder(R.drawable.ic_profile_placeholder) // 로딩 중 보여줄 이미지
             error(R.drawable.ic_profile_placeholder) // 로딩 실패 시 보여줄 이미지
         }
+        profileStartday.text = SimpleDateFormat("yyyy년 M월", Locale.KOREA).format(SimpleDateFormat("yyyy. MM. dd. HH-mm-ss", Locale.KOREA).parse(sharedPreferences_setting.getString("STARTDAY", "")))
         profileFavoriteCount.text = sharedPreferences_setting.getInt("FAVORITECOUNT", 0).toString()
         profileChatCount.text = sharedPreferences_setting.getInt("CHATCOUNT", 0).toString()
         characterViewModel.chatcount_live.observe(viewLifecycleOwner) { chatcount -> profileChatCount.text = chatcount.toString() }
@@ -55,50 +54,5 @@ class MyPageFragment : Fragment(R.layout.fragment_my_page) {
 
         // 도움말 클릭시 이동
         view.findViewById<View>(R.id.layoutHelp).setOnClickListener { findNavController().navigate(R.id.action_nav_mypage_to_helpFragment) }
-    }
-
-    private fun load_user(view: View) {
-        Thread {
-            val sharedPreferences_setting = requireContext().getSharedPreferences("prefs_setting", MODE_PRIVATE)
-
-            val url = characterViewModel.updateURL("/load_user")
-
-            val connection = (url.openConnection() as HttpURLConnection).apply {
-                requestMethod = "POST"
-                setRequestProperty("Content-Type", "application/json; charset=UTF-8")
-                doOutput = true
-            }
-
-
-            val jsonInput = JSONObject().apply {
-                put("email", sharedPreferences_setting.getString("EMAIL", ""))
-                put("nickname", "")
-                put("image", "")
-                put("startday", "")
-            }
-
-            connection.outputStream.use { it.write(jsonInput.toString().toByteArray(Charsets.UTF_8)) }
-
-
-            val responseJson = JSONObject(connection.inputStream.bufferedReader().use { it.readText() })
-
-            // val EMAIL = responseJson.getString("email")
-
-            // val NICKNAME = responseJson.getString("nickname")
-
-            // val IMAGE = responseJson.getString("image")
-
-            val STARTDAY = responseJson.getString("startday")
-
-            sharedPreferences_setting.edit().apply {
-                // putString("EMAIL", EMAIL)
-                // putString("NICKNAME", NICKNAME)
-                // putString("IMAGE", IMAGE)
-                putString("STARTDAY", STARTDAY)
-                apply()
-            }
-
-            Handler(Looper.getMainLooper()).post { view.findViewById<TextView>(R.id.profileStartday).text = SimpleDateFormat("yyyy년 M월", Locale.KOREA).format(SimpleDateFormat("yyyy. MM. dd. HH-mm-ss", Locale.KOREA).parse(sharedPreferences_setting.getString("STARTDAY", ""))) }
-        }.start()
     }
 }
