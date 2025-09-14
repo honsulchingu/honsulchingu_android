@@ -21,6 +21,7 @@ import com.kakao.sdk.common.model.KakaoSdkError
 import kr.ac.tukorea.honsulchingu.R
 import kr.ac.tukorea.honsulchingu.MainActivity
 import kr.ac.tukorea.honsulchingu.ui.login.LoginActivity
+import kr.ac.tukorea.honsulchingu.ui.onboarding.FirstLoginActivity
 import kr.ac.tukorea.honsulchingu.viewmodel.CharacterViewModel
 import java.net.HttpURLConnection
 import java.text.SimpleDateFormat
