@@ -21,6 +21,7 @@ import com.kakao.sdk.user.UserApiClient
 import kr.ac.tukorea.honsulchingu.MainActivity
 import kr.ac.tukorea.honsulchingu.R
 import kr.ac.tukorea.honsulchingu.ui.login.LoginActivity
+import kr.ac.tukorea.honsulchingu.ui.onboarding.FirstLoginActivity
 import kr.ac.tukorea.honsulchingu.viewmodel.CharacterViewModel
 import org.json.JSONObject
 import java.net.HttpURLConnection
@@ -104,7 +105,7 @@ class LoadingActivity : AppCompatActivity() {
                             else Log.e("db", "토큰 정보 보기 실패", error)
 
                             requestUserAdditionalScopes(sharedPreferences_setting) {
-                                startActivity(Intent(this, LoginActivity::class.java))
+                                startActivity(Intent(this, FirstLoginActivity::class.java))
                                 overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out)
                                 finish()
                             }
@@ -113,7 +114,7 @@ class LoadingActivity : AppCompatActivity() {
                             Log.i("db", "토큰 정보 보기 성공 ID: ${tokenInfo.id} (만료 시간: ${tokenInfo.expiresIn}초)")
 
                             requestUserAdditionalScopes(sharedPreferences_setting) {
-                                startActivity(Intent(this, MainActivity::class.java))
+                                startActivity(Intent(this, FirstLoginActivity::class.java))
                                 overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out)
                                 finish()
                             }
@@ -124,7 +125,7 @@ class LoadingActivity : AppCompatActivity() {
                     Log.d("db", "토큰 정보 없음")
 
                     requestUserAdditionalScopes(sharedPreferences_setting) {
-                        startActivity(Intent(this, LoginActivity::class.java))
+                        startActivity(Intent(this, FirstLoginActivity::class.java))
                         overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out)
                         finish()
                     }

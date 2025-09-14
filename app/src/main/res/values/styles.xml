@@ -25,4 +25,13 @@
         <item name="cornerSizeBottomRight">0dp</item>
     </style>
 
+    <style name="RoundButton">
+        <item name="android:background">@drawable/bg_button_selector</item>
+        <item name="android:textColor">@android:color/white</item>
+        <item name="android:paddingStart">16dp</item>
+        <item name="android:paddingEnd">16dp</item>
+        <item name="android:minHeight">48dp</item>
+    </style>
+
+
 </resources>

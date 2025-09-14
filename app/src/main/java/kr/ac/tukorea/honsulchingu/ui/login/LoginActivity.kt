@@ -23,8 +23,10 @@ import com.kakao.sdk.common.model.ClientError
 import com.kakao.sdk.common.model.ClientErrorCause
 import com.kakao.sdk.common.model.KakaoSdkError
 import com.kakao.sdk.user.UserApiClient
+import kotlinx.coroutines.Dispatchers.Main
 import kr.ac.tukorea.honsulchingu.MainActivity
 import kr.ac.tukorea.honsulchingu.R
+import kr.ac.tukorea.honsulchingu.ui.onboarding.FirstLoginActivity
 import kr.ac.tukorea.honsulchingu.viewmodel.CharacterViewModel
 import org.json.JSONObject
 import java.net.HttpURLConnection
@@ -129,7 +131,7 @@ class LoginActivity : AppCompatActivity() {
                     Log.i("db", "카카오계정으로 로그인 성공 ID: ${token.accessToken}")
 
                     requestUserAdditionalScopes(sharedPreferences_setting) {
-                        startActivity(Intent(this, MainActivity::class.java))
+                        startActivity(Intent(this, FirstLoginActivity::class.java))
                         overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out)
                         finish()
                     }
@@ -153,7 +155,7 @@ class LoginActivity : AppCompatActivity() {
                         Log.i("db", "카카오톡으로 로그인 성공 ID: ${token.accessToken}")
 
                         requestUserAdditionalScopes(sharedPreferences_setting) {
-                            startActivity(Intent(this, MainActivity::class.java))
+                            startActivity(Intent(this, FirstLoginActivity::class.java))
                             overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out)
                             finish()
                         }

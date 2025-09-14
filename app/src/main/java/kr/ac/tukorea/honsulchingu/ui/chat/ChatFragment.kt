@@ -98,23 +98,27 @@ class ChatFragment : Fragment() {
             navController.navigate(R.id.nav_voiceChat, null, navOptions)
         }
 
-        // 키보드가 올라왔을 때 입력창 마진을 동적으로 설정
         ViewCompat.setOnApplyWindowInsetsListener(binding.root) { view, insets ->
-
-            // 키보드(IME) 높이 얻기
             val imeInsets = insets.getInsets(WindowInsetsCompat.Type.ime())
             val imeHeight = imeInsets.bottom
-            val isKeyboardVisible = imeHeight > 0
 
+            val isKeyboardVisible = imeHeight > 0
             if (isKeyboardVisible) {
-                val marginPx = (100 * resources.displayMetrics.density).toInt()
-                val offset = imeHeight - marginPx
-                binding.containerUI.translationY = -offset.toFloat()
+                // 디바이스 화면 높이 및 밀도 고려
+                val screenHeight = resources.displayMetrics.heightPixels
+                val screenDensity = resources.displayMetrics.density
+
+                // 밀도 보정 적용한 오프셋 설정
+                val offsetDp = 100
+                val offsetPx = (offsetDp * screenDensity).toInt()
+                val translation = imeHeight - offsetPx
+
+                binding.containerUI.translationY = -translation.coerceAtLeast(0).toFloat()
             } else {
                 binding.containerUI.translationY = 0f
             }
 
-            // 시스템바(상단, 하단, 네비게이션) 인셋 처리 (우측 패딩 적용 예시)
+            // 시스템 바 인셋 적용
             val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
             view.setPadding(
                 view.paddingLeft,
@@ -127,16 +131,19 @@ class ChatFragment : Fragment() {
         }
 
 
-        // 키보드 올라갈 때 스크롤 자동화 및 플릭커 방지
+
+        // 키보드 올라올 때 수동 스크롤 보정
         binding.recyclerViewChat.addOnLayoutChangeListener { _, _, _, _, bottom, _, _, _, oldBottom ->
-            if (bottom < oldBottom) { // 화면이 위로 밀렸을 때 (키보드가 올라갔을 때)
+            if (bottom < oldBottom) {
                 binding.recyclerViewChat.post {
                     val position = chatItems.size - 1
-                    binding.recyclerViewChat.smoothScrollToPosition(position) // 부드럽게 맨 아래로 스크롤
+                    if (position >= 0) {
+                        binding.recyclerViewChat.scrollToPosition(position)
+                    }
                 }
             }
         }
-
+        // 메시지 전송 버튼
         binding.buttonSend.setOnClickListener {
             sendToServer(binding.editTextMessage.text.toString().trim(), System.currentTimeMillis())
             binding.editTextMessage.text.clear()
@@ -359,9 +366,12 @@ class ChatFragment : Fragment() {
     }
 
     private fun setupRecyclerView() {
+        val layoutManager = LinearLayoutManager(requireContext())
+        layoutManager.stackFromEnd = true
+
+        binding.recyclerViewChat.layoutManager = layoutManager
         chatAdapter = ChatAdapter(requireContext())
         binding.recyclerViewChat.adapter = chatAdapter
-        binding.recyclerViewChat.layoutManager = LinearLayoutManager(requireContext())
     }
 
     override fun onDestroyView() {
@@ -370,3 +380,5 @@ class ChatFragment : Fragment() {
         handler.removeCallbacks(loadingTextRunnable)
     }
 }
+
+
