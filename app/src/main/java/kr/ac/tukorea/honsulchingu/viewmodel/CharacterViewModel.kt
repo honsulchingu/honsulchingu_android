@@ -28,7 +28,7 @@ class CharacterViewModel : ViewModel() {
 
     // 특정 앤드포인트의 URL 업데이트
     fun updateURL(endPoint: String): URL {
-        val IPv4 = "13.208.208.33"
+        val IPv4 = "56.155.92.107"
         return URL("http://$IPv4:8000$endPoint")
     }
 

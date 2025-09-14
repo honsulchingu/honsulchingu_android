@@ -28,6 +28,7 @@ import androidx.navigation.fragment.findNavController
 import com.airbnb.lottie.LottieAnimationView
 import com.google.android.material.imageview.ShapeableImageView
 import kr.ac.tukorea.honsulchingu.R
+import kr.ac.tukorea.honsulchingu.ui.chat.ChatMessage
 import kr.ac.tukorea.honsulchingu.ui.chat.ChatFragment
 import kr.ac.tukorea.honsulchingu.viewmodel.CharacterViewModel
 import kr.ac.tukorea.honsulchingu.navigation.NavAnimationUtil
@@ -75,6 +76,8 @@ class VoiceChatFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         val sharedPreferences_chat = requireContext().getSharedPreferences("prefs_chat", MODE_PRIVATE)
+
+        loadChat()
 
         imageCharacter = view.findViewById(R.id.imageCharacter)
         textSpeech = view.findViewById(R.id.textSpeech)
@@ -378,8 +381,7 @@ class VoiceChatFragment : Fragment() {
 
                         val output_ai = responseJson.getString("output_ai")
 
-                        // 수정사항 2 (2/2)
-                        // val tts_ai = responseJson.getString("tts_ai")
+                        val tts_ai = responseJson.getString("tts_ai")
 
                         Handler(Looper.getMainLooper()).post {
                             sharedPreferences_chat.edit().putString("greet", output_ai).apply()
@@ -405,27 +407,117 @@ class VoiceChatFragment : Fragment() {
                             LodingDotLottie.cancelAnimation()
                         }
 
-// 수정사항 1 (1/2)
-//                        val decodedBytes = Base64.decode(tts_ai, Base64.DEFAULT)
-//
-//                        val ttsFile = File(externalDir, "tts_${id_user}_${select_user}_${time_user}_${start_user}.wav")
-//
-//                        ttsFile.outputStream().use { it.write(decodedBytes) }
-//
-//
-//                        isPlaying = true
-//
-//                        var mediaPlayer = MediaPlayer().apply {
-//                            setDataSource(ttsFile.absolutePath)
-//                            prepare()
-//                            start()
-//                        }
-//
-//                        isPlaying = false
+
+                        val decodedBytes = Base64.decode(tts_ai, Base64.DEFAULT)
+
+                        val ttsFile = File(externalDir, "tts_${id_user}_${select_user}_${time_user}_${start_user}.wav")
+
+                        ttsFile.outputStream().use { it.write(decodedBytes) }
+
+
+                        isPlaying = true
+
+                        var mediaPlayer = MediaPlayer().apply {
+                            setDataSource(ttsFile.absolutePath)
+                            prepare()
+                            start()
+                        }
+
+                        isPlaying = false
                     }
                 }
             }.start()
         }
+    }
+
+    private fun loadChat() {
+        Thread {
+            val sharedPreferences_setting = requireContext().getSharedPreferences("prefs_setting", MODE_PRIVATE)
+
+            val sharedPreferences_chat = requireContext().getSharedPreferences("prefs_chat", MODE_PRIVATE)
+
+            val url = characterViewModel.updateURL("/load_chat")
+
+            val connection = (url.openConnection() as HttpURLConnection).apply {
+                requestMethod = "POST"
+                setRequestProperty("Content-Type", "application/json; charset=UTF-8")
+                doOutput = true
+            }
+
+
+            val jsonInput = JSONObject().apply {
+                put("id_user", sharedPreferences_setting.getString("EMAIL", ""))
+                put("select_user", sharedPreferences_chat.getString("select_user", ""))
+                put("input_user", "")
+                put("time_user", "")
+                put("start_user", sharedPreferences_chat.getString("start_user", ""))
+            }
+
+            connection.outputStream.use { it.write(jsonInput.toString().toByteArray(Charsets.UTF_8)) }
+
+
+            val responseJson = JSONObject(connection.inputStream.bufferedReader().use { it.readText() })
+
+            val Messages = responseJson.getJSONArray("chat").let { array ->
+                List(array.length()) { i ->
+                    val obj = array.getJSONObject(i)
+                    val message = obj.getString("text")
+                    val isUser = obj.getString("role") == "user"
+                    val time = LocalDateTime.parse(obj.getString("time"), DateTimeFormatter.ofPattern("yyyy. MM. dd. HH-mm-ss")).atZone(ZoneId.of("Asia/Seoul")).toInstant().toEpochMilli()
+                    val isFavorite = obj.getString("favorite") != ""
+                    ChatMessage(message, isUser, time, isFavorite)
+                }
+            }
+
+
+            if (Messages.isEmpty()) sendToServer("${sharedPreferences_setting.getString("BEGIN", "")}, 사용자의 이름은 \"${sharedPreferences_setting.getString("NICKNAME", "")}\"입니다.", System.currentTimeMillis())
+        }.start()
+    }
+
+    private fun sendToServer(input_user: String, time_user: Long) {
+        Thread {
+            val sharedPreferences_setting = requireContext().getSharedPreferences("prefs_setting", MODE_PRIVATE)
+
+            val sharedPreferences_chat = requireContext().getSharedPreferences("prefs_chat", MODE_PRIVATE)
+
+            val url = characterViewModel.updateURL("/conversation_model")
+
+            val connection = (url.openConnection() as HttpURLConnection).apply {
+                requestMethod = "POST"
+                setRequestProperty("Content-Type", "application/json; charset=UTF-8")
+                doOutput = true
+            }
+
+
+            if (sharedPreferences_chat.getBoolean("isFirst", true)) {
+                Handler(Looper.getMainLooper()).post {
+                    sharedPreferences_setting.edit().putInt("CHATCOUNT", sharedPreferences_setting.getInt("CHATCOUNT", 0) + 1).apply()
+                    characterViewModel.chatcount_live.value = sharedPreferences_setting.getInt("CHATCOUNT", 0)
+                }
+            }
+
+            val jsonInput = JSONObject().apply {
+                put("id_user", sharedPreferences_setting.getString("EMAIL", ""))
+                put("select_user", sharedPreferences_chat.getString("select_user", ""))
+                put("input_user", input_user)
+                put("time_user", SimpleDateFormat("yyyy. MM. dd. HH-mm-ss", Locale.KOREA).format(Date(time_user)))
+                put("start_user", sharedPreferences_chat.getString("start_user", ""))
+            }
+
+            connection.outputStream.use { it.write(jsonInput.toString().toByteArray(Charsets.UTF_8)) }
+
+
+            val responseJson = JSONObject(connection.inputStream.bufferedReader().use { it.readText() })
+
+            val output_ai = responseJson.getString("output_ai")
+
+            Handler(Looper.getMainLooper()).post {
+                if (sharedPreferences_chat.getBoolean("isFirst", true)) sharedPreferences_chat.edit().putBoolean("isFirst", false).apply()
+
+                sharedPreferences_chat.edit().putString("greet", output_ai).apply()
+                characterViewModel.greet_live.value = output_ai
+            }
+        }.start()
     }
 
     private fun showChatFragment() {
