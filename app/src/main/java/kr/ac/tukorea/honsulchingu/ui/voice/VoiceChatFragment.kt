@@ -206,6 +206,15 @@ class VoiceChatFragment : Fragment() {
 
 
                 while (isPressed) {
+
+                    if (isPlaying) {
+
+                        Thread.sleep(100)
+
+                        continue
+                    }
+
+
                     var soundDetected = false
 
                     val detectRecorder = AudioRecord(
@@ -245,6 +254,7 @@ class VoiceChatFragment : Fragment() {
                     val speak_user = sharedPreferences_chat.getString("speak", "")
                     val time_user = SimpleDateFormat("yyyy. MM. dd. HH-mm-ss", Locale.KOREA).format(Date(System.currentTimeMillis()))
                     val start_user = sharedPreferences_chat.getString("start_user", "")
+                    val gender_user = sharedPreferences_setting.getString("GENDER", "")
 
                     val wavFile = File(externalDir, "wav_${id_user}_${select_user}_${time_user}_${start_user}.wav")
                     val raf = RandomAccessFile(wavFile, "rw")
@@ -365,6 +375,7 @@ class VoiceChatFragment : Fragment() {
                             writeFormField("speak_user", speak_user!!)
                             writeFormField("time_user", time_user)
                             writeFormField("start_user", start_user!!)
+                            writeFormField("gender_user", gender_user!!)
 
                             writeBytes("$twoHyphens$boundary$lineEnd")
                             writeBytes("Content-Disposition: form-data; name=\"wav_user\"; filename=\"${wavFile.name}\"$lineEnd")
@@ -381,7 +392,7 @@ class VoiceChatFragment : Fragment() {
 
                         val output_ai = responseJson.getString("output_ai")
 
-                        val tts_ai = responseJson.getString("tts_ai")
+                        // val tts_ai = responseJson.getString("tts_ai")
 
                         Handler(Looper.getMainLooper()).post {
                             sharedPreferences_chat.edit().putString("greet", output_ai).apply()
@@ -408,22 +419,21 @@ class VoiceChatFragment : Fragment() {
                         }
 
 
-                        val decodedBytes = Base64.decode(tts_ai, Base64.DEFAULT)
-
-                        val ttsFile = File(externalDir, "tts_${id_user}_${select_user}_${time_user}_${start_user}.wav")
-
-                        ttsFile.outputStream().use { it.write(decodedBytes) }
-
-
-                        isPlaying = true
-
-                        var mediaPlayer = MediaPlayer().apply {
-                            setDataSource(ttsFile.absolutePath)
-                            prepare()
-                            start()
-                        }
-
-                        isPlaying = false
+//                        val decodedBytes = Base64.decode(tts_ai, Base64.DEFAULT)
+//
+//                        val ttsFile = File(externalDir, "tts_${id_user}_${select_user}_${time_user}_${start_user}.wav")
+//
+//                        ttsFile.outputStream().use { it.write(decodedBytes) }
+//
+//
+//                        this@VoiceChatFragment.isPlaying = true
+//
+//                        var mediaPlayer = MediaPlayer().apply {
+//                            setDataSource(ttsFile.absolutePath)
+//                            prepare()
+//                            setOnCompletionListener { this@VoiceChatFragment.isPlaying = false }
+//                            start()
+//                        }
                     }
                 }
             }.start()
@@ -470,7 +480,7 @@ class VoiceChatFragment : Fragment() {
             }
 
 
-            if (Messages.isEmpty()) sendToServer("${sharedPreferences_setting.getString("BEGIN", "")}, 사용자의 이름은 \"${sharedPreferences_setting.getString("NICKNAME", "")}\"입니다.", System.currentTimeMillis())
+            if (Messages.isEmpty()) sendToServer("${sharedPreferences_setting.getString("BEGIN", "")}, 사용자의 이름은 \"${sharedPreferences_setting.getString("NICKNAME", "")}\"입니다, 사용자의 나이는 \"${sharedPreferences_setting.getString("AGE", "")}세\"입니다.", System.currentTimeMillis())
         }.start()
     }
 
@@ -511,12 +521,28 @@ class VoiceChatFragment : Fragment() {
 
             val output_ai = responseJson.getString("output_ai")
 
+            // val tts_ai = responseJson.getString("tts_ai")
+
             Handler(Looper.getMainLooper()).post {
                 if (sharedPreferences_chat.getBoolean("isFirst", true)) sharedPreferences_chat.edit().putBoolean("isFirst", false).apply()
 
                 sharedPreferences_chat.edit().putString("greet", output_ai).apply()
                 characterViewModel.greet_live.value = output_ai
             }
+
+
+//            val decodedBytes = Base64.decode(tts_ai, Base64.DEFAULT)
+//
+//            val ttsFile = File(requireContext().getExternalFilesDir(Environment.DIRECTORY_MUSIC)!!, "tts.wav")
+//
+//            ttsFile.outputStream().use { it.write(decodedBytes) }
+//
+//
+//            var mediaPlayer = MediaPlayer().apply {
+//                setDataSource(ttsFile.absolutePath)
+//                prepare()
+//                start()
+//            }
         }.start()
     }
 

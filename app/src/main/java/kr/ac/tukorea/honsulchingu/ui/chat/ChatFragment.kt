@@ -8,6 +8,9 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.LayoutInflater
 import android.animation.ObjectAnimator
+import android.media.MediaPlayer
+import android.os.Environment
+import android.util.Base64
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.fragment.app.Fragment
@@ -28,6 +31,7 @@ import java.util.Calendar
 import java.util.Locale
 import java.util.Date
 import org.json.JSONObject
+import java.io.File
 
 class ChatFragment : Fragment() {
 
@@ -188,6 +192,8 @@ class ChatFragment : Fragment() {
 
             val time_ai = LocalDateTime.parse(responseJson.getString("time_ai"), DateTimeFormatter.ofPattern("yyyy. MM. dd. HH-mm-ss")).atZone(ZoneId.of("Asia/Seoul")).toInstant().toEpochMilli()
 
+            // val tts_ai = responseJson.getString("tts_ai")
+
             val elapsedTime = System.currentTimeMillis() - startTime
 
             val delay = maxOf(0L, 3000L - elapsedTime)
@@ -206,6 +212,20 @@ class ChatFragment : Fragment() {
 
                 sendMessage(output_ai, false, time_ai)
             }, delay) // 최소 3초 로딩 애니메이션 보장
+
+
+//            val decodedBytes = Base64.decode(tts_ai, Base64.DEFAULT)
+//
+//            val ttsFile = File(requireContext().getExternalFilesDir(Environment.DIRECTORY_MUSIC)!!, "tts.wav")
+//
+//            ttsFile.outputStream().use { it.write(decodedBytes) }
+//
+//
+//            var mediaPlayer = MediaPlayer().apply {
+//                setDataSource(ttsFile.absolutePath)
+//                prepare()
+//                start()
+//            }
         }.start()
     }
 
@@ -288,7 +308,7 @@ class ChatFragment : Fragment() {
             }
 
 
-            if (Messages.isEmpty()) sendToServer("${sharedPreferences_setting.getString("BEGIN", "")}, 사용자의 이름은 \"${sharedPreferences_setting.getString("NICKNAME", "")}\"입니다.", System.currentTimeMillis())
+            if (Messages.isEmpty()) sendToServer("${sharedPreferences_setting.getString("BEGIN", "")}, 사용자의 이름은 \"${sharedPreferences_setting.getString("NICKNAME", "")}\"입니다, 사용자의 나이는 \"${sharedPreferences_setting.getString("AGE", "")}세\"입니다.", System.currentTimeMillis())
 
 
             var lastDate: String? = null

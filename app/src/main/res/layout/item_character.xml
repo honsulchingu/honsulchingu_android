@@ -39,9 +39,9 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
 
-            <!-- 메시지 -->
+            <!-- 설명 -->
             <TextView
-                android:id="@+id/characterMessage"
+                android:id="@+id/characterDescription"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="12dp"
@@ -136,9 +136,9 @@
 
             </LinearLayout>
 
-            <!-- 설명 -->
+            <!-- 메세지 -->
             <TextView
-                android:id="@+id/characterDescription"
+                android:id="@+id/characterMessage"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="12dp"
@@ -165,7 +165,7 @@
                 android:textColor="@color/bg_color"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/characterDescription" />
+                app:layout_constraintTop_toBottomOf="@id/characterMessage" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 
