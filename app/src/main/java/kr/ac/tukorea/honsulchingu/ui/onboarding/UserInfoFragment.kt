@@ -1,9 +1,11 @@
 package kr.ac.tukorea.honsulchingu.ui.onboarding
 
 import android.content.Context
+import android.content.Context.MODE_PRIVATE
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.MotionEvent
 import android.view.View
@@ -11,11 +13,17 @@ import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
 import com.google.android.material.button.MaterialButton
 import kr.ac.tukorea.honsulchingu.R
 import kr.ac.tukorea.honsulchingu.databinding.FragmentUserInfoBinding
+import kr.ac.tukorea.honsulchingu.viewmodel.CharacterViewModel
+import org.json.JSONObject
+import java.net.HttpURLConnection
 
 class UserInfoFragment : Fragment() {
+
+    private val characterViewModel: CharacterViewModel by viewModels()
 
     private var _binding: FragmentUserInfoBinding? = null
     private val binding get() = _binding!!
@@ -91,7 +99,6 @@ class UserInfoFragment : Fragment() {
             }
         }
 
-
         // 빈 클릭 리스너 (Lint 경고 제거용)
         binding.root.setOnClickListener { }
 
@@ -99,6 +106,44 @@ class UserInfoFragment : Fragment() {
         binding.btnNext.setOnClickListener {
             // 다음 화면으로 이동 처리
             (activity as? FirstLoginActivity)?.goToTutorial()
+
+            Thread {
+                val sharedPreferences_setting = requireContext().getSharedPreferences("prefs_setting", MODE_PRIVATE)
+
+                val url = characterViewModel.updateURL("/add_user")
+
+                val connection = (url.openConnection() as HttpURLConnection).apply {
+                    requestMethod = "POST"
+                    setRequestProperty("Content-Type", "application/json; charset=UTF-8")
+                    doOutput = true
+                }
+
+
+                val jsonInput = JSONObject().apply {
+                    put("email", sharedPreferences_setting.getString("EMAIL", "") ?: "")
+                    put("nickname", sharedPreferences_setting.getString("NICKNAME", "") ?: "")
+                    put("image", sharedPreferences_setting.getString("IMAGE", "") ?: "")
+                    put("age", age.toString())
+                    put("gender", selectedGender)
+                    put("startday", sharedPreferences_setting.getString("STARTDAY", "") ?: "")
+                }
+
+                connection.outputStream.use { it.write(jsonInput.toString().toByteArray(Charsets.UTF_8)) }
+
+
+                connection.inputStream.bufferedReader().use { it.readText() }
+
+
+                sharedPreferences_setting.edit().apply {
+                    putString("AGE", age.toString())
+                    putString("GENDER", selectedGender)
+                    apply()
+                }
+
+                Log.d("db", "first")
+                Log.d("db", sharedPreferences_setting.getString("AGE", "") ?: "")
+                Log.d("db", sharedPreferences_setting.getString("GENDER", "") ?: "")
+            }.start()
         }
     }
 

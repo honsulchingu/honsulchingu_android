@@ -204,6 +204,10 @@ class LoadingActivity : AppCompatActivity() {
 
                                         if (AGE == "" || GENDER == "") decision = 1
 
+                                        Log.d("db", AGE)
+                                        Log.d("db", GENDER)
+                                        Log.d("db", decision.toString())
+
 
                                         url = characterViewModel.updateURL("/add_user")
 
@@ -246,19 +250,21 @@ class LoadingActivity : AppCompatActivity() {
                                         Log.d("db", sharedPreferences_setting.getString("AGE", "") ?: "")
                                         Log.d("db", sharedPreferences_setting.getString("GENDER", "") ?: "")
                                         Log.d("db", sharedPreferences_setting.getString("STARTDAY", "") ?: "")
+
+
+                                        Handler(Looper.getMainLooper()).post {
+                                            if (decision == 1) {
+                                                startActivity(Intent(this, FirstLoginActivity::class.java))
+                                                overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out)
+                                                finish()
+                                            }
+                                            else if (decision == 0) {
+                                                startActivity(Intent(this, MainActivity::class.java))
+                                                overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out)
+                                                finish()
+                                            }
+                                        }
                                     }.start()
-
-
-                                    if (decision == 1) {
-                                        startActivity(Intent(this, LoginActivity::class.java)) // TODO: 여기 바꾸기
-                                        overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out)
-                                        finish()
-                                    }
-                                    else if (decision == 0) {
-                                        startActivity(Intent(this, MainActivity::class.java))
-                                        overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out)
-                                        finish()
-                                    }
 
                                     onComplete()
                                 }
@@ -300,6 +306,10 @@ class LoadingActivity : AppCompatActivity() {
                         val STARTDAY = SimpleDateFormat("yyyy. MM. dd. HH-mm-ss", Locale.KOREA).format(Date(System.currentTimeMillis()))
 
                         if (AGE == "" || GENDER == "") decision = 1
+
+                        Log.d("db", AGE)
+                        Log.d("db", GENDER)
+                        Log.d("db", decision.toString())
 
 
                         url = characterViewModel.updateURL("/add_user")
@@ -343,19 +353,21 @@ class LoadingActivity : AppCompatActivity() {
                         Log.d("db", sharedPreferences_setting.getString("AGE", "") ?: "")
                         Log.d("db", sharedPreferences_setting.getString("GENDER", "") ?: "")
                         Log.d("db", sharedPreferences_setting.getString("STARTDAY", "") ?: "")
+
+
+                        Handler(Looper.getMainLooper()).post {
+                            if (decision == 1) {
+                                startActivity(Intent(this, FirstLoginActivity::class.java))
+                                overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out)
+                                finish()
+                            }
+                            else if (decision == 0) {
+                                startActivity(Intent(this, MainActivity::class.java))
+                                overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out)
+                                finish()
+                            }
+                        }
                     }.start()
-
-
-                    if (decision == 1) {
-                        startActivity(Intent(this, LoginActivity::class.java)) // TODO: 여기 바꾸기
-                        overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out)
-                        finish()
-                    }
-                    else if (decision == 0) {
-                        startActivity(Intent(this, MainActivity::class.java))
-                        overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out)
-                        finish()
-                    }
 
                     onComplete()
                 }

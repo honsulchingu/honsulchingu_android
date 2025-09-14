@@ -1,29 +1,40 @@
 package kr.ac.tukorea.honsulchingu.ui.onboarding
 
 import android.os.Bundle
+import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
 import kr.ac.tukorea.honsulchingu.R
-import kr.ac.tukorea.honsulchingu.ui.onboarding.TutorialFragment
-import kr.ac.tukorea.honsulchingu.ui.onboarding.UserInfoFragment
 
 class FirstLoginActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_first_login)
-//
-//        // 최초 진입: UserInfoFragment 표시
-//        if (savedInstanceState == null) {
-//            supportFragmentManager.beginTransaction()
-//                .replace(R.id.fragment_container, UserInfoFragment())
-//                .commit()
-//        }
-        // 테스트용: 바로 TutorialFragment 표시
+
+        enableEdgeToEdge()
+
+        // ✅ 안전 영역 적용
+        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.fragment_container)) { v, insets ->
+            val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
+            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
+            insets
+        }
+
+        // 최초 진입: UserInfoFragment 표시
         if (savedInstanceState == null) {
             supportFragmentManager.beginTransaction()
-                .replace(R.id.fragment_container, TutorialFragment())
+                .replace(R.id.fragment_container, UserInfoFragment())
                 .commit()
         }
+
+//        // 테스트: 바로 TutorialFragment 표시
+//        if (savedInstanceState == null) {
+//            supportFragmentManager.beginTransaction()
+//                .replace(R.id.fragment_container, TutorialFragment())
+//                .commit()
+//        }
     }
 
     // UserInfoFragment에서 호출
@@ -51,5 +62,4 @@ class FirstLoginActivity : AppCompatActivity() {
             .replace(R.id.fragment_container, CompleteFragment())
             .commit()
     }
-
 }

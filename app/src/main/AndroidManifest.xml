@@ -40,6 +40,10 @@
             android:exported="false"
             android:windowSoftInputMode="adjustPan|stateHidden"
             android:screenOrientation="portrait" />
+        <activity
+            android:name=".ui.onboarding.FirstLoginActivity"
+            android:exported="false"
+            android:screenOrientation="portrait" />
     </application>
 
 </manifest>
